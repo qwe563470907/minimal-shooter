@@ -6,7 +6,7 @@ class Sequence extends List {
 	}
 
 	override public function run(actor: IActor): Bool {
-		var state = actor.actionStateManager.getCountState(this);
+		var state = actor.getStateManager().getCountState(this);
 
 		while(!state.isCompleted) {
 			var completed = this.actionList[state.count].run(actor);
@@ -29,6 +29,6 @@ class Sequence extends List {
 	}
 
 	override public function resetState(actor: IActor): Void {
-		actor.actionStateManager.getCountState(this).reset();
+		actor.getStateManager().getCountState(this).reset();
 	}
 }

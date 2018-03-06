@@ -9,7 +9,7 @@ class Wait extends DefaultElement {
 	}
 
 	override public function run(actor: IActor): Bool {
-		var state = actor.actionStateManager.getCountState(this);
+		var state = actor.getStateManager().getCountState(this);
 
 		state.increment();
 		return state.isCompleted;
@@ -20,6 +20,6 @@ class Wait extends DefaultElement {
 	}
 
 	override public function resetState(actor: IActor): Void {
-		actor.actionStateManager.getCountState(this).reset();
+		actor.getStateManager().getCountState(this).reset();
 	}
 }
