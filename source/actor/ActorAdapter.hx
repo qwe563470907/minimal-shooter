@@ -5,19 +5,31 @@ import action.element.Element;
 import action.element.Utility;
 import action.StateManager;
 
+private class TemporalVector implements Vector
+{
+  public var x:Float;
+  public var y:Float;
+
+  public function new(x:Float, y:Float)
+  {
+    this.x = x;
+    this.y = y;
+  }
+}
+
 class ActorAdapter implements IActor
 {
-  public var actionStateManager(get, null):StateManager;
-  public var actionElement(null, set):Element;
-  public var x(get, set):Float;
-  public var y(get, set):Float;
+  static private var _temporalVector:Vector = new TemporalVector(0, 0);
+
+  private var _actionElement:Element;
 
   private var _actor:Actor;
+  private var _actionStateManager:StateManager;
 
   public function new(actor:Actor)
   {
-    this.actionStateManager = new StateManager();
-    this.actionElement = Utility.NULL_ELEMENT;
+    this._actionStateManager = new StateManager();
+    this._actionElement = Utility.NULL_ELEMENT;
     this._actor = actor;
   }
 
@@ -28,43 +40,40 @@ class ActorAdapter implements IActor
   }
 
   public function kill():Void
-  {
-    this._actor.kill();
-  }
+  { this._actor.kill(); }
 
   public function runAction():Void
+  { this._actionElement.run(this); }
+
+  public function getStateManager():StateManager
+  { return _actionStateManager; }
+
+  public function getPosition():Vector
   {
-    this.actionElement.run(this);
+    _temporalVector.x = this._actor.centerX;
+    _temporalVector.y = this._actor.centerY;
+    return _temporalVector;
   }
 
-  function get_actionStateManager()
+  public function setPosition(x:Float, y:Float):Void
+  { this._actor.setCenterPosition(x, y); }
+
+  public function getVelocity():Vector
   {
-    return this.actionStateManager;
+    _temporalVector.x = this._actor.velocity.x;
+    _temporalVector.y = this._actor.velocity.y;
+    return _temporalVector;
   }
 
-  function set_actionElement(v:Element)
-  {
- 		v.prepareState(this.actionStateManager);
-		return this.actionElement = v;
-  }
+  public function setVelocity(x:Float, y:Float):Void
+  { this._actor.velocity.set(x, y); }
 
-  public function get_x()
-  {
-    return this._actor.centerX;
-  }
+  public function addVelocity(x:Float, y:Float):Void
+  { this._actor.velocity.add(x, y); }
 
-  public function set_x(v:Float)
+  public function setActionElement(v:Element):Void
   {
-    return this._actor.x = v;
-  }
-
-  public function get_y()
-  {
-    return this._actor.centerY;
-  }
-
-  public function set_y(v:Float)
-  {
-    return this._actor.y = v;
+ 		v.prepareState(this._actionStateManager);
+		this._actionElement = v;
   }
 }

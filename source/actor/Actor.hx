@@ -18,8 +18,6 @@ class Actor extends FlxSprite // implements ICleanable
 	public var centerY(get, set):Float;
 	// public var childActors:CleanableGroup<Actor>;
 
-	public var actionElement(never, set):Element;
-
 	private var behaviorList:Array<IBehavior>;
 	private var adapter:ActorAdapter;
 
@@ -148,8 +146,8 @@ class Actor extends FlxSprite // implements ICleanable
 		return y = v - 0.5 * height;
 	}
 
-	function set_actionElement(v:Element)
+	public function setActionElement(v:Element):Void
 	{
-		return this.adapter.actionElement = v;
+		this.adapter.setActionElement(v);
 	}
 }

@@ -34,7 +34,7 @@ class EnemyGenerator extends FlxBasic
         new Fire(90, 400),
         120
 			);
-			newEnemy.actionElement = action;
+			newEnemy.setActionElement(action);
 		}
 	}
 }
