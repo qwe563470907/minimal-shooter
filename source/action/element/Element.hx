@@ -1,6 +1,6 @@
 package action.element;
 
-interface IElement
+interface Element
 {
 	public function run(actor: IActor): Bool;
 	public function prepareState(manager: StateManager): Void;

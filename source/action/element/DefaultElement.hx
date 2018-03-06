@@ -1,6 +1,8 @@
 package action.element;
 
-class DefaultElement implements IElement {
+import action.element.Element;
+
+class DefaultElement implements Element {
 	private function new() {}
 	public function run(actor: IActor): Bool
 	{

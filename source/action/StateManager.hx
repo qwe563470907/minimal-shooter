@@ -1,14 +1,14 @@
 package action;
 
-import action.element.IElement;
+import action.element.Element;
 
 class StateManager {
 	static private var NULL_COUNT_STATE = new CountState(0);
 
-	public var countStateMap: Map<IElement, CountState>;
+	public var countStateMap: Map<Element, CountState>;
 
 	public function new() {
-		this.countStateMap = new Map<IElement, CountState>();
+		this.countStateMap = new Map<Element, CountState>();
 	}
 
 	public function clear():Void {
@@ -16,7 +16,7 @@ class StateManager {
 			countStateMap.remove(key);
 	}
 
-	public function getCountState(action: IElement): CountState {
+	public function getCountState(action: Element): CountState {
 		var state = this.countStateMap.get(action);
 		return if (state != null) state else NULL_COUNT_STATE;
 	}

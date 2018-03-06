@@ -1,10 +1,10 @@
 package action.element;
 
 class Repeat extends DefaultElement {
-	public var action: IElement;
+	public var action: Element;
 	private var repetitionCount: Int;
 
-	public function new(action: IElement, count: Int) {
+	public function new(action: Element, count: Int) {
 		super();
 		this.action = action;
 		this.repetitionCount = count;

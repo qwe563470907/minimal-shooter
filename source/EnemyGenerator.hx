@@ -35,7 +35,6 @@ class EnemyGenerator extends FlxBasic
         120
 			);
 			newEnemy.actionElement = action;
-      newEnemy.actionElement.prepareState(newEnemy.actionStateManager);
 		}
 	}
 }

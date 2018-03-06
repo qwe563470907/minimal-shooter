@@ -3,10 +3,10 @@ package action.element;
 class Fire extends DefaultElement {
 	private var _directionAngle:Null<Float>;
 	private var _speed:Null<Float>;
-	private var _offsetX:Null<Float>;
-	private var _offsetY:Null<Float>;
+	private var _offsetX:Float;
+	private var _offsetY:Float;
 
-	public function new(?directionAngle:Float, ?speed:Float, ?offsetX:Float, ?offsetY:Float)
+	public function new(?directionAngle:Float, ?speed:Float, offsetX:Float = 0, offsetY:Float = 0)
 	{
 		super();
 		this._directionAngle = directionAngle;

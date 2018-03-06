@@ -1,7 +1,7 @@
 package action.element;
 
 class EndlessRepeat extends Sequence {
-	public function new(action: IElement, ?intervalWaitCount: Int) {
+	public function new(action: Element, ?intervalWaitCount: Int) {
 		super([action, new Wait(intervalWaitCount)]);
 	}
 

@@ -1,7 +1,7 @@
 package action.element;
 
 class Parallel extends List {
-	public function new(actionList: Array<IElement>) {
+	public function new(actionList: Array<Element>) {
 		super(actionList);
 	}
 

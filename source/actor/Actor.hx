@@ -5,33 +5,30 @@ import flixel.math.FlxPoint;
 // import flixel.util.FlxArrayUtil.clearArray;
 import flixel.FlxG;
 import actor.behavior.*;
-import action.*;
-import action.element.IElement;
+import action.element.Element;
 
-class Actor extends FlxSprite	implements IActor // implements ICleanable
+class Actor extends FlxSprite // implements ICleanable
 {
-	static var standardHighSpeed = 800;
-
-	public var actionStateManager:StateManager;
-
 	public var army:ActorArmy;
 
 	public var currentSpeed:Float = 0;
 	public var currentDirectionAngle:Float = 0;
 	public var properFrameCount:Int = 0;
-	public var centerX(get, never):Float;
-	public var centerY(get, never):Float;
+	public var centerX(get, set):Float;
+	public var centerY(get, set):Float;
 	// public var childActors:CleanableGroup<Actor>;
 
-	var behaviorList:Array<IBehavior>;
-	public var actionElement:IElement;
+	public var actionElement(never, set):Element;
+
+	private var behaviorList:Array<IBehavior>;
+	private var adapter:ActorAdapter;
 
 	public function new()
 	{
 		super();
 		super.kill();
 		behaviorList = [];
-		actionStateManager = new StateManager();
+		adapter = new ActorAdapter(this);
 		// childActors = new CleanableGroup<Actor>(256);
 	}
 
@@ -84,7 +81,7 @@ class Actor extends FlxSprite	implements IActor // implements ICleanable
 		{
 			behavior.run(this);
 		}
-		if (actionElement != null) actionElement.run(this);
+		adapter.runAction();
 		properFrameCount++;
 		// childActors.forEach(removeNonExistingChild);
 	}
@@ -117,12 +114,13 @@ class Actor extends FlxSprite	implements IActor // implements ICleanable
 		return this;
 	}
 
-	public inline function setCenterPosition(X:Float = 0, Y:Float = 0):Void
+	public inline function setCenterPosition(x:Float = 0, y:Float = 0):Void
 	{
-		setPosition(X - 0.5 * width, Y - 0.5 * height);
+		centerX = x;
+		centerY = y;
 	}
 
-	public inline function fire(?directionAngle:Float = 90, ?speed:Float = 100, ?offsetX:Float = 0, ?offsetY:Float = 0):Actor
+	public inline function fire(directionAngle:Float, speed:Float, offsetX:Float, offsetY:Float):Actor
 	{
 		var newBullet = army.newBullet();
 		newBullet.setCenterPosition(centerX + offsetX, centerY + offsetY);
@@ -138,5 +136,20 @@ class Actor extends FlxSprite	implements IActor // implements ICleanable
 	function get_centerY()
 	{
 		return y + 0.5 * height;
+	}
+
+	function set_centerX(v:Float)
+	{
+		return x = v - 0.5 * width;
+	}
+
+	function set_centerY(v:Float)
+	{
+		return y = v - 0.5 * height;
+	}
+
+	function set_actionElement(v:Element)
+	{
+		return this.adapter.actionElement = v;
 	}
 }
