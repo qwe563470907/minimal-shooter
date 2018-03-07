@@ -7,33 +7,48 @@ import action.element.*;
 
 class EnemyGenerator extends FlxBasic
 {
-	var _random:FlxRandom;
-	var _army:ActorArmy;
+	var _random: FlxRandom;
+	var _army: ActorArmy;
+	var _patternDictionary: Map<String, Element>;
 
-	public function new(state:FlxState, Army:ActorArmy)
+	public function new (state: FlxState, Army: ActorArmy)
 	{
 		super();
 		_random = new FlxRandom();
 		state.add(this);
 		_army = Army;
+		_patternDictionary = action.Parser.parseYaml(AssetPaths.enemy__yaml);
 	}
 
-	override public function update(elapsed:Float):Void
+	override public function update(elapsed: Float): Void
 	{
 		super.update(elapsed);
 
-		if(_random.bool(1))
+		if (_random.bool(1))
 		{
-			if(_army.agents.countLiving() >= 1)
+			if (_army.agents.countLiving() >= 1)
 				return;
 
 			var newEnemy = _army.newAgent();
 			newEnemy.setCenterPosition(_random.float(100, FlxG.width - 100), -50);
-			newEnemy.velocity.set(0, 100);
-			var action = new EndlessRepeat(
-        new Fire(90, 400),
-        120
-			);
+			newEnemy.velocity.set(0, 50);
+			var action = _patternDictionary.get("enemy1");
+			// var action = new Parallel(
+			//     [
+			//         new EndlessRepeat(
+			//             new Fire(90, 400),
+			//             120
+			//         ),
+			//         new Sequence(
+			//             [
+			//                 new Wait(240),
+			//                 new EndlessRepeat(
+			//                     new AddVelocity(90, 5)
+			//                 )
+			//             ]
+			//         )
+			//     ]
+			// );
 			newEnemy.setActionElement(action);
 		}
 	}

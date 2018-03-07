@@ -7,10 +7,10 @@ import actor.behavior.*;
 
 class PlayState extends FlxState
 {
-	private var _playerArmy:ActorArmy;
-	private var _enemyArmy:ActorArmy;
+	private var _playerArmy: ActorArmy;
+	private var _enemyArmy: ActorArmy;
 
-	override public function create():Void
+	override public function create(): Void
 	{
 		super.create();
 
@@ -75,7 +75,7 @@ class PlayState extends FlxState
 		new EnemyGenerator(this, _enemyArmy);
 	}
 
-	override public function update(elapsed:Float):Void
+	override public function update(elapsed: Float): Void
 	{
 		super.update(elapsed);
 	}

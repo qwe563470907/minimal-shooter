@@ -1,17 +1,21 @@
 package action.element;
 
-class Sequence extends List {
-	public function new(actionList: Array<Element>) {
+class Sequence extends List
+{
+	public function new (actionList: Array<Element>)
+	{
 		super(actionList);
 	}
 
-	override public function run(actor: IActor): Bool {
+	override public function run(actor: IActor): Bool
+	{
 		var state = actor.getStateManager().getCountState(this);
 
-		while(!state.isCompleted) {
+		while (!state.isCompleted)
+		{
 			var completed = this.actionList[state.count].run(actor);
 
-			if(!completed) return false;
+			if (!completed) return false;
 
 			state.increment();
 		}
@@ -21,14 +25,21 @@ class Sequence extends List {
 		return true;
 	}
 
-	override public function prepareState(manager: StateManager): Void {
+	override public function prepareState(manager: StateManager): Void
+	{
 		super.prepareState(manager);
 
 		var actionListLength = this.actionList.length;
 		manager.countStateMap.set(this, new CountState(actionListLength));
 	}
 
-	override public function resetState(actor: IActor): Void {
+	override public function resetState(actor: IActor): Void
+	{
 		actor.getStateManager().getCountState(this).reset();
+	}
+
+	override public function toString(): String
+	{
+		return "sequence:\n" + super.toString();
 	}
 }
