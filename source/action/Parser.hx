@@ -4,6 +4,7 @@ import yaml.Yaml;
 import yaml.util.ObjectMap;
 import openfl.Assets.getText;
 import action.element.*;
+import action.element.Utility.NULL_ELEMENT;
 
 typedef NonParsedElement = TObjectMap<String, Dynamic>;
 typedef NonParsedElementArrayMap = TObjectMap<String, Array<Dynamic>>;
@@ -42,13 +43,22 @@ class Parser
 		if (_patternDictionary.exists(patternName))
 			return _patternDictionary.get(patternName);
 
+		if (_parsingPatternNameSet.exists(patternName))
+		{
+			trace("[BLOC] Circular reference of pattern " + patternName);
+			return NULL_ELEMENT;
+		}
+
 		_parsingPatternNameSet.set(patternName, true);
 		trace("Parsing " + patternName);
 
 		var topElements = _nonParsedPatternMap.get(patternName);
 
 		if (topElements == null)
-			throw "Error: pattern \"" + patternName + "\" has no content.";
+		{
+			trace("[BLOC] Pattern \"" + patternName + "\" has no content.");
+			return NULL_ELEMENT;
+		}
 
 		var parsedElement = foldElements(parseElementArray(topElements));
 		parsedElement.name = patternName;
@@ -62,16 +72,12 @@ class Parser
 
 	static private function parseElement(nonParsedNode: Dynamic): Element
 	{
-		trace("Begin parseElement");
-
 		var parsedElement: Element;
 
 		if (Std.is(nonParsedNode, NonParsedElement))
 		{
-			trace("Parcing a new element");
 			var element: NonParsedElement = cast nonParsedNode;
 			var name = getFirstKey(element);
-			trace("Parcing element " + name);
 
 			parsedElement = switch (name)
 			{
@@ -109,32 +115,34 @@ class Parser
 
 				default:
 					// definition?
-					new NullElement();
+					NULL_ELEMENT;
 			}
 		}
 		else if (Std.is(nonParsedNode, String))
 		{
 			var patternName: String = cast(nonParsedNode, String);
-			trace("Found pattern alias " + patternName);
 
 			if (_nonParsedPatternMap.exists(patternName))
+			{
+				trace("Found pattern alias " + patternName);
 				parsedElement = parsePattern(patternName);
+			}
 			else
 			{
-				trace("No pattern found for alias " + patternName);
-				parsedElement = new NullElement();
+				trace("[BLOC] No pattern found for alias " + patternName);
+				parsedElement = NULL_ELEMENT;
 			}
 		}
 		else
 		{
-			trace("Neither Map nor String");
-			parsedElement = new NullElement();
+			trace("[BLOC] Following object should be a map or string:\n" + nonParsedNode);
+			parsedElement = NULL_ELEMENT;
 		}
 
 		if (parsedElement == null || !Std.is(parsedElement, Element))
 		{
-			trace("Failed to parse element:\n" + nonParsedNode);
-			return new NullElement();
+			trace("[BLOC] Failed to parse element:\n" + nonParsedNode);
+			return NULL_ELEMENT;
 		}
 
 		return parsedElement;
@@ -161,17 +169,17 @@ class Parser
 	{
 		if (!Std.is(object, NonParsedElement))
 		{
-			trace(object + " should be a map.");
-			throw "Error while parsing BLOC";
+			trace("[BLOC] Following object should be a map:" + object);
+			throw "[BLOC] Error: Invalid object.";
 		}
 
 		var keys = object.keys();
 
 		if (keys == null)
-			throw "Error while parsing BLOC: Expected a mapping but received object without keys.";
+			throw "[BLOC] Error: Expected a mapping but received object without keys.";
 
 		if (!keys.hasNext())
-			throw "Error while parsing BLOC: Found an empty mapping.";
+			throw "[BLOC] Error: Found an empty mapping.";
 
 		return keys.next();
 	}
