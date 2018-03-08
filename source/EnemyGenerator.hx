@@ -17,7 +17,8 @@ class EnemyGenerator extends FlxBasic
 		_random = new FlxRandom();
 		state.add(this);
 		_army = Army;
-		_patternDictionary = action.Parser.parseYaml(AssetPaths.enemy__yaml);
+		_patternDictionary = new Map<String, Element>();
+		action.Parser.parseYaml(AssetPaths.enemy__yaml, _patternDictionary);
 	}
 
 	override public function update(elapsed: Float): Void
