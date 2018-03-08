@@ -4,8 +4,6 @@ import action.element.Element;
 
 class DefaultElement implements Element
 {
-	public var name: String = "";
-
 	private function new () {}
 
 	public function run(actor: IActor): Bool

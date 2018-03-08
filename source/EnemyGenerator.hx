@@ -3,13 +3,13 @@ import flixel.FlxState;
 import flixel.math.FlxRandom;
 import flixel.FlxG;
 import actor.ActorArmy;
-import action.element.*;
+import action.Pattern;
 
 class EnemyGenerator extends FlxBasic
 {
 	var _random: FlxRandom;
 	var _army: ActorArmy;
-	var _patternDictionary: Map<String, Element>;
+	var _blocPatternDictionary: Map<String, Pattern>;
 
 	public function new (state: FlxState, Army: ActorArmy)
 	{
@@ -17,8 +17,8 @@ class EnemyGenerator extends FlxBasic
 		_random = new FlxRandom();
 		state.add(this);
 		_army = Army;
-		_patternDictionary = new Map<String, Element>();
-		action.Parser.parseYaml(AssetPaths.enemy__yaml, _patternDictionary);
+		_blocPatternDictionary = new Map<String, Pattern>();
+		action.Parser.parseYaml(AssetPaths.enemy__yaml, _blocPatternDictionary);
 	}
 
 	override public function update(elapsed: Float): Void
@@ -33,7 +33,7 @@ class EnemyGenerator extends FlxBasic
 			var newEnemy = _army.newAgent();
 			newEnemy.setCenterPosition(_random.float(100, FlxG.width - 100), -50);
 			newEnemy.velocity.set(0, 50);
-			var action = _patternDictionary.get("enemy1");
+			var action = _blocPatternDictionary.get("enemy1");
 			// var action = new Parallel(
 			//     [
 			//         new EndlessRepeat(
@@ -50,7 +50,7 @@ class EnemyGenerator extends FlxBasic
 			//         )
 			//     ]
 			// );
-			newEnemy.setActionElement(action);
+			newEnemy.setActionPattern(action);
 		}
 	}
 }

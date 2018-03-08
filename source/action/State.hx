@@ -1,5 +1,6 @@
 package action;
 
-interface ActionState {
+interface State
+{
 	public function reset(): Void;
 }

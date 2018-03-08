@@ -4,7 +4,6 @@ import yaml.Yaml;
 import yaml.util.ObjectMap;
 import openfl.Assets.getText;
 import action.element.*;
-import action.element.Utility.NULL_ELEMENT;
 
 typedef NonParsedElement = TObjectMap<String, Dynamic>;
 typedef NonParsedElementArrayMap = TObjectMap<String, Array<Dynamic>>;
@@ -12,10 +11,10 @@ typedef NonParsedElementArrayMap = TObjectMap<String, Array<Dynamic>>;
 class Parser
 {
 	static private var _parsingPatternNameSet = new Map<String, Bool>();
-	static private var _patternDictionary: Map<String, Element>;
+	static private var _patternDictionary: Map<String, Pattern>;
 	static private var _nonParsedPatternMap: NonParsedElementArrayMap;
 
-	static public function parseYaml(filePath: String, patternDictionary: Map<String, Element>): Void
+	static public function parseYaml(filePath: String, patternDictionary: Map<String, Pattern>): Void
 	{
 		_patternDictionary = patternDictionary;
 
@@ -38,15 +37,15 @@ class Parser
 		}
 	}
 
-	static private function parsePattern(patternName: String): Element
+	static private function parsePattern(patternName: String): Pattern
 	{
-		if (_patternDictionary.exists(patternName))
+		if (_patternDictionary.exists(patternName))	// Already parsed
 			return _patternDictionary.get(patternName);
 
 		if (_parsingPatternNameSet.exists(patternName))
 		{
 			trace("[BLOC] Circular reference of pattern " + patternName);
-			return NULL_ELEMENT;
+			return Utility.NULL_PATTERN;
 		}
 
 		_parsingPatternNameSet.set(patternName, true);
@@ -57,17 +56,17 @@ class Parser
 		if (topElements == null)
 		{
 			trace("[BLOC] Pattern \"" + patternName + "\" has no content.");
-			return NULL_ELEMENT;
+			return Utility.NULL_PATTERN;
 		}
 
 		var parsedElement = foldElements(parseElementArray(topElements));
-		parsedElement.name = patternName;
+		var parsedPattern = new Pattern(patternName, parsedElement);
 
-		_patternDictionary.set(patternName, parsedElement);
-		trace("[" + patternName + "]\n" + parsedElement);
+		_patternDictionary.set(patternName, parsedPattern);
+		trace("[" + patternName + "]\n" + parsedPattern.render());
 		_parsingPatternNameSet.remove(patternName);
 
-		return parsedElement;
+		return parsedPattern;
 	}
 
 	static private function parseElement(nonParsedNode: Dynamic): Element
@@ -115,7 +114,7 @@ class Parser
 
 				default:
 					// definition?
-					NULL_ELEMENT;
+					Utility.NULL_ELEMENT;
 			}
 		}
 		else if (Std.is(nonParsedNode, String))
@@ -130,19 +129,19 @@ class Parser
 			else
 			{
 				trace("[BLOC] No pattern found for alias " + patternName);
-				parsedElement = NULL_ELEMENT;
+				parsedElement = Utility.NULL_ELEMENT;
 			}
 		}
 		else
 		{
 			trace("[BLOC] Following object should be a map or string:\n" + nonParsedNode);
-			parsedElement = NULL_ELEMENT;
+			parsedElement = Utility.NULL_ELEMENT;
 		}
 
 		if (parsedElement == null || !Std.is(parsedElement, Element))
 		{
 			trace("[BLOC] Failed to parse element:\n" + nonParsedNode);
-			return NULL_ELEMENT;
+			return Utility.NULL_ELEMENT;
 		}
 
 		return parsedElement;

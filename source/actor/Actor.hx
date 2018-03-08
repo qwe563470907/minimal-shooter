@@ -5,23 +5,23 @@ import flixel.math.FlxPoint;
 // import flixel.util.FlxArrayUtil.clearArray;
 import flixel.FlxG;
 import actor.behavior.*;
-import action.element.Element;
+import action.Pattern;
 
 class Actor extends FlxSprite // implements ICleanable
 {
-	public var army:ActorArmy;
+	public var army: ActorArmy;
 
-	public var currentSpeed:Float = 0;
-	public var currentDirectionAngle:Float = 0;
-	public var properFrameCount:Int = 0;
-	public var centerX(get, set):Float;
-	public var centerY(get, set):Float;
+	public var currentSpeed: Float = 0;
+	public var currentDirectionAngle: Float = 0;
+	public var properFrameCount: Int = 0;
+	public var centerX(get, set): Float;
+	public var centerY(get, set): Float;
 	// public var childActors:CleanableGroup<Actor>;
 
-	private var behaviorList:Array<IBehavior>;
-	private var adapter:ActorAdapter;
+	private var behaviorList: Array<IBehavior>;
+	private var adapter: ActorAdapter;
 
-	public function new()
+	public function new ()
 	{
 		super();
 		super.kill();
@@ -35,12 +35,12 @@ class Actor extends FlxSprite // implements ICleanable
 	// 	childActors.clean();
 	// }
 
-	public inline function addBehavior(Behavior:IBehavior)
+	public inline function addBehavior(Behavior: IBehavior)
 	{
 		behaviorList.push(Behavior);
 	}
 
-	public inline function setVelocityFromAngle(DirectionAngle:Float, Speed:Float):Void
+	public inline function setVelocityFromAngle(DirectionAngle: Float, Speed: Float): Void
 	{
 		velocity.set(Speed);
 		velocity.rotate(FlxPoint.weak(0, 0), DirectionAngle);
@@ -48,43 +48,42 @@ class Actor extends FlxSprite // implements ICleanable
 		currentSpeed = Speed;
 	}
 
-	public inline function truncateSpeed(max:Float):Void
+	public inline function truncateSpeed(max: Float): Void
 	{
-		if(currentSpeed > max) {
+		if (currentSpeed > max)
 			velocity.set(max * Math.cos(currentDirectionAngle), max * Math.sin(currentDirectionAngle));
-		}
 	}
 
-	public inline function updateCurrentSpeed():Void
+	public inline function updateCurrentSpeed(): Void
 	{
 		currentSpeed = velocity.distanceTo(FlxPoint.get(0, 0));
 	}
 
 	/**
 	 * Check and see if this object is currently out of the world bounds.
-	 * 
+	 *
 	 * @param	margin	The margin around the world bounds.
 	 * @return   True if the object is out of the world.
 	 */
-	public inline function isOutOfWorld(margin:Float = 0):Bool
+	public inline function isOutOfWorld(margin: Float = 0): Bool
 	{
 		return (x + width < FlxG.worldBounds.x - margin) || (x > FlxG.worldBounds.right + margin) ||
-			(y + height < FlxG.worldBounds.y - margin) || (y > FlxG.worldBounds.bottom + margin);
+		(y + height < FlxG.worldBounds.y - margin) || (y > FlxG.worldBounds.bottom + margin);
 	}
-	
-	override public function update(elapsed:Float):Void
+
+	override public function update(elapsed: Float): Void
 	{
 		super.update(elapsed);
-		for(behavior in behaviorList)
-		{
+
+		for (behavior in behaviorList)
 			behavior.run(this);
-		}
-		adapter.runAction();
+
+		adapter.runBulletHellPattern();
 		properFrameCount++;
 		// childActors.forEach(removeNonExistingChild);
 	}
 
-	override public function kill():Void
+	override public function kill(): Void
 	{
 		super.kill();
 		setPosition(-10000, -10000);
@@ -102,9 +101,9 @@ class Actor extends FlxSprite // implements ICleanable
 	 * @param   Rotation	Set `true` for calling `loadRotatedGraphic()`.
 	 * @return  This `FlxSprite` instance.
 	 */
-	public inline function setGraphic(Graphic:String, ?Rotations:Int):flixel.FlxSprite
+	public inline function setGraphic(Graphic: String, ? Rotations : Int): flixel.FlxSprite
 	{
-		if(Rotations != null)
+		if (Rotations != null)
 			loadRotatedGraphic(Graphic, Rotations, -1, true, true);
 		else
 			loadGraphic(Graphic);
@@ -112,13 +111,13 @@ class Actor extends FlxSprite // implements ICleanable
 		return this;
 	}
 
-	public inline function setCenterPosition(x:Float = 0, y:Float = 0):Void
+	public inline function setCenterPosition(x: Float = 0, y: Float = 0): Void
 	{
 		centerX = x;
 		centerY = y;
 	}
 
-	public inline function fire(directionAngle:Float, speed:Float, offsetX:Float, offsetY:Float):Actor
+	public inline function fire(directionAngle: Float, speed: Float, offsetX: Float, offsetY: Float): Actor
 	{
 		var newBullet = army.newBullet();
 		newBullet.setCenterPosition(centerX + offsetX, centerY + offsetY);
@@ -136,18 +135,18 @@ class Actor extends FlxSprite // implements ICleanable
 		return y + 0.5 * height;
 	}
 
-	function set_centerX(v:Float)
+	function set_centerX(v: Float)
 	{
 		return x = v - 0.5 * width;
 	}
 
-	function set_centerY(v:Float)
+	function set_centerY(v: Float)
 	{
 		return y = v - 0.5 * height;
 	}
 
-	public function setActionElement(v:Element):Void
+	public function setActionPattern(v: Pattern): Void
 	{
-		this.adapter.setActionElement(v);
+		this.adapter.setActionPattern(v);
 	}
 }
