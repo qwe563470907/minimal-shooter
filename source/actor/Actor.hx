@@ -1,7 +1,7 @@
 package actor;
 
 import flixel.FlxSprite;
-import flixel.math.FlxPoint;
+// import flixel.math.FlxPoint;
 // import flixel.util.FlxArrayUtil.clearArray;
 import flixel.FlxG;
 import actor.behavior.*;
@@ -11,8 +11,9 @@ class Actor extends FlxSprite // implements ICleanable
 {
 	public var army: ActorArmy;
 
-	public var currentSpeed: Float = 0;
-	public var currentDirectionAngle: Float = 0;
+	public var motionVelocity: Vector;
+	public var shotOffset: Vector;
+
 	public var properFrameCount: Int = 0;
 	public var centerX(get, set): Float;
 	public var centerY(get, set): Float;
@@ -28,6 +29,8 @@ class Actor extends FlxSprite // implements ICleanable
 		behaviorList = [];
 		adapter = new ActorAdapter(this);
 		// childActors = new CleanableGroup<Actor>(256);
+		motionVelocity = new Vector();
+		shotOffset = new Vector();
 	}
 
 	// public function clean():Void
@@ -40,23 +43,10 @@ class Actor extends FlxSprite // implements ICleanable
 		behaviorList.push(Behavior);
 	}
 
-	public inline function setVelocityFromAngle(DirectionAngle: Float, Speed: Float): Void
-	{
-		velocity.set(Speed);
-		velocity.rotate(FlxPoint.weak(0, 0), DirectionAngle);
-		currentDirectionAngle = DirectionAngle;
-		currentSpeed = Speed;
-	}
-
 	public inline function truncateSpeed(max: Float): Void
 	{
-		if (currentSpeed > max)
-			velocity.set(max * Math.cos(currentDirectionAngle), max * Math.sin(currentDirectionAngle));
-	}
-
-	public inline function updateCurrentSpeed(): Void
-	{
-		currentSpeed = velocity.distanceTo(FlxPoint.get(0, 0));
+		if (motionVelocity.radius > max)
+			motionVelocity.radius = max;
 	}
 
 	/**
@@ -73,7 +63,9 @@ class Actor extends FlxSprite // implements ICleanable
 
 	override public function update(elapsed: Float): Void
 	{
+		velocity.set(motionVelocity.x, motionVelocity.y);
 		super.update(elapsed);
+		motionVelocity.setCartesian(velocity.x, velocity.y);
 
 		for (behavior in behaviorList)
 			behavior.run(this);
@@ -81,6 +73,8 @@ class Actor extends FlxSprite // implements ICleanable
 		adapter.runBulletHellPattern();
 		properFrameCount++;
 		// childActors.forEach(removeNonExistingChild);
+
+		velocity.set(motionVelocity.x, motionVelocity.y);
 	}
 
 	override public function kill(): Void
@@ -117,11 +111,11 @@ class Actor extends FlxSprite // implements ICleanable
 		centerY = y;
 	}
 
-	public inline function fire(directionAngle: Float, speed: Float, offsetX: Float, offsetY: Float): Actor
+	public inline function fire(speed: Float, direction: Float): Actor
 	{
 		var newBullet = army.newBullet();
-		newBullet.setCenterPosition(centerX + offsetX, centerY + offsetY);
-		newBullet.setVelocityFromAngle(directionAngle, speed);
+		newBullet.setCenterPosition(centerX + shotOffset.x, centerY + shotOffset.y);
+		newBullet.motionVelocity.setPolar(speed, direction);
 		return this;
 	}
 

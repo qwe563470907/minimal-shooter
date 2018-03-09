@@ -39,11 +39,11 @@ class PlayState extends FlxState
 			return bullet;
 		};
 		_playerArmy = new ActorArmy(
-		    this,
-		    1,
-		    256,
-		    playerFactory,
-		    playerBulletFactory
+		  this,
+		  1,
+		  256,
+		  playerFactory,
+		  playerBulletFactory
 		);
 		_playerArmy.newAgent().setCenterPosition(0.5 * FlxG.width, 0.8 * FlxG.height);
 
@@ -65,11 +65,11 @@ class PlayState extends FlxState
 			return bullet;
 		};
 		_enemyArmy = new ActorArmy(
-		    this,
-		    128,
-		    1024,
-		    enemyFactory,
-		    enemyBulletFactory
+		  this,
+		  128,
+		  1024,
+		  enemyFactory,
+		  enemyBulletFactory
 		);
 
 		new EnemyGenerator(this, _enemyArmy);

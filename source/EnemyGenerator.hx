@@ -32,7 +32,7 @@ class EnemyGenerator extends FlxBasic
 
 			var newEnemy = _army.newAgent();
 			newEnemy.setCenterPosition(_random.float(100, FlxG.width - 100), -50);
-			newEnemy.velocity.set(0, 50);
+			newEnemy.motionVelocity.setCartesian(0, 50);
 			var action = _blocPatternDictionary.get("enemy1");
 			// var action = new Parallel(
 			//     [
