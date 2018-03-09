@@ -8,11 +8,11 @@ import bloc.Pattern;
 
 class EnemyGenerator extends FlxBasic
 {
-	var _random: FlxRandom;
-	var _army: ActorArmy;
-	var _blocPatternDictionary: Map<String, Pattern>;
+	var _random:FlxRandom;
+	var _army:ActorArmy;
+	var _blocPatternDictionary:Map<String, Pattern>;
 
-	public function new (state: FlxState, Army: ActorArmy)
+	public function new (state:FlxState, Army:ActorArmy)
 	{
 		super();
 		_random = new FlxRandom();
@@ -22,7 +22,7 @@ class EnemyGenerator extends FlxBasic
 		Parser.parseYaml(AssetPaths.enemy__yaml, _blocPatternDictionary);
 	}
 
-	override public function update(elapsed: Float): Void
+	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
 

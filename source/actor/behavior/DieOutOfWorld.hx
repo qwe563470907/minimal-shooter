@@ -2,14 +2,14 @@ package actor.behavior;
 
 class DieOutOfWorld implements Behavior
 {
-	var margin: Float;
+	var margin:Float;
 
-	public function new (Margin: Float)
+	public function new (Margin:Float)
 	{
 		margin = Margin;
 	}
 
-	public function run(actor: ActorSprite): Void
+	public function run(actor:ActorSprite):Void
 	{
 		if (actor.isOutOfWorld(margin))
 			actor.kill();

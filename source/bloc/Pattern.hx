@@ -7,36 +7,36 @@ import bloc.element.Element;
  */
 class Pattern implements Element
 {
-	public var name: String = "";
-	public var topElement: Element;
+	public var name:String = "";
+	public var topElement:Element;
 
-	public function new (name: String, topElement: Element)
+	public function new (name:String, topElement:Element)
 	{
 		this.name = name;
 		this.topElement = topElement;
 	}
 
-	public function run(actor: Actor): Bool
+	public function run(actor:Actor):Bool
 	{
 		return topElement.run(actor);
 	}
 
-	public function prepareState(manager: StateManager): Void
+	public function prepareState(manager:StateManager):Void
 	{
 		topElement.prepareState(manager);
 	}
 
-	public function resetState(actor: Actor): Void
+	public function resetState(actor:Actor):Void
 	{
 		topElement.resetState(actor);
 	}
 
-	public function toString(): String
+	public function toString():String
 	{
 		return name;
 	}
 
-	public function render(): String
+	public function render():String
 	{
 		return topElement.toString();
 	}

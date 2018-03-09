@@ -11,33 +11,33 @@ typedef NonParsedElementArrayMap = TObjectMap<String, Array<Dynamic>>;
 class Parser
 {
 	static private var _parsingPatternNameSet = new Map<String, Bool>();
-	static private var _patternDictionary: Map<String, Pattern>;
-	static private var _nonParsedPatternMap: NonParsedElementArrayMap;
+	static private var _patternDictionary:Map<String, Pattern>;
+	static private var _nonParsedPatternMap:NonParsedElementArrayMap;
 
-	static public function parseYaml(filePath: String, patternDictionary: Map<String, Pattern>): Void
+	static public function parseYaml(filePath:String, patternDictionary:Map<String, Pattern>):Void
 	{
 		_patternDictionary = patternDictionary;
 
-		var data: AnyObjectMap = Yaml.parse(getText(filePath));
+		var data:AnyObjectMap = Yaml.parse(getText(filePath));
 		var patterns = data.get("patterns");
 
 		if (patterns != null)
 		{
 			if (!Std.is(patterns, NonParsedElementArrayMap))
-				throw "Error while parsing YAML: The content of \"patterns\" is invalid.";
+				throw "Error while parsing YAML:The content of \"patterns\" is invalid.";
 
 			trace("Parsing file " + filePath);
 			_nonParsedPatternMap = patterns;
 
 			for (key in _nonParsedPatternMap.keys())
 			{
-				var patternName: String = cast(key, String);
+				var patternName:String = cast(key, String);
 				parsePattern(patternName);
 			}
 		}
 	}
 
-	static private function parsePattern(patternName: String): Pattern
+	static private function parsePattern(patternName:String):Pattern
 	{
 		if (_patternDictionary.exists(patternName))	// Already parsed
 			return _patternDictionary.get(patternName);
@@ -69,34 +69,34 @@ class Parser
 		return parsedPattern;
 	}
 
-	static private function parseElement(nonParsedNode: Dynamic): Element
+	static private function parseElement(nonParsedNode:Dynamic):Element
 	{
-		var parsedElement: Element;
+		var parsedElement:Element;
 
 		if (Std.is(nonParsedNode, NonParsedElement))
 		{
-			var element: NonParsedElement = cast nonParsedNode;
+			var element:NonParsedElement = cast nonParsedNode;
 			var name = getFirstKey(element);
 
 			parsedElement = switch (name)
 			{
 				case "fire":
-					var arguments: Array<Float> = element.get(name);
+					var arguments:Array<Float> = element.get(name);
 					trace(name + " [" + arguments[0] + ", " + arguments[1] + "]");
 					new Fire(arguments[0], arguments[1]);
 
 				case "wait":
-					var argument: Int = element.get(name);
+					var argument:Int = element.get(name);
 					trace(name + " " + argument);
 					new Wait(argument);
 
 				case "addvelocity":
-					var arguments: Array<Float> = element.get(name);
+					var arguments:Array<Float> = element.get(name);
 					trace(name + " [" + arguments[0] + ", " + arguments[1] + "]");
 					new AddVelocity(arguments[0], arguments[1]);
 
 				case "setvelocity":
-					var arguments: Array<Float> = element.get(name);
+					var arguments:Array<Float> = element.get(name);
 					trace(name + " [" + arguments[0] + ", " + arguments[1] + "]");
 					new SetVelocity(arguments[0], arguments[1]);
 
@@ -119,7 +119,7 @@ class Parser
 		}
 		else if (Std.is(nonParsedNode, String))
 		{
-			var patternName: String = cast(nonParsedNode, String);
+			var patternName:String = cast(nonParsedNode, String);
 
 			if (_nonParsedPatternMap.exists(patternName))
 			{
@@ -147,16 +147,16 @@ class Parser
 		return parsedElement;
 	}
 
-	static private function foldElements(elements: Array<Element>): Element
+	static private function foldElements(elements:Array<Element>):Element
 	{
 		if (elements.length == 1) return elements[0];
 
 		return new Sequence(elements);
 	}
 
-	static private function parseElementArray(nonParsedElements: Array<Dynamic>): Array<Element>
+	static private function parseElementArray(nonParsedElements:Array<Dynamic>):Array<Element>
 	{
-		var parsedElements: Array<Element> = [];
+		var parsedElements:Array<Element> = [];
 
 		for (e in nonParsedElements)
 			parsedElements.push(parseElement(e));
@@ -164,21 +164,21 @@ class Parser
 		return parsedElements;
 	}
 
-	static private function getFirstKey(object: NonParsedElement): String
+	static private function getFirstKey(object:NonParsedElement):String
 	{
 		if (!Std.is(object, NonParsedElement))
 		{
 			trace("[BLOC] Following object should be a map:" + object);
-			throw "[BLOC] Error: Invalid object.";
+			throw "[BLOC] Error:Invalid object.";
 		}
 
 		var keys = object.keys();
 
 		if (keys == null)
-			throw "[BLOC] Error: Expected a mapping but received object without keys.";
+			throw "[BLOC] Error:Expected a mapping but received object without keys.";
 
 		if (!keys.hasNext())
-			throw "[BLOC] Error: Found an empty mapping.";
+			throw "[BLOC] Error:Found an empty mapping.";
 
 		return keys.next();
 	}

@@ -2,12 +2,12 @@ package bloc.element;
 
 class EndlessRepeat extends Sequence
 {
-	public function new (action: Element, ? intervalWaitCount : Int)
+	public function new (action:Element, ?intervalWaitCount:Int)
 	{
 		super([action, new Wait(intervalWaitCount)]);
 	}
 
-	override public function run(actor: Actor): Bool
+	override public function run(actor:Actor):Bool
 	{
 		if (super.run(actor))
 			this.resetState(actor);
@@ -15,7 +15,7 @@ class EndlessRepeat extends Sequence
 		return false;
 	}
 
-	override public function toString(): String
+	override public function toString():String
 	{
 		return "endless " + super.toString();
 	}

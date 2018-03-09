@@ -2,12 +2,12 @@ package bloc.element;
 
 class Parallel extends List
 {
-	public function new (actionList: Array<Element>)
+	public function new (actionList:Array<Element>)
 	{
 		super(actionList);
 	}
 
-	override public function run(actor: Actor): Bool
+	override public function run(actor:Actor):Bool
 	{
 		var completedAll = true;
 
@@ -19,7 +19,7 @@ class Parallel extends List
 		return completedAll;
 	}
 
-	override public function toString(): String
+	override public function toString():String
 	{
 		return "parallel:\n" + super.toString();
 	}

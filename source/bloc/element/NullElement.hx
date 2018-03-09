@@ -7,7 +7,7 @@ class NullElement extends DefaultElement
 		super();
 	}
 
-	override public function toString(): String
+	override public function toString():String
 	{
 		return "null";
 	}

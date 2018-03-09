@@ -2,5 +2,5 @@ package actor.behavior;
 
 interface Behavior
 {
-	public function run(actor: ActorSprite): Void;
+	public function run(actor:ActorSprite):Void;
 }

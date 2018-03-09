@@ -2,17 +2,17 @@ package bloc.element;
 
 class Repeat extends DefaultElement
 {
-	public var action: Element;
-	private var repetitionCount: Int;
+	public var action:Element;
+	private var repetitionCount:Int;
 
-	public function new (action: Element, count: Int)
+	public function new (action:Element, count:Int)
 	{
 		super();
 		this.action = action;
 		this.repetitionCount = count;
 	}
 
-	override public function run(actor: Actor): Bool
+	override public function run(actor:Actor):Bool
 	{
 		var state = actor.getStateManager().getCountState(this);
 
@@ -29,13 +29,13 @@ class Repeat extends DefaultElement
 		return true;
 	}
 
-	override public function prepareState(manager: StateManager): Void
+	override public function prepareState(manager:StateManager):Void
 	{
 		manager.countStateMap.set(this, new CountState(this.repetitionCount));
 		this.action.prepareState(manager);
 	}
 
-	override public function resetState(actor: Actor): Void
+	override public function resetState(actor:Actor):Void
 	{
 		actor.getStateManager().getCountState(this).reset();
 	}

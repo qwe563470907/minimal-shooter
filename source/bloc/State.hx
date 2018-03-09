@@ -2,5 +2,5 @@ package bloc;
 
 interface State
 {
-	public function reset(): Void;
+	public function reset():Void;
 }

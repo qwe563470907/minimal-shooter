@@ -4,23 +4,23 @@ import flixel.FlxG;
 
 class ManualMove implements Behavior
 {
-	var userInput: UserInput;
-	var highSpeed: Float;
-	var lowSpeed: Float;
+	var userInput:UserInput;
+	var highSpeed:Float;
+	var lowSpeed:Float;
 
-	public function new (Input: UserInput, HighSpeed: Float, LowSpeed: Float)
+	public function new (Input:UserInput, HighSpeed:Float, LowSpeed:Float)
 	{
 		userInput = Input;
 		highSpeed = HighSpeed;
 		lowSpeed = LowSpeed;
 	}
 
-	public function run(actor: ActorSprite): Void
+	public function run(actor:ActorSprite):Void
 	{
 		if (userInput.isMoving)
 		{
 			actor.motionVelocity.setPolar(
-			  userInput.isBraking ? lowSpeed : highSpeed,
+			  userInput.isBraking ? lowSpeed:highSpeed,
 			  userInput.movingAngle
 			);
 		}

@@ -2,12 +2,12 @@ package bloc.element;
 
 class Sequence extends List
 {
-	public function new (actionList: Array<Element>)
+	public function new (actionList:Array<Element>)
 	{
 		super(actionList);
 	}
 
-	override public function run(actor: Actor): Bool
+	override public function run(actor:Actor):Bool
 	{
 		var state = actor.getStateManager().getCountState(this);
 
@@ -25,7 +25,7 @@ class Sequence extends List
 		return true;
 	}
 
-	override public function prepareState(manager: StateManager): Void
+	override public function prepareState(manager:StateManager):Void
 	{
 		super.prepareState(manager);
 
@@ -33,12 +33,12 @@ class Sequence extends List
 		manager.countStateMap.set(this, new CountState(actionListLength));
 	}
 
-	override public function resetState(actor: Actor): Void
+	override public function resetState(actor:Actor):Void
 	{
 		actor.getStateManager().getCountState(this).reset();
 	}
 
-	override public function toString(): String
+	override public function toString():String
 	{
 		return "sequence:\n" + super.toString();
 	}
