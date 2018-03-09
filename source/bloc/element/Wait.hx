@@ -1,10 +1,10 @@
-package action.element;
+package bloc.element;
 
 class Wait extends DefaultElement
 {
 	public var waitCount: Int;
 
-	public function new ( ? count : Int = 1)
+	public function new (? count : Int = 1)
 	{
 		super();
 		this.waitCount = count;

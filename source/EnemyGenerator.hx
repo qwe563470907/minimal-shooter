@@ -3,7 +3,8 @@ import flixel.FlxState;
 import flixel.math.FlxRandom;
 import flixel.FlxG;
 import actor.ActorArmy;
-import action.Pattern;
+import bloc.Parser;
+import bloc.Pattern;
 
 class EnemyGenerator extends FlxBasic
 {
@@ -18,7 +19,7 @@ class EnemyGenerator extends FlxBasic
 		state.add(this);
 		_army = Army;
 		_blocPatternDictionary = new Map<String, Pattern>();
-		action.Parser.parseYaml(AssetPaths.enemy__yaml, _blocPatternDictionary);
+		Parser.parseYaml(AssetPaths.enemy__yaml, _blocPatternDictionary);
 	}
 
 	override public function update(elapsed: Float): Void

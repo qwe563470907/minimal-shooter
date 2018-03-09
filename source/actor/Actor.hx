@@ -5,7 +5,7 @@ import flixel.FlxSprite;
 // import flixel.util.FlxArrayUtil.clearArray;
 import flixel.FlxG;
 import actor.behavior.*;
-import action.Pattern;
+import bloc.Pattern;
 
 class Actor extends FlxSprite // implements ICleanable
 {

@@ -1,6 +1,6 @@
-package action;
+package bloc;
 
-import action.element.Element;
+import bloc.element.Element;
 
 class Pattern implements Element
 {

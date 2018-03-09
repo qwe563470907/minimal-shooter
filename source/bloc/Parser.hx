@@ -1,9 +1,9 @@
-package action;
+package bloc;
 
 import yaml.Yaml;
 import yaml.util.ObjectMap;
 import openfl.Assets.getText;
-import action.element.*;
+import bloc.element.*;
 
 typedef NonParsedElement = TObjectMap<String, Dynamic>;
 typedef NonParsedElementArrayMap = TObjectMap<String, Array<Dynamic>>;

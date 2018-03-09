@@ -1,9 +1,9 @@
 package actor;
 
-import action.IActor;
-import action.Pattern;
-import action.Utility;
-import action.StateManager;
+import bloc.IActor;
+import bloc.Pattern;
+import bloc.Utility;
+import bloc.StateManager;
 
 // private class TemporalVector implements Vector
 // {

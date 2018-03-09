@@ -1,6 +1,4 @@
-package action.element;
-
-import action.element.Element;
+package bloc.element;
 
 class DefaultElement implements Element
 {
