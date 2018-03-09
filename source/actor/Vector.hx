@@ -1,68 +1,193 @@
 package actor;
 
 import flixel.math.FlxPoint;
+import flixel.math.FlxVector;
+import flixel.util.FlxPool;
 
-class Vector
+class Vector implements IFlxPooled
 {
+	private static var _pool = new FlxPool<Vector>(Vector);
+
 	private static var TO_RADIANS = Math.PI / 180.0;
-	private static var TO_DEGREES = 180 / Math.PI;
+
+	/**
+	 * Recycle or create a new vector.
+	 * Be sure to put() them back into the pool after you're done with them!
+	 *
+	 * @return	This vector.
+	 */
+	public static inline function get():Vector
+	{
+		var vector = _pool.get();
+		vector._inPool = false;
+
+		return vector;
+	}
+
+	/**
+	 * Recycle or create a new vector which will automatically be released
+	 * to the pool when passed into a function (be sure to putWeak() in that function).
+	 *
+	 * @return	This vector.
+	 */
+	public static inline function weak():Vector
+	{
+		var vector = get();
+		vector._weak = true;
+
+		return vector;
+	}
 
 	/**
 	 * The x value in cartesian coordinates system.
 	 */
-	public var x(get, set): Float;
+	public var x(get, set):Float;
 
 	/**
 	 * The y value in cartesian coordinates system.
 	 */
-	public var y(get, set): Float;
+	public var y(get, set):Float;
 
 	/**
 	 * The radius in polar coordinates system (= magnitude of the vector).
 	 */
-	public var radius(get, set): Float;
+	public var radius(get, set):Float;
 
 	/**
 	 * The angle (degrees) in polar coordinates system.
 	 */
-	public var angle(get, set): Float;
+	public var angle(get, set):Float;
 
-	private var _cartesianCoords: FlxPoint;
-	private var _polarCoords: FlxPoint;
-	private var _xUpdated: Bool = true;
-	private var _yUpdated: Bool = true;
-	private var _radiusUpdated: Bool = true;
-	private var _angleUpdated: Bool = true;
+	private var _weak:Bool = false;
+	private var _inPool:Bool = false;
 
+	private var _cartesianCoords:FlxVector;
+	private var _polarCoords:FlxPoint;
+	private var _xUpdated:Bool = true;
+	private var _yUpdated:Bool = true;
+	private var _radiusUpdated:Bool = true;
+	private var _angleUpdated:Bool = true;
+
+	@:keep
 	public function new ()
 	{
-		_cartesianCoords = new FlxPoint();
+		_cartesianCoords = new FlxVector();
 		_polarCoords = new FlxPoint();
 	}
 
-	public inline function setCartesian(x: Float, y: Float): Vector
+	/**
+	 * Add this FlxPoint to the recycling pool.
+	 */
+	public function put():Void
+	{
+		if (_inPool) return;
+
+		_inPool = true;
+		_weak = false;
+		_pool.putUnsafe(this);
+	}
+
+	/**
+	 * Add this FlxPoint to the recycling pool if it's a weak reference (allocated via weak()).
+	 */
+	public inline function putWeak():Void
+	{
+		if (_weak)
+			put();
+	}
+
+	public function destroy():Void
+	{
+	}
+
+	public inline function setCartesian(x:Float, y:Float):Vector
 	{
 		_xUpdated = true;
 		_yUpdated = true;
 		_radiusUpdated = false;
 		_angleUpdated = false;
-		_cartesianCoords.x = x;
-		_cartesianCoords.y = y;
+		_cartesianCoords.set(x, y);
+
 		return this;
 	}
 
-	public inline function setPolar(radius: Float, angle: Float): Vector
+	public inline function setPolar(radius:Float, angle:Float):Vector
 	{
 		_radiusUpdated = true;
 		_angleUpdated = true;
 		_xUpdated = false;
 		_yUpdated = false;
-		_polarCoords.x = radius;
-		_polarCoords.y = angle;
+		_polarCoords.set(radius, angle);
+
 		return this;
 	}
 
-	private inline function updateX(): Void
+	/**
+	 * Adds to the cartesian coordinates of this vector.
+	 *
+	 * @param	x	Amount to add to x
+	 * @param	y	Amount to add to y
+	 * @return	This vector.
+	 */
+	public inline function addCartesian(x:Float, y:Float):Vector
+	{
+		setCartesian(this.x + x, this.y + y);
+
+		return this;
+	}
+
+	/**
+	 * Adds the cartesian coordinates of another vector to the cartesian coordinates of this vector.
+	 *
+	 * @param	vector	The vector to add to this vector
+	 * @return	This vector.
+	 */
+
+	public inline function add(vector:Vector):Vector
+	{
+		addCartesian(vector.x, vector.y);
+		vector.putWeak();
+
+		return this;
+	}
+
+	/**
+	 * Subtracts from the cartesian coordinates of this vector.
+	 *
+	 * @param	x	Amount to subtract from x
+	 * @param	y	Amount to subtract from y
+	 * @return	This point.
+	 */
+	public inline function subtractCartesian(x:Float = 0, y:Float = 0):Vector
+	{
+		setCartesian(this.x - x, this.y - y);
+
+		return this;
+	}
+
+	/**
+	 * Subtracts the cartesian coordinates of another vector from the cartesian coordinates of this vector.
+	 *
+	 * @param	vector	The vector to subtract from this vector
+	 * @return	This vector.
+	 */
+	public inline function subtract(vector:Vector):Vector
+	{
+		subtractCartesian(vector.x, vector.y);
+		vector.putWeak();
+
+		return this;
+	}
+
+	public inline function toFlxVector():FlxVector
+	{
+		updateX();
+		updateY();
+
+		return _cartesianCoords.clone();
+	}
+
+	private inline function updateX():Void
 	{
 		if (!_xUpdated)
 		{
@@ -71,7 +196,7 @@ class Vector
 		}
 	}
 
-	private inline function updateY(): Void
+	private inline function updateY():Void
 	{
 		if (!_yUpdated)
 		{
@@ -80,22 +205,20 @@ class Vector
 		}
 	}
 
-	private inline function updateRadius(): Void
+	private inline function updateRadius():Void
 	{
 		if (!_radiusUpdated)
 		{
-			_polarCoords.x = Math.sqrt(
-			  _cartesianCoords.x * _cartesianCoords.x + _cartesianCoords.y * _cartesianCoords.y
-			);
+			_polarCoords.x = _cartesianCoords.length;
 			_radiusUpdated = true;
 		}
 	}
 
-	private inline function updateAngle(): Void
+	private inline function updateAngle():Void
 	{
 		if (!_angleUpdated)
 		{
-			_polarCoords.y =  Math.atan2(_cartesianCoords.y, _cartesianCoords.x) * TO_DEGREES;
+			_polarCoords.y = _cartesianCoords.degrees;
 			_angleUpdated = true;
 		}
 	}
@@ -114,21 +237,23 @@ class Vector
 		return _cartesianCoords.y;
 	}
 
-	inline function set_x(v: Float)
+	inline function set_x(v:Float)
 	{
 		_xUpdated = true;
 		updateY();
 		_radiusUpdated = false;
 		_angleUpdated = false;
+
 		return _cartesianCoords.x = v;
 	}
 
-	inline function set_y(v: Float)
+	inline function set_y(v:Float)
 	{
 		updateX();
 		_yUpdated = true;
 		_radiusUpdated = false;
 		_angleUpdated = false;
+
 		return _cartesianCoords.y = v;
 	}
 
@@ -146,21 +271,23 @@ class Vector
 		return _polarCoords.y;
 	}
 
-	inline function set_radius(v: Float)
+	inline function set_radius(v:Float)
 	{
 		_radiusUpdated = true;
 		updateAngle();
 		_xUpdated = false;
 		_yUpdated = false;
+
 		return _polarCoords.x = v;
 	}
 
-	inline function set_angle(v: Float)
+	inline function set_angle(v:Float)
 	{
 		updateRadius();
 		_angleUpdated = true;
 		_xUpdated = false;
 		_yUpdated = false;
+
 		return _polarCoords.y = v;
 	}
 }
