@@ -7,7 +7,7 @@ import flixel.FlxG;
 import actor.behavior.*;
 import bloc.Pattern;
 
-class Actor extends FlxSprite // implements ICleanable
+class ActorSprite extends FlxSprite // implements ICleanable
 {
 	public var army: ActorArmy;
 
@@ -111,7 +111,7 @@ class Actor extends FlxSprite // implements ICleanable
 		centerY = y;
 	}
 
-	public inline function fire(speed: Float, direction: Float): Actor
+	public inline function fire(speed: Float, direction: Float): ActorSprite
 	{
 		var newBullet = army.newBullet();
 		newBullet.setCenterPosition(centerX + shotOffset.x, centerY + shotOffset.y);

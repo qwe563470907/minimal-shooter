@@ -1,5 +1,5 @@
 package actor;
 
-class Bullet extends Actor
+class Bullet extends ActorSprite
 {
 }

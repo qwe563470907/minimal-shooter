@@ -23,11 +23,11 @@ class ActorAdapter implements bloc.Actor
 {
 	// static private var _temporalVector: Vector = new TemporalVector(0, 0);
 
-	private var _actor: Actor;
+	private var _actor: ActorSprite;
 	private var _blocPattern: Pattern;
 	private var _blocStateManager: StateManager;
 
-	public function new (actor: Actor)
+	public function new (actor: ActorSprite)
 	{
 		this._actor = actor;
 		this._blocStateManager = new StateManager();

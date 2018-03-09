@@ -9,7 +9,7 @@ class DieOutOfWorld implements IBehavior
 		margin = Margin;
 	}
 
-	public function run(actor: Actor): Void
+	public function run(actor: ActorSprite): Void
 	{
 		if (actor.isOutOfWorld(margin))
 			actor.kill();

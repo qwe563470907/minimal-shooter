@@ -9,7 +9,7 @@ class ManualShot implements IBehavior
 		userInput = Input;
 	}
 
-	public function run(actor: Actor): Void
+	public function run(actor: ActorSprite): Void
 	{
 		if (!userInput.isShooting)
 			return;

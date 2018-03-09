@@ -13,7 +13,7 @@ class RotateByMove implements IBehavior
 		standardAngularVelocity = StandardAngularVelocity;
 	}
 
-	public function run(actor: Actor): Void
+	public function run(actor: ActorSprite): Void
 	{
 		actor.angle += (standardAngularVelocity / FlxG.updateFramerate) * (actor.motionVelocity.radius / standardSpeed);
 	}

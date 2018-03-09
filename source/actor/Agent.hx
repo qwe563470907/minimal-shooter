@@ -1,6 +1,6 @@
 package actor;
 
-class Agent extends Actor
+class Agent extends ActorSprite
 {
 
 }

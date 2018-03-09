@@ -15,7 +15,7 @@ class ManualMove implements IBehavior
 		lowSpeed = LowSpeed;
 	}
 
-	public function run(actor: Actor): Void
+	public function run(actor: ActorSprite): Void
 	{
 		if (userInput.isMoving)
 		{

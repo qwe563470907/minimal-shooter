@@ -9,7 +9,7 @@ class ListenInput implements IBehavior
 		userInput = Input;
 	}
 
-	public function run(actor: Actor): Void
+	public function run(actor: ActorSprite): Void
 	{
 		userInput.update();
 	}
