@@ -2,9 +2,9 @@ package bloc.element;
 
 class SetVelocity extends Velocity
 {
-	public function new (directionAngle: Float, speed: Float)
+	public function new (speed: Float, directionAngle : Float)
 	{
-		super(directionAngle, speed);
+		super(speed, directionAngle);
 	}
 
 	override public function run(actor: Actor): Bool
@@ -15,6 +15,6 @@ class SetVelocity extends Velocity
 
 	override public function toString(): String
 	{
-		return "set velocity -dir " + this._directionAngle + " -spd " + this._speed;
+		return "set velocity -spd " + this._speed + " -dir " + this._directionAngle;
 	}
 }

@@ -2,6 +2,9 @@ package bloc;
 
 import bloc.element.Element;
 
+/**
+ * Composition of BLOC elements. A BLOC pattern can be also an element in another pattern.
+ */
 class Pattern implements Element
 {
 	public var name: String = "";
