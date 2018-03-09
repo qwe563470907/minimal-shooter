@@ -13,7 +13,7 @@ class Pattern implements Element
 		this.topElement = topElement;
 	}
 
-	public function run(actor: IActor): Bool
+	public function run(actor: Actor): Bool
 	{
 		return topElement.run(actor);
 	}
@@ -23,7 +23,7 @@ class Pattern implements Element
 		topElement.prepareState(manager);
 	}
 
-	public function resetState(actor: IActor): Void
+	public function resetState(actor: Actor): Void
 	{
 		topElement.resetState(actor);
 	}

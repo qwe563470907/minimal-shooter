@@ -1,6 +1,5 @@
 package actor;
 
-import bloc.IActor;
 import bloc.Pattern;
 import bloc.Utility;
 import bloc.StateManager;
@@ -20,7 +19,7 @@ import bloc.StateManager;
 /**
  * Adapter for Actor class and BLOC package.
  */
-class ActorAdapter implements IActor
+class ActorAdapter implements bloc.Actor
 {
 	// static private var _temporalVector: Vector = new TemporalVector(0, 0);
 
@@ -35,7 +34,7 @@ class ActorAdapter implements IActor
 		this._blocPattern = Utility.NULL_PATTERN;
 	}
 
-	public function fire(? speed : Float = 200, ? directionAngle : Float = 90): IActor
+	public function fire(? speed : Float = 200, ? directionAngle : Float = 90): bloc.Actor
 	{
 		this._actor.fire(speed, directionAngle);
 		return this;

@@ -7,7 +7,7 @@ class Parallel extends List
 		super(actionList);
 	}
 
-	override public function run(actor: IActor): Bool
+	override public function run(actor: Actor): Bool
 	{
 		var completedAll = true;
 

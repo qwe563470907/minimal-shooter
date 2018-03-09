@@ -10,7 +10,7 @@ class Wait extends DefaultElement
 		this.waitCount = count;
 	}
 
-	override public function run(actor: IActor): Bool
+	override public function run(actor: Actor): Bool
 	{
 		var state = actor.getStateManager().getCountState(this);
 
@@ -23,7 +23,7 @@ class Wait extends DefaultElement
 		manager.countStateMap.set(this, new CountState(this.waitCount + 1));
 	}
 
-	override public function resetState(actor: IActor): Void
+	override public function resetState(actor: Actor): Void
 	{
 		actor.getStateManager().getCountState(this).reset();
 	}

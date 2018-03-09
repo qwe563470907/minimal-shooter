@@ -10,7 +10,7 @@ class List extends DefaultElement
 		this.actionList = actionList.copy();
 	}
 
-	public function resetChildrenState(actor: IActor): Void
+	public function resetChildrenState(actor: Actor): Void
 	{
 		for (i in 0...this.actionList.length)
 			this.actionList[i].resetState(actor);

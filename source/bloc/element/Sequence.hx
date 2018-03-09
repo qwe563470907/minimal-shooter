@@ -7,7 +7,7 @@ class Sequence extends List
 		super(actionList);
 	}
 
-	override public function run(actor: IActor): Bool
+	override public function run(actor: Actor): Bool
 	{
 		var state = actor.getStateManager().getCountState(this);
 
@@ -33,7 +33,7 @@ class Sequence extends List
 		manager.countStateMap.set(this, new CountState(actionListLength));
 	}
 
-	override public function resetState(actor: IActor): Void
+	override public function resetState(actor: Actor): Void
 	{
 		actor.getStateManager().getCountState(this).reset();
 	}

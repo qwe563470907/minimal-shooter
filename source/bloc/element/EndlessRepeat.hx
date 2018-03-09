@@ -7,7 +7,7 @@ class EndlessRepeat extends Sequence
 		super([action, new Wait(intervalWaitCount)]);
 	}
 
-	override public function run(actor: IActor): Bool
+	override public function run(actor: Actor): Bool
 	{
 		if (super.run(actor))
 			this.resetState(actor);

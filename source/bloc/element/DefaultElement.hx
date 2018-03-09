@@ -4,7 +4,7 @@ class DefaultElement implements Element
 {
 	private function new () {}
 
-	public function run(actor: IActor): Bool
+	public function run(actor: Actor): Bool
 	{
 		return true;
 	}
@@ -13,7 +13,7 @@ class DefaultElement implements Element
 	{
 	}
 
-	public function resetState(actor: IActor): Void
+	public function resetState(actor: Actor): Void
 	{
 	}
 

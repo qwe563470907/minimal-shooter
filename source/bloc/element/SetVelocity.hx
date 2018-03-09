@@ -7,7 +7,7 @@ class SetVelocity extends Velocity
 		super(directionAngle, speed);
 	}
 
-	override public function run(actor: IActor): Bool
+	override public function run(actor: Actor): Bool
 	{
 		actor.setVelocity(_x, _y);
 		return true;

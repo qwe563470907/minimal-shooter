@@ -12,7 +12,7 @@ class Fire extends DefaultElement
 		this._direction = direction;
 	}
 
-	override public function run(actor: IActor): Bool
+	override public function run(actor: Actor): Bool
 	{
 		actor.fire(this._speed, this._direction);
 		return true;

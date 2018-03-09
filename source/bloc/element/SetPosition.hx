@@ -7,7 +7,7 @@ class SetPosition extends PositionalElement
 		super(x, y);
 	}
 
-	override public function run(actor: IActor): Bool
+	override public function run(actor: Actor): Bool
 	{
 		actor.setPosition(_x, _y);
 		return true;
