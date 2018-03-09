@@ -19,7 +19,7 @@ class ActorSprite extends FlxSprite // implements ICleanable
 	public var centerY(get, set): Float;
 	// public var childActors:CleanableGroup<Actor>;
 
-	private var behaviorList: Array<IBehavior>;
+	private var behaviorList: Array<Behavior>;
 	private var adapter: ActorAdapter;
 
 	public function new ()
@@ -38,7 +38,7 @@ class ActorSprite extends FlxSprite // implements ICleanable
 	// 	childActors.clean();
 	// }
 
-	public inline function addBehavior(Behavior: IBehavior)
+	public inline function addBehavior(Behavior: Behavior)
 	{
 		behaviorList.push(Behavior);
 	}

@@ -1,6 +1,6 @@
 package actor.behavior;
 
-class ListenInput implements IBehavior
+class ListenInput implements Behavior
 {
 	var userInput: UserInput;
 

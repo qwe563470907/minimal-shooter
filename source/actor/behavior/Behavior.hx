@@ -1,6 +1,6 @@
 package actor.behavior;
 
-interface IBehavior
+interface Behavior
 {
 	public function run(actor: ActorSprite): Void;
 }

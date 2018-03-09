@@ -1,6 +1,6 @@
 package actor.behavior;
 
-class ManualShot implements IBehavior
+class ManualShot implements Behavior
 {
 	var userInput: UserInput;
 

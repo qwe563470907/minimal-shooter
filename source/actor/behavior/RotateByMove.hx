@@ -2,7 +2,7 @@ package actor.behavior;
 
 import flixel.FlxG;
 
-class RotateByMove implements IBehavior
+class RotateByMove implements Behavior
 {
 	var standardSpeed: Float;
 	var standardAngularVelocity: Float;

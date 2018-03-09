@@ -1,6 +1,6 @@
 package actor.behavior;
 
-class DieOutOfWorld implements IBehavior
+class DieOutOfWorld implements Behavior
 {
 	var margin: Float;
 

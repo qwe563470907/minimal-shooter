@@ -2,7 +2,7 @@ package actor.behavior;
 
 import flixel.FlxG;
 
-class ManualMove implements IBehavior
+class ManualMove implements Behavior
 {
 	var userInput: UserInput;
 	var highSpeed: Float;
