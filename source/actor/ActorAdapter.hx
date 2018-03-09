@@ -35,7 +35,7 @@ class ActorAdapter implements IActor
 		this._blocPattern = Utility.NULL_PATTERN;
 	}
 
-	public function fire( ? speed : Float = 200, ? directionAngle : Float = 90): IActor
+	public function fire(? speed : Float = 200, ? directionAngle : Float = 90): IActor
 	{
 		this._actor.fire(speed, directionAngle);
 		return this;
@@ -71,11 +71,7 @@ class ActorAdapter implements IActor
 	{ this._actor.motionVelocity.setCartesian(x, y); }
 
 	public function addVelocity(x: Float, y: Float): Void
-	{
-		var prevX = _actor.motionVelocity.x;
-		var prevY = _actor.motionVelocity.y;
-		this._actor.motionVelocity.setCartesian(prevX + x, prevY + y);
-	}
+	{ this._actor.motionVelocity.addCartesian(x, y); }
 
 	public function setActionPattern(v: Pattern): Void
 	{
