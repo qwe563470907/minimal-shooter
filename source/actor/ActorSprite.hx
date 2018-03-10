@@ -20,7 +20,7 @@ class ActorSprite extends FlxSprite // implements ICleanable
 	// public var childActors:CleanableGroup<Actor>;
 
 	private var behaviorList:Array<Behavior>;
-	private var adapter:ActorAdapter;
+	public var adapter:ActorAdapter;
 
 	public function new ()
 	{

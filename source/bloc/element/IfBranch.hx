@@ -2,38 +2,73 @@ package bloc.element;
 
 class IfBranch extends ConditionalBranch
 {
-	static private var parser = new hscript.Parser();
-	static private var interpreter = new hscript.Interp();
+	static private var _parser = new hscript.Parser();
 
+	private var _interpreter:hscript.Interp;
 	private var _expression:String;
 	private var _parsedExpression:hscript.Expr;
+	private var _command:String;
+	private var _hasExpression:Bool;
+	private var _hasCommand:Bool;
 
-	public function new (expression:String, thenElement:Element, elseElement:Element)
+	public function new (expression:Null<String>, command:Null<String>, thenElement:Element, elseElement:Element)
 	{
 		super(thenElement, elseElement);
-		this._expression = expression;
-		this._parsedExpression = parser.parseString(expression);
+
+		if (expression != null)
+		{
+			this._interpreter = new hscript.Interp();
+			this._expression = expression;
+			this._parsedExpression = _parser.parseString(expression);
+			this._hasExpression = true;
+		}
+		else this._hasExpression = false;
+
+		if (command != null)
+		{
+			this._command = command;
+			this._hasCommand = true;
+		}
+		else this._hasCommand = false;
 	}
 
 	override public function toString():String
 	{
-		var expStr = "expression:\n" + Utility.indent(this._expression);
+		var str = "";
 
-		return "if:\n" + Utility.indent(expStr) + "\n" + super.toString();
-	}
-
-	override private function setActiveBranch(state:ConditionalBranchState):Element
-	{
-		var evaluationResult = interpreter.execute(this._parsedExpression);
-		trace(evaluationResult);
-
-		if (Std.is(evaluationResult, Bool) == false)
+		if (this._hasExpression)
 		{
-			trace("Failed to evaluate expression: " + _expression);
-			evaluationResult = false;
+			str = "expression:\n" + Utility.indent(this._expression);
+
+			if (this._hasCommand) str += "\n";
 		}
 
-		var branch = if (evaluationResult) _then else _else;
+		if (this._hasCommand)
+			str += "command:\n" + Utility.indent(this._command);
+
+		return "if:\n" + Utility.indent(str) + "\n" + super.toString();
+	}
+
+	override private function setActiveBranch(actor:Actor, state:ConditionalBranchState):Element
+	{
+		var expEvalResult:Bool;
+
+		if (this._hasExpression)
+		{
+			expEvalResult = this._interpreter.execute(this._parsedExpression);
+
+			if (Std.is(expEvalResult, Bool) == false)
+			{
+				trace("Failed to evaluate expression: " + this._expression);
+				expEvalResult = false;
+			}
+		}
+		else
+			expEvalResult = false;
+
+		var cmdEvalResult = if (this._hasCommand) actor.hasReceivedCommand(this._command) else false;
+
+		var branch = if (expEvalResult || cmdEvalResult) this._then else this._else;
 
 		state.setActiveBranch(branch);
 

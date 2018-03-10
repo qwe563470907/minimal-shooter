@@ -4,6 +4,8 @@ import flixel.FlxState;
 import flixel.FlxG;
 import actor.*;
 import actor.behavior.*;
+import bloc.Pattern;
+import bloc.Parser;
 
 class PlayState extends FlxState
 {
@@ -15,6 +17,9 @@ class PlayState extends FlxState
 		super.create();
 
 		bgColor = 0xFFFFFFFF;
+
+		var blocPatternDictionary = new Map<String, Pattern>();
+		Parser.parseYaml(AssetPaths.enemy__yaml, blocPatternDictionary);
 
 		var dieOutOfWorldBehavior = new DieOutOfWorld(200);
 
@@ -49,7 +54,9 @@ class PlayState extends FlxState
 		  playerFactory,
 		  playerBulletFactory
 		);
-		_playerArmy.newAgent().setCenterPosition(0.5 * FlxG.width, 0.8 * FlxG.height);
+		var player = _playerArmy.newAgent();
+		player.setCenterPosition(0.5 * FlxG.width, 0.8 * FlxG.height);
+		player.setActionPattern(blocPatternDictionary.get("player"));
 
 		var enemyFactory = function()
 		{
@@ -80,7 +87,7 @@ class PlayState extends FlxState
 		  enemyBulletFactory
 		);
 
-		new EnemyGenerator(this, _enemyArmy);
+		new EnemyGenerator(this, _enemyArmy, blocPatternDictionary);
 	}
 
 	override public function update(elapsed:Float):Void

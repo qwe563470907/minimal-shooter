@@ -115,28 +115,52 @@ class Parser
 				case "if":
 					trace(name);
 					var argumentMap = element.get(name);
+
 					var expression = argumentMap.get("expression");
+
+					if (expression != null && Std.is(expression, String) != true)
+					{
+						trace("[BLOC] Warning: The expression of <if> element must be a string.");
+						expression = null;
+					}
+
+					var command = argumentMap.get("command");
+
+					if (command != null && Std.is(command, String) != true)
+					{
+						trace("[BLOC] Warning: The command of <if> element must be a string.");
+						command = null;
+					}
+
 					var nonParsedThenElements:Array<Element> = argumentMap.get("then");
 
-					if (nonParsedThenElements == null) nonParsedThenElements = [];
+					if (nonParsedThenElements == null)
+						nonParsedThenElements = [];
+					else if (Std.is(nonParsedThenElements, Array) != true)
+					{
+						trace("[BLOC] Warning: \"then\" of <if> element must be a list of elements.");
+						nonParsedThenElements = [];
+					}
 
 					var nonParsedElseElements:Array<Element> = argumentMap.get("else");
 
-					if (nonParsedElseElements == null) nonParsedElseElements = [];
-
-					if (expression == null)
+					if (nonParsedElseElements == null)
+						nonParsedElseElements = [];
+					else if (Std.is(nonParsedElseElements, Array) != true)
 					{
-						trace("[BLOC] Warning: <if> element without expression.");
-						Utility.NULL_ELEMENT;
+						trace("[BLOC] Warning: \"else\" of <if> element must be a list of elements.");
+						nonParsedElseElements = [];
 					}
-					else if (Std.is(expression, String) == false)
+
+					if (expression == null && command == null)
 					{
-						trace("[BLOC] Warning: <if> element must have a string expression.");
+						trace("[BLOC] Warning: <if> element must have either an expression or a command.");
 						Utility.NULL_ELEMENT;
 					}
 					else
 						new IfBranch(
 						  expression,
+						  command,
 						  foldElements(parseElementArray(nonParsedThenElements)),
 						  foldElements(parseElementArray(nonParsedElseElements))
 						);

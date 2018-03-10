@@ -19,7 +19,7 @@ class ConditionalBranch extends DefaultElement
 		var state = actor.getStateManager().getBranchState(this);
 		var activeBranch = state.activeBranch;
 
-		if (activeBranch == null) activeBranch = setActiveBranch(state);
+		if (activeBranch == null) activeBranch = setActiveBranch(actor, state);
 
 		var completed = activeBranch.run(actor);
 
@@ -44,13 +44,18 @@ class ConditionalBranch extends DefaultElement
 		this._else.prepareState(manager);
 	}
 
+	override public function resetState(actor:Actor):Void
+	{
+		actor.getStateManager().getBranchState(this).reset();
+	}
+
 	public inline function resetChildrenState(actor:Actor):Void
 	{
 		this._then.resetState(actor);
 		this._else.resetState(actor);
 	}
 
-	private function setActiveBranch(state:ConditionalBranchState):Element
+	private function setActiveBranch(actor:Actor, state:ConditionalBranchState):Element
 	{
 		state.setActiveBranch(_then);
 

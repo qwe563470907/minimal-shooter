@@ -10,4 +10,12 @@ interface Actor
 	public function addVelocity(x:Float, y:Float):Void;
 	public function fire(?speed:Float, ?direction:Float):Actor;
 	public function kill():Void;
+
+	/**
+	 *  Checks if this actor has recently received the specified command string.
+	 *
+	 *  @param   String command
+	 *  @return  True if received.
+	 */
+	public function hasReceivedCommand(command:String):Bool;
 }

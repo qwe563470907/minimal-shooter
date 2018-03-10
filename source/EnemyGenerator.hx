@@ -3,7 +3,6 @@ import flixel.FlxState;
 import flixel.math.FlxRandom;
 import flixel.FlxG;
 import actor.ActorArmy;
-import bloc.Parser;
 import bloc.Pattern;
 
 class EnemyGenerator extends FlxBasic
@@ -12,14 +11,13 @@ class EnemyGenerator extends FlxBasic
 	var _army:ActorArmy;
 	var _blocPatternDictionary:Map<String, Pattern>;
 
-	public function new (state:FlxState, Army:ActorArmy)
+	public function new (state:FlxState, Army:ActorArmy, blocPatternDictionary:Map<String, Pattern>)
 	{
 		super();
 		_random = new FlxRandom();
 		state.add(this);
 		_army = Army;
-		_blocPatternDictionary = new Map<String, Pattern>();
-		Parser.parseYaml(AssetPaths.enemy__yaml, _blocPatternDictionary);
+		_blocPatternDictionary = blocPatternDictionary;
 	}
 
 	override public function update(elapsed:Float):Void

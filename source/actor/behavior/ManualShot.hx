@@ -17,6 +17,8 @@ class ManualShot implements Behavior
 		if (actor.properFrameCount % 4 > 0)
 			return;
 
+		actor.adapter.receiveCommand("fire");
+
 		var directionAngle = -90;
 		var speed = 3000;
 		actor.shotOffset.setCartesian(-30, 0);
