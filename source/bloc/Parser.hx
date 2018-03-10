@@ -112,6 +112,15 @@ class Parser
 					trace(name);
 					new EndlessRepeat(foldElements(parseElementArray(element.get(name))));
 
+				case "if":
+					trace(name);
+					var argumentMap = element.get(name);
+					new IfBranch(
+					  argumentMap.get("expression"),
+					  foldElements(parseElementArray(argumentMap.get("then"))),
+					  foldElements(parseElementArray(argumentMap.get("else")))
+					);
+
 				default:
 					// definition?
 					Utility.NULL_ELEMENT;
