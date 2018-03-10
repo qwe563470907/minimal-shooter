@@ -19,15 +19,15 @@ class ManualShot implements Behavior
 
 		actor.adapter.receiveCommand("fire");
 
-		var directionAngle = -90;
-		var speed = 3000;
-		actor.shotOffset.setCartesian(-30, 0);
-		actor.fire(speed, directionAngle);
-		actor.shotOffset.setCartesian(-10, -10);
-		actor.fire(speed, directionAngle);
-		actor.shotOffset.setCartesian(10, -10);
-		actor.fire(speed, directionAngle);
-		actor.shotOffset.setCartesian(30, 0);
-		actor.fire(speed, directionAngle);
+		// var directionAngle = -90;
+		// var speed = 3000;
+		// actor.shotOffset.setCartesian(-30, 0);
+		// actor.fire(speed, directionAngle);
+		// actor.shotOffset.setCartesian(-10, -10);
+		// actor.fire(speed, directionAngle);
+		// actor.shotOffset.setCartesian(10, -10);
+		// actor.fire(speed, directionAngle);
+		// actor.shotOffset.setCartesian(30, 0);
+		// actor.fire(speed, directionAngle);
 	}
 }

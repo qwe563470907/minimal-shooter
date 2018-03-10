@@ -111,11 +111,12 @@ class ActorSprite extends FlxSprite // implements ICleanable
 		centerY = y;
 	}
 
-	public inline function fire(speed:Float, direction:Float):ActorSprite
+	public inline function fire(pattern:Pattern):ActorSprite
 	{
 		var newBullet = army.newBullet();
 		newBullet.setCenterPosition(centerX + shotOffset.x, centerY + shotOffset.y);
-		newBullet.motionVelocity.setPolar(speed, direction);
+		newBullet.motionVelocity.setCartesian(0, 0);
+		newBullet.setActionPattern(pattern);
 
 		return this;
 	}

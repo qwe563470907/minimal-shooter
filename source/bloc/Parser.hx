@@ -81,9 +81,10 @@ class Parser
 			parsedElement = switch (name)
 			{
 				case "fire":
-					var arguments:Array<Float> = element.get(name);
-					trace(name + " [" + arguments[0] + ", " + arguments[1] + "]");
-					new Fire(arguments[0], arguments[1]);
+					var argumentMap = element.get(name);
+					var elements:Array<NonParsedElement> = argumentMap.get("pattern");
+					trace(name);
+					new Fire(new Pattern("anonymous", foldElements(parseElementArray(elements))));
 
 				case "wait":
 					var argument:Int = element.get(name);

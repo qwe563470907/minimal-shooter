@@ -1,26 +1,26 @@
 package bloc.element;
 
+import bloc.Pattern;
+
 class Fire extends DefaultElement
 {
-	private var _speed:Null<Float>;
-	private var _direction:Null<Float>;
+	private var _pattern:Pattern;
 
-	public function new (?speed:Float, ?direction:Float)
+	public function new (pattern:Pattern)
 	{
 		super();
-		this._speed = speed;
-		this._direction = direction;
+		this._pattern = pattern;
 	}
 
 	override public function run(actor:Actor):Bool
 	{
-		actor.fire(this._speed, this._direction);
+		actor.fire(this._pattern);
 
 		return true;
 	}
 
 	override public function toString():String
 	{
-		return "fire -spd " + this._speed + " -dir " + this._direction;
+		return "fire";
 	}
 }

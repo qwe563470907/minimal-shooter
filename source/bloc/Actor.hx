@@ -8,7 +8,7 @@ interface Actor
 	// public function getVelocity():Vector;
 	public function setVelocity(x:Float, y:Float):Void;
 	public function addVelocity(x:Float, y:Float):Void;
-	public function fire(?speed:Float, ?direction:Float):Actor;
+	public function fire(pattern:Pattern):Actor;
 	public function kill():Void;
 
 	/**

@@ -37,9 +37,9 @@ class ActorAdapter implements bloc.Actor
 		this._receivedMessages = new StringMap<Bool>();
 	}
 
-	public function fire(?speed:Float = 200, ?directionAngle:Float = 90):bloc.Actor
+	public function fire(pattern:Pattern):bloc.Actor
 	{
-		this._actor.fire(speed, directionAngle);
+		this._actor.fire(pattern);
 
 		return this;
 	}
