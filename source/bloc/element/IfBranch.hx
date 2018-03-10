@@ -2,12 +2,17 @@ package bloc.element;
 
 class IfBranch extends ConditionalBranch
 {
+	static private var parser = new hscript.Parser();
+	static private var interpreter = new hscript.Interp();
+
 	private var _expression:String;
+	private var _parsedExpression:hscript.Expr;
 
 	public function new (expression:String, thenElement:Element, elseElement:Element)
 	{
 		super(thenElement, elseElement);
 		this._expression = expression;
+		this._parsedExpression = parser.parseString(expression);
 	}
 
 	override public function toString():String
@@ -19,8 +24,19 @@ class IfBranch extends ConditionalBranch
 
 	override private function setActiveBranch(state:ConditionalBranchState):Element
 	{
-		state.setActiveBranch(_then);
+		var evaluationResult = interpreter.execute(this._parsedExpression);
+		trace(evaluationResult);
 
-		return _then;
+		if (Std.is(evaluationResult, Bool) == false)
+		{
+			trace("Failed to evaluate expression: " + _expression);
+			evaluationResult = false;
+		}
+
+		var branch = if (evaluationResult) _then else _else;
+
+		state.setActiveBranch(branch);
+
+		return branch;
 	}
 }

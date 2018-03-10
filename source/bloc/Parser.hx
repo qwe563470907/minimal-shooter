@@ -115,11 +115,31 @@ class Parser
 				case "if":
 					trace(name);
 					var argumentMap = element.get(name);
-					new IfBranch(
-					  argumentMap.get("expression"),
-					  foldElements(parseElementArray(argumentMap.get("then"))),
-					  foldElements(parseElementArray(argumentMap.get("else")))
-					);
+					var expression = argumentMap.get("expression");
+					var nonParsedThenElements:Array<Element> = argumentMap.get("then");
+
+					if (nonParsedThenElements == null) nonParsedThenElements = [];
+
+					var nonParsedElseElements:Array<Element> = argumentMap.get("else");
+
+					if (nonParsedElseElements == null) nonParsedElseElements = [];
+
+					if (expression == null)
+					{
+						trace("[BLOC] Warning: <if> element without expression.");
+						Utility.NULL_ELEMENT;
+					}
+					else if (Std.is(expression, String) == false)
+					{
+						trace("[BLOC] Warning: <if> element must have a string expression.");
+						Utility.NULL_ELEMENT;
+					}
+					else
+						new IfBranch(
+						  expression,
+						  foldElements(parseElementArray(nonParsedThenElements)),
+						  foldElements(parseElementArray(nonParsedElseElements))
+						);
 
 				default:
 					// definition?
@@ -158,6 +178,8 @@ class Parser
 
 	static private function foldElements(elements:Array<Element>):Element
 	{
+		if (elements.length == 0) return Utility.NULL_ELEMENT;
+
 		if (elements.length == 1) return elements[0];
 
 		return new Sequence(elements);
