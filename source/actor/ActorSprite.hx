@@ -45,8 +45,8 @@ class ActorSprite extends FlxSprite // implements ICleanable
 
 	public inline function truncateSpeed(max:Float):Void
 	{
-		if (motionVelocity.radius > max)
-			motionVelocity.radius = max;
+		if (motionVelocity.length > max)
+			motionVelocity.length = max;
 	}
 
 	/**

@@ -1,0 +1,6 @@
+package bloc;
+
+interface Vector
+{
+
+}

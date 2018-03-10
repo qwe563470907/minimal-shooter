@@ -15,6 +15,6 @@ class RotateByMove implements Behavior
 
 	public function run(actor:ActorSprite):Void
 	{
-		actor.angle += (standardAngularVelocity / FlxG.updateFramerate) * (actor.motionVelocity.radius / standardSpeed);
+		actor.angle += (standardAngularVelocity / FlxG.updateFramerate) * (actor.motionVelocity.length / standardSpeed);
 	}
 }

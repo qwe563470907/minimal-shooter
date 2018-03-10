@@ -51,7 +51,7 @@ class Vector implements IFlxPooled
 	/**
 	 * The radius in polar coordinates system (= magnitude of the vector).
 	 */
-	public var radius(get, set):Float;
+	public var length(get, set):Float;
 
 	/**
 	 * The angle (degrees) in polar coordinates system.
@@ -65,7 +65,7 @@ class Vector implements IFlxPooled
 	private var _polarCoords:FlxPoint;
 	private var _xUpdated:Bool = true;
 	private var _yUpdated:Bool = true;
-	private var _radiusUpdated:Bool = true;
+	private var _lengthUpdated:Bool = true;
 	private var _angleUpdated:Bool = true;
 
 	@:keep
@@ -104,20 +104,20 @@ class Vector implements IFlxPooled
 	{
 		_xUpdated = true;
 		_yUpdated = true;
-		_radiusUpdated = false;
+		_lengthUpdated = false;
 		_angleUpdated = false;
 		_cartesianCoords.set(x, y);
 
 		return this;
 	}
 
-	public inline function setPolar(radius:Float, angle:Float):Vector
+	public inline function setPolar(length:Float, angle:Float):Vector
 	{
-		_radiusUpdated = true;
+		_lengthUpdated = true;
 		_angleUpdated = true;
 		_xUpdated = false;
 		_yUpdated = false;
-		_polarCoords.set(radius, angle);
+		_polarCoords.set(length, angle);
 
 		return this;
 	}
@@ -207,10 +207,10 @@ class Vector implements IFlxPooled
 
 	private inline function updateRadius():Void
 	{
-		if (!_radiusUpdated)
+		if (!_lengthUpdated)
 		{
 			_polarCoords.x = _cartesianCoords.length;
-			_radiusUpdated = true;
+			_lengthUpdated = true;
 		}
 	}
 
@@ -241,7 +241,7 @@ class Vector implements IFlxPooled
 	{
 		_xUpdated = true;
 		updateY();
-		_radiusUpdated = false;
+		_lengthUpdated = false;
 		_angleUpdated = false;
 
 		return _cartesianCoords.x = v;
@@ -251,13 +251,13 @@ class Vector implements IFlxPooled
 	{
 		updateX();
 		_yUpdated = true;
-		_radiusUpdated = false;
+		_lengthUpdated = false;
 		_angleUpdated = false;
 
 		return _cartesianCoords.y = v;
 	}
 
-	inline function get_radius()
+	inline function get_length()
 	{
 		updateRadius();
 
@@ -271,9 +271,9 @@ class Vector implements IFlxPooled
 		return _polarCoords.y;
 	}
 
-	inline function set_radius(v:Float)
+	inline function set_length(v:Float)
 	{
-		_radiusUpdated = true;
+		_lengthUpdated = true;
 		updateAngle();
 		_xUpdated = false;
 		_yUpdated = false;
