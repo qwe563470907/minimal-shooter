@@ -1,8 +1,9 @@
 package bloc.parser;
 
 import bloc.element.Element;
-import bloc.element.Utility;
-import bloc.parser.Parser.NonParsedElement;
+import bloc.element.Utility.Operation;
+import bloc.element.Utility.Coordinates;
+import bloc.parser.ParserUtility.*;
 
 class VectorParser
 {
@@ -13,7 +14,7 @@ class VectorParser
 			if (content == null)
 				throw "Found no attributes.";
 
-			if (Std.is(content, NonParsedElement) != true)
+			if (!isMap(content))
 				throw "Invalid attributes. The attributes must be written in a map format.";
 
 			var value = content.get("value");
@@ -21,13 +22,10 @@ class VectorParser
 			if (value == null)
 				throw "Found no \"value\" attribute.";
 
-			try { value = cast(value, Array<Dynamic>); }
-			catch (msg:String) { throw "Invalid \"value\" attribute. This must be an array of two numbers."; }
-
-			if (value.length != 2)
+			if (!isSequence(value))
 				throw "Invalid \"value\" attribute. This must be an array of two numbers.";
 
-			if (Std.is(value[0], Float) != true || Std.is(value[1], Float) != true)
+			if (value.length != 2 || !isFloat(value[0]) || !isFloat(value[1]))
 				throw "Invalid \"value\" attribute. This must be an array of two numbers.";
 
 			var coords = stringToCoords(content.get("coordinates"), POLAR);
