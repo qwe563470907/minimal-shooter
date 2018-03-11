@@ -78,7 +78,7 @@ class ActorAdapter implements bloc.Actor
 	public function getStateManager():StateManager
 	{ return _blocStateManager; }
 
-	public function setActionPattern(v:Pattern):Void
+	public function setBlocPattern(v:Pattern):Void
 	{
 		v.prepareState(this._blocStateManager);
 		this._blocPattern = v;

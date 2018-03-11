@@ -126,13 +126,13 @@ class ActorSprite extends FlxSprite // implements ICleanable
 		var newBullet = army.newBullet();
 		newBullet.position.set(this.position);
 		newBullet.motionVelocity.setCartesian(0, 0);
-		newBullet.setActionPattern(pattern);
+		newBullet.setBlocPattern(pattern);
 
 		return this;
 	}
 
-	public function setActionPattern(v:Pattern):Void
+	public function setBlocPattern(v:Pattern):Void
 	{
-		this.adapter.setActionPattern(v);
+		this.adapter.setBlocPattern(v);
 	}
 }

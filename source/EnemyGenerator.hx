@@ -50,7 +50,7 @@ class EnemyGenerator extends FlxBasic
 			//         )
 			//     ]
 			// );
-			newEnemy.setActionPattern(action);
+			newEnemy.setBlocPattern(action);
 		}
 	}
 }
