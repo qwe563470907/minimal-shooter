@@ -11,13 +11,13 @@ patterns:
           then:
             - fire:
                 pattern:
-                  - setvelocity: [3000, -85]
+                  - velocity: [3000, -85]
             - fire:
                 pattern:
-                  - setvelocity: [3000, -90]
+                  - velocity: [3000, -90]
             - fire:
                 pattern:
-                  - setvelocity: [3000, -95]
+                  - velocity: [3000, -95]
             - wait: 3
   "enemy1":
     - parallel:
@@ -25,21 +25,23 @@ patterns:
         - sequence:
           - fire:
               pattern:
-                - setvelocity: [400, 90]
+                - velocity: [400, 90]
           - wait: 120
       - sequence:
         - wait: 240
         - if:
             expression: 1 == 1
             then:
-              - setvelocity: [100, -90]
+              - velocity: [100, -90]
             else:
-              - setvelocity: [900, 90]
+              - velocity: [900, 90]
         - endless:
-          - addvelocity: [7, 90]
+          - velocity:
+              value: [7, 90]
+              operation: add
   "enemy2":
     - sequence:
-      - setvelocity: [500, 90]
+      - velocity: [500, 90]
       - enemy1
 
 definitions:

@@ -1,7 +1,6 @@
 package bloc.parser;
 
 import bloc.element.*;
-
 import bloc.parser.Parser.NonParsedElement;
 
 class ElementParser
@@ -13,59 +12,51 @@ class ElementParser
 		if (Std.is(nonParsedNode, NonParsedElement))
 		{
 			var element:NonParsedElement = cast nonParsedNode;
-			var name:String;
+			var nameStr:String;
 
 			try
-			{ name = getFirstKey(element); }
+			{ nameStr = getFirstKey(element); }
 			catch (message:String)
 			{
 				trace(message);
 				return Utility.NULL_ELEMENT;
 			}
 
-			var content = element.get(name);
+			var content = element.get(nameStr);
 
-			parsedElement = switch (name)
+			var elementName = ParserUtility.stringToElementName(nameStr);
+
+			parsedElement = switch (elementName)
 			{
-				case "fire":
-					var argumentMap = element.get(name);
+				case POSITION, VELOCITY, SHOT_VELOCITY:
+					VectorParser.parse(elementName, content);
+
+				case FIRE:
+					var argumentMap = element.get(nameStr);
 					var elements:Array<NonParsedElement> = argumentMap.get("pattern");
-					trace(name);
+					trace(nameStr);
 					new Fire(new Pattern("anonymous", PatternParser.parseAndFoldElements(elements)));
 
-				case "wait":
-					var argument:Int = element.get(name);
-					trace(name + " " + argument);
+				case WAIT:
+					var argument:Int = element.get(nameStr);
+					trace(nameStr + " " + argument);
 					new Wait(argument);
 
-				case "addvelocity":
-					var arguments:Array<Float> = element.get(name);
-					trace(name + " [" + arguments[0] + ", " + arguments[1] + "]");
-					new AddVelocity(new Vector().setPolar(arguments[0], arguments[1]));
+				case SEQUENCE:
+					trace(nameStr);
+					new Sequence(PatternParser.parseElementArray(element.get(nameStr)));
 
-				case "setvelocity":
-					var arguments:Array<Float> = element.get(name);
-					trace(name + " [" + arguments[0] + ", " + arguments[1] + "]");
-					new SetVelocity(new Vector().setPolar(arguments[0], arguments[1]));
+				case PARALLEL:
+					trace(nameStr);
+					new Parallel(PatternParser.parseElementArray(element.get(nameStr)));
 
-				case "shot_velocity":
-					VectorParser.parse(name, content);
+				case ENDLESS:
+					trace(nameStr);
+					new EndlessRepeat(PatternParser.parseAndFoldElements(element.get(nameStr)));
 
-				case "sequence":
-					trace(name);
-					new Sequence(PatternParser.parseElementArray(element.get(name)));
-
-				case "parallel":
-					trace(name);
-					new Parallel(PatternParser.parseElementArray(element.get(name)));
-
-				case "endless":
-					trace(name);
-					new EndlessRepeat(PatternParser.parseAndFoldElements(element.get(name)));
-
-				case "if":
-					trace(name);
-					var argumentMap = element.get(name);
+				case IF:
+					trace(nameStr);
+					var argumentMap = element.get(nameStr);
 
 					var expression = argumentMap.get("expression");
 

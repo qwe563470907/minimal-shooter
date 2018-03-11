@@ -1,5 +1,6 @@
 package bloc.element;
 
+import bloc.element.ElementUtility.indent;
 import bloc.state.ConditionalBranchState;
 
 class IfBranch extends ConditionalBranch
@@ -40,15 +41,15 @@ class IfBranch extends ConditionalBranch
 
 		if (this._hasExpression)
 		{
-			str = "expression:\n" + Utility.indent(this._expression);
+			str = "expression:\n" + indent(this._expression);
 
 			if (this._hasCommand) str += "\n";
 		}
 
 		if (this._hasCommand)
-			str += "command:\n" + Utility.indent(this._command);
+			str += "command:\n" + indent(this._command);
 
-		return "if:\n" + Utility.indent(str) + "\n" + super.toString();
+		return "if:\n" + indent(str) + "\n" + super.toString();
 	}
 
 	override private function setActiveBranch(actor:Actor, state:ConditionalBranchState):Element

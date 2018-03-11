@@ -1,5 +1,6 @@
 package bloc.element;
 
+import bloc.element.ElementUtility.indent;
 import bloc.state.ConditionalBranchState;
 
 class ConditionalBranch extends DefaultElement
@@ -31,10 +32,10 @@ class ConditionalBranch extends DefaultElement
 
 	override public function toString():String
 	{
-		var thenStr = "then:\n" + Utility.indent(this._then.toString());
-		var elseStr = "else:\n" + Utility.indent(this._else.toString());
+		var thenStr = "then:\n" + indent(this._then.toString());
+		var elseStr = "else:\n" + indent(this._else.toString());
 
-		return Utility.indent(thenStr + "\n" + elseStr);
+		return indent(thenStr + "\n" + elseStr);
 	}
 
 	override public function prepareState(manager:StateManager):Void

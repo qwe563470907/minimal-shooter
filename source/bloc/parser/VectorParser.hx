@@ -1,13 +1,15 @@
 package bloc.parser;
 
 import bloc.element.Element;
-import bloc.element.Utility.Operation;
-import bloc.element.Utility.Coordinates;
+import bloc.element.ElementUtility.ElementName;
+import bloc.element.ElementUtility.Coordinates;
+import bloc.element.ElementUtility.Operation;
+import bloc.element.VectorElement;
 import bloc.parser.ParserUtility.*;
 
 class VectorParser
 {
-	static public function parse(name:String, content: Null<Dynamic>):Element
+	static public function parse(elementName:ElementName, content: Null<Dynamic>):Element
 	{
 		try
 		{
@@ -30,21 +32,21 @@ class VectorParser
 				var coords = stringToCoords(content.get("coordinates"), POLAR);
 				var operation = stringToOperation(content.get("operation"), SET);
 
-				return bloc.element.ShotVelocity.create(value[0], value[1], coords, operation);
+				return VectorElement.create(elementName, value[0], value[1], coords, operation);
 			}
 			else if (isSequence(content))
 			{
 				if (!isValidValue(content))
 					throw "Invalid \"value\" attribute. This must be an array of two numbers.";
 
-				return bloc.element.ShotVelocity.create(content[0], content[1], POLAR, SET);
+				return VectorElement.create(elementName, content[0], content[1], POLAR, SET);
 			}
 			else
 				throw "Invalid attributes. The attributes must be either a map or an array of two numbers.";
 		}
 		catch (message:String)
 		{
-			trace("[BLOC] Warning: Element <" + name + ">: " + message);
+			trace("[BLOC] Warning: Element <" + elementNameToString(elementName) + ">: " + message);
 
 			return Utility.NULL_ELEMENT;
 		}

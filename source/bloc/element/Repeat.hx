@@ -1,5 +1,7 @@
 package bloc.element;
 
+import bloc.state.CountState;
+
 class Repeat extends DefaultElement
 {
 	public var action:Element;

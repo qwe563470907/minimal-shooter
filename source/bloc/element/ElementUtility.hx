@@ -1,6 +1,6 @@
 package bloc.element;
 
-class Utility
+class ElementUtility
 {
 	static public function indent(str:String):String
 	{
@@ -19,4 +19,19 @@ enum Coordinates
 {
 	CARTESIAN;
 	POLAR;
+}
+
+enum ElementName
+{
+	POSITION;
+	VELOCITY;
+	SHOT_VELOCITY;
+	FIRE;
+	WAIT;
+	SEQUENCE;
+	PARALLEL;
+	REPEAT;
+	ENDLESS;
+	IF;
+	NULL;
 }
