@@ -69,19 +69,28 @@ class ActorSprite extends FlxSprite // implements ICleanable
 		this.halfWidth = 0.5 * this.width;
 		this.halfHeight = 0.5 * this.height;
 
-		// Sync vectors between flixel and BLOC.
-		setPosition(position.x - halfWidth, position.y - halfHeight);
-		velocity.set(motionVelocity.x, motionVelocity.y);
-		super.update(elapsed);
-		position.setCartesian(x + halfWidth, y + halfHeight);
-		motionVelocity.setCartesian(velocity.x, velocity.y);
-
 		for (behavior in behaviorList)
 			behavior.run(this);
 
 		adapter.runBulletHellPattern();
 		properFrameCount++;
 		// childActors.forEach(removeNonExistingChild);
+
+		syncBlocToFlixel();
+		super.update(elapsed);
+		syncFlixelToBloc();
+	}
+
+	public function syncBlocToFlixel():Void
+	{
+		setPosition(position.x - halfWidth, position.y - halfHeight);
+		velocity.set(motionVelocity.x, motionVelocity.y);
+	}
+
+	public function syncFlixelToBloc():Void
+	{
+		position.setCartesian(x + halfWidth, y + halfHeight);
+		motionVelocity.setCartesian(velocity.x, velocity.y);
 	}
 
 	override public function kill():Void
