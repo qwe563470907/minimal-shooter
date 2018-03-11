@@ -1,5 +1,6 @@
 patterns:
   "player":
+    - shot_velocity: [2000, -90]
     - shot_velocity:
         value: [3000, -90]
         coordinates: polar

@@ -14,24 +14,33 @@ class VectorParser
 			if (content == null)
 				throw "Found no attributes.";
 
-			if (!isMap(content))
-				throw "Invalid attributes. The attributes must be written in a map format.";
+			if (isMap(content))
+			{
+				var value = content.get("value");
 
-			var value = content.get("value");
+				if (value == null)
+					throw "Found no \"value\" attribute.";
 
-			if (value == null)
-				throw "Found no \"value\" attribute.";
+				if (!isSequence(value))
+					throw "Invalid \"value\" attribute. This must be an array of two numbers.";
 
-			if (!isSequence(value))
-				throw "Invalid \"value\" attribute. This must be an array of two numbers.";
+				if (!isValidValue(value))
+					throw "Invalid \"value\" attribute. This must be an array of two numbers.";
 
-			if (value.length != 2 || !isFloat(value[0]) || !isFloat(value[1]))
-				throw "Invalid \"value\" attribute. This must be an array of two numbers.";
+				var coords = stringToCoords(content.get("coordinates"), POLAR);
+				var operation = stringToOperation(content.get("operation"), SET);
 
-			var coords = stringToCoords(content.get("coordinates"), POLAR);
-			var operation = stringToOperation(content.get("operation"), SET);
+				return bloc.element.ShotVelocity.create(value[0], value[1], coords, operation);
+			}
+			else if (isSequence(content))
+			{
+				if (!isValidValue(content))
+					throw "Invalid \"value\" attribute. This must be an array of two numbers.";
 
-			return bloc.element.ShotVelocity.create(value[0], value[1], coords, operation);
+				return bloc.element.ShotVelocity.create(content[0], content[1], POLAR, SET);
+			}
+			else
+				throw "Invalid attributes. The attributes must be either a map or an array of two numbers.";
 		}
 		catch (message:String)
 		{
@@ -39,6 +48,11 @@ class VectorParser
 
 			return Utility.NULL_ELEMENT;
 		}
+	}
+
+	static private function isValidValue(array:Array<Dynamic>):Bool
+	{
+		return array.length == 2 && isFloat(array[0]) && isFloat(array[1]);
 	}
 
 	static public function stringToOperation(op: Dynamic, defaultValue:Operation):Operation
@@ -54,7 +68,7 @@ class VectorParser
 
 			case "subtract": SUBTRACT;
 
-			default: throw "Invalid operation type: " + op;
+			default: throw "Invalid operation: " + op;
 		}
 	}
 
