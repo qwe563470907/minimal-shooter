@@ -14,9 +14,6 @@ class ManualShot implements Behavior
 		if (!userInput.isShooting)
 			return;
 
-		if (actor.properFrameCount % 4 > 0)
-			return;
-
 		actor.adapter.receiveCommand("fire");
 
 		// var directionAngle = -90;

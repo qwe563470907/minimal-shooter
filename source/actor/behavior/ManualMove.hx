@@ -30,7 +30,7 @@ class ManualMove implements Behavior
 				actor.truncateSpeed(lowSpeed);
 		}
 
-		actor.x = Math.min(Math.max(0, actor.x), FlxG.width - actor.width);
-		actor.y = Math.min(Math.max(0, actor.y), FlxG.height - actor.height);
+		actor.position.x = Math.min(Math.max(actor.halfWidth, actor.position.x), FlxG.width - actor.halfWidth);
+		actor.position.y = Math.min(Math.max(actor.halfHeight, actor.position.y), FlxG.height - actor.halfHeight);
 	}
 }

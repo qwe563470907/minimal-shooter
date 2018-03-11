@@ -2,20 +2,20 @@ package bloc.element;
 
 class AddVelocity extends Velocity
 {
-	public function new (speed:Float, directionAngle:Float)
+	public function new (vector:Vector)
 	{
-		super(speed, directionAngle);
+		super(vector);
 	}
 
 	override public function run(actor:Actor):Bool
 	{
-		actor.addVelocity(_x, _y);
+		actor.motionVelocity.add(this._vector);
 
 		return true;
 	}
 
 	override public function toString():String
 	{
-		return "add velocity -spd " + this._speed + " -dir " + this._directionAngle;
+		return "add velocity -spd " + this._vector.length + " -dir " + this._vector.angle;
 	}
 }

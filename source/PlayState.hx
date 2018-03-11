@@ -55,7 +55,7 @@ class PlayState extends FlxState
 		  playerBulletFactory
 		);
 		var player = _playerArmy.newAgent();
-		player.setCenterPosition(0.5 * FlxG.width, 0.8 * FlxG.height);
+		player.position.setCartesian(0.5 * FlxG.width, 0.8 * FlxG.height);
 		player.setActionPattern(blocPatternDictionary.get("player"));
 
 		var enemyFactory = function()

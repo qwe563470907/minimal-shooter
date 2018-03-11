@@ -2,13 +2,11 @@ package bloc.element;
 
 class PositionalElement extends DefaultElement
 {
-	private var _x:Float;
-	private var _y:Float;
+	private var _vector:Vector;
 
-	private function new (x:Float, y:Float)
+	private function new (vector:Vector)
 	{
 		super();
-		this._x = x;
-		this._y = y;
+		this._vector = vector;
 	}
 }

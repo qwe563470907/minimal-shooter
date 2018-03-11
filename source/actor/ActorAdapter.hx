@@ -3,6 +3,7 @@ package actor;
 import bloc.Pattern;
 import bloc.Utility;
 import bloc.StateManager;
+import bloc.Vector;
 import haxe.ds.StringMap;
 
 // private class TemporalVector implements Vector
@@ -23,6 +24,9 @@ import haxe.ds.StringMap;
 class ActorAdapter implements bloc.Actor
 {
 	// static private var _temporalVector:Vector = new TemporalVector(0, 0);
+
+	public var position(get, never):Vector;
+	public var motionVelocity(get, never):Vector;
 
 	private var _actor:ActorSprite;
 	private var _blocPattern:Pattern;
@@ -74,32 +78,19 @@ class ActorAdapter implements bloc.Actor
 	public function getStateManager():StateManager
 	{ return _blocStateManager; }
 
-	// public function getPosition():Vector
-	// {
-	// 	_temporalVector.x = this._actor.centerX;
-	// 	_temporalVector.y = this._actor.centerY;
-	// 	return _temporalVector;
-	// }
-
-	public function setPosition(x:Float, y:Float):Void
-	{ this._actor.setCenterPosition(x, y); }
-
-	// public function getVelocity():Vector
-	// {
-	// 	_temporalVector.x = this._actor.velocity.x;
-	// 	_temporalVector.y = this._actor.velocity.y;
-	// 	return _temporalVector;
-	// }
-
-	public function setVelocity(x:Float, y:Float):Void
-	{ this._actor.motionVelocity.setCartesian(x, y); }
-
-	public function addVelocity(x:Float, y:Float):Void
-	{ this._actor.motionVelocity.addCartesian(x, y); }
-
 	public function setActionPattern(v:Pattern):Void
 	{
 		v.prepareState(this._blocStateManager);
 		this._blocPattern = v;
+	}
+
+	inline function get_position()
+	{
+		return this._actor.position;
+	}
+
+	inline function get_motionVelocity()
+	{
+		return this._actor.motionVelocity;
 	}
 }

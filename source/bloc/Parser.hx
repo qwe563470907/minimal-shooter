@@ -94,12 +94,12 @@ class Parser
 				case "addvelocity":
 					var arguments:Array<Float> = element.get(name);
 					trace(name + " [" + arguments[0] + ", " + arguments[1] + "]");
-					new AddVelocity(arguments[0], arguments[1]);
+					new AddVelocity(new Vector().setPolar(arguments[0], arguments[1]));
 
 				case "setvelocity":
 					var arguments:Array<Float> = element.get(name);
 					trace(name + " [" + arguments[0] + ", " + arguments[1] + "]");
-					new SetVelocity(arguments[0], arguments[1]);
+					new SetVelocity(new Vector().setPolar(arguments[0], arguments[1]));
 
 				case "sequence":
 					trace(name);

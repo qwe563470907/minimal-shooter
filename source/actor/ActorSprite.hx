@@ -11,12 +11,14 @@ class ActorSprite extends FlxSprite // implements ICleanable
 {
 	public var army:ActorArmy;
 
+	public var position:Vector;
 	public var motionVelocity:Vector;
 	public var shotOffset:Vector;
 
+	public var halfWidth:Float;
+	public var halfHeight:Float;
+
 	public var properFrameCount:Int = 0;
-	public var centerX(get, set):Float;
-	public var centerY(get, set):Float;
 	// public var childActors:CleanableGroup<Actor>;
 
 	private var behaviorList:Array<Behavior>;
@@ -29,6 +31,7 @@ class ActorSprite extends FlxSprite // implements ICleanable
 		behaviorList = [];
 		adapter = new ActorAdapter(this);
 		// childActors = new CleanableGroup<Actor>(256);
+		position = new Vector();
 		motionVelocity = new Vector();
 		shotOffset = new Vector();
 	}
@@ -57,14 +60,20 @@ class ActorSprite extends FlxSprite // implements ICleanable
 	 */
 	public inline function isOutOfWorld(margin:Float = 0):Bool
 	{
-		return (x + width < FlxG.worldBounds.x - margin) || (x > FlxG.worldBounds.right + margin) ||
-		(y + height < FlxG.worldBounds.y - margin) || (y > FlxG.worldBounds.bottom + margin);
+		return (position.x + halfWidth < FlxG.worldBounds.x - margin) || (position.x - halfWidth > FlxG.worldBounds.right + margin) ||
+		(position.y + halfHeight < FlxG.worldBounds.y - margin) || (position.y - halfHeight > FlxG.worldBounds.bottom + margin);
 	}
 
 	override public function update(elapsed:Float):Void
 	{
+		this.halfWidth = 0.5 * this.width;
+		this.halfHeight = 0.5 * this.height;
+
+		// Sync vectors between flixel and BLOC.
+		setPosition(position.x - halfWidth, position.y - halfHeight);
 		velocity.set(motionVelocity.x, motionVelocity.y);
 		super.update(elapsed);
+		position.setCartesian(x + halfWidth, y + halfHeight);
 		motionVelocity.setCartesian(velocity.x, velocity.y);
 
 		for (behavior in behaviorList)
@@ -73,8 +82,6 @@ class ActorSprite extends FlxSprite // implements ICleanable
 		adapter.runBulletHellPattern();
 		properFrameCount++;
 		// childActors.forEach(removeNonExistingChild);
-
-		velocity.set(motionVelocity.x, motionVelocity.y);
 	}
 
 	override public function kill():Void
@@ -105,40 +112,14 @@ class ActorSprite extends FlxSprite // implements ICleanable
 		return this;
 	}
 
-	public inline function setCenterPosition(x:Float = 0, y:Float = 0):Void
-	{
-		centerX = x;
-		centerY = y;
-	}
-
 	public inline function fire(pattern:Pattern):ActorSprite
 	{
 		var newBullet = army.newBullet();
-		newBullet.setCenterPosition(centerX + shotOffset.x, centerY + shotOffset.y);
+		newBullet.position.set(this.position);
 		newBullet.motionVelocity.setCartesian(0, 0);
 		newBullet.setActionPattern(pattern);
 
 		return this;
-	}
-
-	function get_centerX()
-	{
-		return x + 0.5 * width;
-	}
-
-	function get_centerY()
-	{
-		return y + 0.5 * height;
-	}
-
-	function set_centerX(v:Float)
-	{
-		return x = v - 0.5 * width;
-	}
-
-	function set_centerY(v:Float)
-	{
-		return y = v - 0.5 * height;
 	}
 
 	public function setActionPattern(v:Pattern):Void

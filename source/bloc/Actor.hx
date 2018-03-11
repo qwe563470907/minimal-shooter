@@ -2,12 +2,10 @@ package bloc;
 
 interface Actor
 {
+	public var position(get, never):Vector;
+	public var motionVelocity(get, never):Vector;
+
 	public function getStateManager():StateManager;
-	// public function getPosition():Vector;
-	public function setPosition(x:Float, y:Float):Void;
-	// public function getVelocity():Vector;
-	public function setVelocity(x:Float, y:Float):Void;
-	public function addVelocity(x:Float, y:Float):Void;
 	public function fire(pattern:Pattern):Actor;
 	public function kill():Void;
 
