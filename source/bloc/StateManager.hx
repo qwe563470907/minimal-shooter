@@ -1,6 +1,7 @@
 package bloc;
 
 import bloc.element.Element;
+import bloc.state.*;
 
 class StateManager
 {
@@ -16,7 +17,7 @@ class StateManager
 		this.branchStateMap = new Map<Element, ConditionalBranchState>();
 	}
 
-	public function clear():Void
+	public inline function clear():Void
 	{
 		for (key in countStateMap.keys())
 			countStateMap.remove(key);
@@ -25,17 +26,22 @@ class StateManager
 			branchStateMap.remove(key);
 	}
 
-	public function getCountState(element:Element):CountState
+	public inline function getCountState(element:Element):CountState
 	{
 		var state = this.countStateMap.get(element);
 
 		return if (state != null) state else NULL_COUNT_STATE;
 	}
 
-	public function getBranchState(element:Element):ConditionalBranchState
+	public inline function getBranchState(element:Element):ConditionalBranchState
 	{
 		var state = this.branchStateMap.get(element);
 
 		return if (state != null) state else NULL_BRANCH_STATE;
+	}
+
+	public inline function addCountState(element:Element, maxCount:Int)
+	{
+		this.countStateMap.set(element, new CountState(maxCount));
 	}
 }

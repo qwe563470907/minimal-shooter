@@ -4,8 +4,7 @@ import flixel.FlxState;
 import flixel.FlxG;
 import actor.*;
 import actor.behavior.*;
-import bloc.Pattern;
-import bloc.Parser;
+import bloc.parser.Parser;
 
 class PlayState extends FlxState
 {
@@ -18,8 +17,8 @@ class PlayState extends FlxState
 
 		bgColor = 0xFFFFFFFF;
 
-		var blocPatternDictionary = new Map<String, Pattern>();
-		Parser.parseYaml(AssetPaths.enemy__yaml, blocPatternDictionary);
+		Parser.parseYaml(AssetPaths.enemy__yaml);
+		var blocPatternDictionary = Parser.patternDictionary;
 
 		var dieOutOfWorldBehavior = new DieOutOfWorld(200);
 

@@ -30,7 +30,7 @@ class Sequence extends List
 		super.prepareState(manager);
 
 		var actionListLength = this.actionList.length;
-		manager.countStateMap.set(this, new CountState(actionListLength));
+		manager.addCountState(this, actionListLength);
 	}
 
 	override public function resetState(actor:Actor):Void

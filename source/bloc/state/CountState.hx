@@ -1,4 +1,4 @@
-package bloc;
+package bloc.state;
 
 class CountState implements State
 {

@@ -1,5 +1,7 @@
 package bloc.element;
 
+import bloc.state.ConditionalBranchState;
+
 class IfBranch extends ConditionalBranch
 {
 	static private var _parser = new hscript.Parser();

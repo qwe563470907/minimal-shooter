@@ -1,6 +1,6 @@
 package bloc.element;
 
-import bloc.ConditionalBranchState;
+import bloc.state.ConditionalBranchState;
 
 class ConditionalBranch extends DefaultElement
 {

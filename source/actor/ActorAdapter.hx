@@ -2,8 +2,8 @@ package actor;
 
 import bloc.Pattern;
 import bloc.Utility;
-import bloc.StateManager;
 import bloc.Vector;
+import bloc.StateManager;
 import haxe.ds.StringMap;
 
 // private class TemporalVector implements Vector

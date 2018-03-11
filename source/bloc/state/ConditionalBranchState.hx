@@ -1,4 +1,4 @@
-package bloc;
+package bloc.state;
 
 import bloc.element.Element;
 

@@ -20,7 +20,7 @@ class Wait extends DefaultElement
 
 	override public function prepareState(manager:StateManager):Void
 	{
-		manager.countStateMap.set(this, new CountState(this.waitCount + 1));
+		manager.addCountState(this, this.waitCount + 1);
 	}
 
 	override public function resetState(actor:Actor):Void

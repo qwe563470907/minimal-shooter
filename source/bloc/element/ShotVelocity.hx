@@ -29,9 +29,7 @@ class ShotVelocity extends Velocity
 	}
 
 	private function new (vector:Vector)
-	{
-		super(vector);
-	}
+	{ super(vector); }
 
 	override public function toString():String
 	{
@@ -42,9 +40,7 @@ class ShotVelocity extends Velocity
 private class SetShotVelocity extends ShotVelocity
 {
 	public function new (vector:Vector)
-	{
-		super(vector);
-	}
+	{ super(vector); }
 
 	override public inline function run(actor:Actor):Bool
 	{
@@ -62,9 +58,7 @@ private class SetShotVelocity extends ShotVelocity
 private class AddShotVelocity extends ShotVelocity
 {
 	public function new (vector:Vector)
-	{
-		super(vector);
-	}
+	{ super(vector); }
 
 	override public inline function run(actor:Actor):Bool
 	{
@@ -74,17 +68,13 @@ private class AddShotVelocity extends ShotVelocity
 	}
 
 	override public function toString():String
-	{
-		return super.toString() +	" -op add";
-	}
+	{ return super.toString() +	" -op add"; }
 }
 
 private class SubtractShotVelocity extends ShotVelocity
 {
 	public function new (vector:Vector)
-	{
-		super(vector);
-	}
+	{ super(vector); }
 
 	override public inline function run(actor:Actor):Bool
 	{
@@ -94,7 +84,5 @@ private class SubtractShotVelocity extends ShotVelocity
 	}
 
 	override public function toString():String
-	{
-		return super.toString() +	" -op subtract";
-	}
+	{ return super.toString() + " -op subtract"; }
 }
