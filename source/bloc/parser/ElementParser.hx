@@ -23,6 +23,8 @@ class ElementParser
 				return Utility.NULL_ELEMENT;
 			}
 
+			var content = element.get(name);
+
 			parsedElement = switch (name)
 			{
 				case "fire":
@@ -47,14 +49,7 @@ class ElementParser
 					new SetVelocity(new Vector().setPolar(arguments[0], arguments[1]));
 
 				case "shot_velocity":
-					var argumentMap = element.get(name);
-					var value = argumentMap.get("value");
-
-					if (!Std.is(value, Array)) return Utility.NULL_ELEMENT;
-
-					var coords = argumentMap.get("coordinates");
-					var operation = argumentMap.get("operation");
-					ShotVelocity.create(value, coords, operation);
+					VectorParser.parse(name, content);
 
 				case "sequence":
 					trace(name);

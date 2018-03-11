@@ -4,18 +4,15 @@ import bloc.element.Utility;
 
 class ShotVelocity extends Velocity
 {
-	public static function create(value:Array<Float>, coordsStr:String, operationStr:String):ShotVelocity
+	public static function create(v1:Float, v2:Float, coords:Coordinates, operation:Operation):ShotVelocity
 	{
-		var coords = Utility.stringToCoords(coordsStr);
-		var operation = Utility.stringToOperation(operationStr);
-
 		var vector = new Vector();
 
 		switch (coords)
 		{
-			case CARTESIAN: vector.setCartesian(value[0], value[1]);
+			case CARTESIAN: vector.setCartesian(v1, v2);
 
-			case POLAR: vector.setPolar(value[0], value[1]);
+			case POLAR: vector.setPolar(v1, v2);
 		}
 
 		return switch (operation)
