@@ -64,7 +64,7 @@ class ActorSprite extends FlxSprite // implements ICleanable
 		(position.y + halfHeight < FlxG.worldBounds.y - margin) || (position.y - halfHeight > FlxG.worldBounds.bottom + margin);
 	}
 
-	override public function update(elapsed:Float):Void
+	override public inline function update(elapsed:Float):Void
 	{
 		this.halfWidth = 0.5 * this.width;
 		this.halfHeight = 0.5 * this.height;
@@ -81,13 +81,13 @@ class ActorSprite extends FlxSprite // implements ICleanable
 		syncFlixelToBloc();
 	}
 
-	public function syncBlocToFlixel():Void
+	public inline function syncBlocToFlixel():Void
 	{
 		setPosition(position.x - halfWidth, position.y - halfHeight);
 		velocity.set(motionVelocity.x, motionVelocity.y);
 	}
 
-	public function syncFlixelToBloc():Void
+	public inline function syncFlixelToBloc():Void
 	{
 		position.setCartesian(x + halfWidth, y + halfHeight);
 		motionVelocity.setCartesian(velocity.x, velocity.y);
@@ -131,8 +131,17 @@ class ActorSprite extends FlxSprite // implements ICleanable
 		return this;
 	}
 
-	public function setBlocPattern(v:Pattern):Void
+	public inline function setBlocPattern(v:Pattern):Void
 	{
 		this.adapter.setBlocPattern(v);
+	}
+
+	public inline function resetContents():ActorSprite
+	{
+		position.reset();
+		motionVelocity.reset();
+		adapter.reset();
+
+		return this;
 	}
 }

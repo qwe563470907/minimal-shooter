@@ -13,14 +13,22 @@ class ActorArmy
 		agents = new FlxTypedGroup<Agent>(agentCapacity);
 
 		for (i in 0...agentCapacity)
-			agents.add(agentFactory());
+		{
+			var agent = agentFactory();
+			agent.army = this;
+			agents.add(agent);
+		}
 
 		state.add(agents);
 
 		bullets = new FlxTypedGroup<Bullet>(bulletCapacity);
 
 		for (i in 0...bulletCapacity)
-			bullets.add(bulletFactory());
+		{
+			var bullet = bulletFactory();
+			bullet.army = this;
+			bullets.add(bullet);
+		}
 
 		state.add(bullets);
 	}
@@ -28,7 +36,7 @@ class ActorArmy
 	public inline function newAgent():Agent
 	{
 		var agent = agents.recycle(null, null, false, true);
-		agent.army = this;
+		agent.resetContents();
 
 		return agent;
 	}
@@ -36,7 +44,7 @@ class ActorArmy
 	public inline function newBullet():Bullet
 	{
 		var bullet = bullets.recycle(null, null, false, true);
-		bullet.army = this;
+		bullet.resetContents();
 
 		return bullet;
 	}

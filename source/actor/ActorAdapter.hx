@@ -31,32 +31,37 @@ class ActorAdapter implements bloc.Actor
 	private var _actor:ActorSprite;
 	private var _blocPattern:Pattern;
 	private var _blocStateManager:StateManager;
-	private var _receivedMessages:StringMap<Bool>;
+	private var _receivedCommands:StringSet;
 
 	public function new (actor:ActorSprite)
 	{
 		this._actor = actor;
 		this._blocStateManager = new StateManager();
 		this._blocPattern = Utility.NULL_PATTERN;
-		this._receivedMessages = new StringMap<Bool>();
+		this._receivedCommands = new StringSet();
 	}
 
-	public function fire(pattern:Pattern):bloc.Actor
+	public inline function reset():Void
+	{
+		this._blocStateManager.clear();
+		this._blocPattern = Utility.NULL_PATTERN;
+		this._receivedCommands.clear();
+	}
+
+	public inline function fire(pattern:Pattern):bloc.Actor
 	{
 		this._actor.fire(pattern);
 
 		return this;
 	}
 
-	public function kill():Void
+	public inline function kill():Void
 	{ this._actor.kill(); }
 
-	public function runBulletHellPattern():Void
+	public inline function runBulletHellPattern():Void
 	{
 		this._blocPattern.run(this);
-
-		for (message in _receivedMessages.keys())
-			_receivedMessages.remove(message);
+		this._receivedCommands.clear();
 	}
 
 	/**
@@ -67,12 +72,12 @@ class ActorAdapter implements bloc.Actor
 	 */
 	public inline function receiveCommand(command:String):Void
 	{
-		this._receivedMessages.set(command, true);
+		this._receivedCommands.add(command);
 	}
 
 	public inline function hasReceivedCommand(command:String):Bool
 	{
-		return this._receivedMessages.exists(command);
+		return this._receivedCommands.exists(command);
 	}
 
 	public function getStateManager():StateManager
@@ -92,5 +97,24 @@ class ActorAdapter implements bloc.Actor
 	inline function get_motionVelocity()
 	{
 		return this._actor.motionVelocity;
+	}
+}
+
+class StringSet extends StringMap<Bool>
+{
+	public function new ()
+	{
+		super();
+	}
+
+	public inline function add(key:String)
+	{
+		this.set(key, true);
+	}
+
+	public inline function clear():Void
+	{
+		for (key in this.keys())
+			this.remove(key);
 	}
 }

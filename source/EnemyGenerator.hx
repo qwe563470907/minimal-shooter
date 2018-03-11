@@ -34,22 +34,6 @@ class EnemyGenerator extends FlxBasic
 			newEnemy.motionVelocity.setCartesian(0, 50);
 			newEnemy.syncBlocToFlixel();
 			var action = _blocPatternDictionary.get("enemy1");
-			// var action = new Parallel(
-			//     [
-			//         new EndlessRepeat(
-			//             new Fire(90, 400),
-			//             120
-			//         ),
-			//         new Sequence(
-			//             [
-			//                 new Wait(240),
-			//                 new EndlessRepeat(
-			//                     new AddVelocity(90, 5)
-			//                 )
-			//             ]
-			//         )
-			//     ]
-			// );
 			newEnemy.setBlocPattern(action);
 		}
 	}
