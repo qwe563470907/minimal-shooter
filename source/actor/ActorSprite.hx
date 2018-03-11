@@ -13,6 +13,7 @@ class ActorSprite extends FlxSprite // implements ICleanable
 
 	public var position:Vector;
 	public var motionVelocity:Vector;
+	public var shotVelocity:Vector;
 	public var shotOffset:Vector;
 
 	public var halfWidth:Float;
@@ -33,6 +34,7 @@ class ActorSprite extends FlxSprite // implements ICleanable
 		// childActors = new CleanableGroup<Actor>(256);
 		position = new Vector();
 		motionVelocity = new Vector();
+		shotVelocity = new Vector();
 		shotOffset = new Vector();
 	}
 

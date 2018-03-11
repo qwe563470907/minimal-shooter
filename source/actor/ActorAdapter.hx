@@ -27,6 +27,7 @@ class ActorAdapter implements bloc.Actor
 
 	public var position(get, never):Vector;
 	public var motionVelocity(get, never):Vector;
+	public var shotVelocity(get, never):Vector;
 
 	private var _actor:ActorSprite;
 	private var _blocPattern:Pattern;
@@ -97,6 +98,11 @@ class ActorAdapter implements bloc.Actor
 	inline function get_motionVelocity()
 	{
 		return this._actor.motionVelocity;
+	}
+
+	inline function get_shotVelocity()
+	{
+		return this._actor.shotVelocity;
 	}
 }
 

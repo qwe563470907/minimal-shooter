@@ -101,6 +101,15 @@ class Parser
 					trace(name + " [" + arguments[0] + ", " + arguments[1] + "]");
 					new SetVelocity(new Vector().setPolar(arguments[0], arguments[1]));
 
+				case "shot_velocity":
+					var argumentMap = element.get(name);
+					var value = argumentMap.get("value");
+					var coords = argumentMap.get("coordinates");
+					var operation = argumentMap.get("operation");
+					var a = ShotVelocity.create(value, coords, operation);
+					trace(a.toString());
+					a;
+
 				case "sequence":
 					trace(name);
 					new Sequence(parseElementArray(element.get(name)));

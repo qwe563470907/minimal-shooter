@@ -4,6 +4,7 @@ interface Actor
 {
 	public var position(get, never):Vector;
 	public var motionVelocity(get, never):Vector;
+	public var shotVelocity(get, never):Vector;
 
 	public function getStateManager():StateManager;
 	public function fire(pattern:Pattern):Actor;
