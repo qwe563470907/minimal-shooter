@@ -1,0 +1,49 @@
+patterns:
+  "player":
+    - shot_velocity:
+        value: [3000, -90]
+        coordinates: polar
+        operation: set
+    - endless:
+      - if:
+          command: fire
+          then:
+            - fire:
+                pattern:
+                  - setvelocity: [3000, -85]
+            - fire:
+                pattern:
+                  - setvelocity: [3000, -90]
+            - fire:
+                pattern:
+                  - setvelocity: [3000, -95]
+            - wait: 3
+  "enemy1":
+    - parallel:
+      - endless:
+        - sequence:
+          - fire:
+              pattern:
+                - setvelocity: [400, 90]
+          - wait: 120
+      - sequence:
+        - wait: 240
+        - if:
+            expression: 1 == 1
+            then:
+              - setvelocity: [100, -90]
+            else:
+              - setvelocity: [900, 90]
+        - endless:
+          - addvelocity: [7, 90]
+  "enemy2":
+    - sequence:
+      - setvelocity: [500, 90]
+      - enemy1
+
+definitions:
+  "accelerate":
+    arguments: [spd, dir]
+    pattern:
+      - endless:
+        - addvelocity: [spd, dir]
