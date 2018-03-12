@@ -1,9 +1,7 @@
 package bloc.parser;
 
 import bloc.element.Element;
-import bloc.element.ElementUtility.ElementName;
-import bloc.element.ElementUtility.Coordinates;
-import bloc.element.ElementUtility.Operation;
+import bloc.element.ElementUtility;
 import bloc.element.VectorElement;
 import bloc.parser.ParserUtility.*;
 
@@ -29,11 +27,11 @@ class VectorParser
 				if (!isValidValues(values))
 					throw "Invalid \"values\" attribute: " + values;
 
-				var operation = stringToOperation(content.get("operation"), SET);
+				var operation = stringToEnum(content.get("operation"), "operation", Operation, "operation", set_operation);
 
-				var defaultCoords = if (elementName == POSITION && operation == SET) CARTESIAN else POLAR;
+				var defaultCoords = if (elementName == position_element && operation == set_operation) cartesian_coords else polar_coords;
 
-				var coords = stringToCoords(content.get("coordinates"), defaultCoords);
+				var coords = stringToEnum(content.get("coordinates"), "coords", Coordinates, "coordinates", defaultCoords);
 
 				return VectorElement.create(elementName, values[0], values[1], operation, coords);
 			}
@@ -42,11 +40,11 @@ class VectorParser
 				if (!isValidContentArray(content))
 					throw "Invalid attributes: " + content;
 
-				var operation = stringToOperation(content[2], SET);
+				var operation = stringToEnum(content[2], "operation", Operation, "operation", set_operation);
 
-				var defaultCoords = if (elementName == POSITION && operation == SET) CARTESIAN else POLAR;
+				var defaultCoords = if (elementName == position_element && operation == set_operation) cartesian_coords else polar_coords;
 
-				var coords = stringToCoords(content[3], defaultCoords);
+				var coords = stringToEnum(content[3], "coords", Coordinates, "coordinates", defaultCoords);
 
 				return VectorElement.create(elementName, content[0], content[1], operation, coords);
 			}
@@ -55,7 +53,7 @@ class VectorParser
 		}
 		catch (message:String)
 		{
-			trace("[BLOC] Warning: Element <" + elementNameToString(elementName) + ">: " + message);
+			trace("[BLOC] Warning: Element <" + ElementUtility.enumToString(elementName) + ">: " + message);
 
 			return Utility.NULL_ELEMENT;
 		}
@@ -69,65 +67,5 @@ class VectorParser
 	static private inline function isValidContentArray(array:Array<Dynamic>):Bool
 	{
 		return array.length >= 2 && array.length <= 4 && isFloat(array[0]) && isFloat(array[1]);
-	}
-
-	static public inline function stringToOperation(op: Null<Dynamic>, defaultValue:Operation):Operation
-	{
-
-		return switch (op)
-		{
-			case "", null: defaultValue;
-
-			case "set": SET;
-
-			case "add": ADD;
-
-			case "subtract": SUBTRACT;
-
-			default:
-				trace("[BLOC] Invalid operation: " + op);
-				defaultValue;
-		}
-	}
-
-	static public inline function operationToString(op: Operation):String
-	{
-
-		return switch (op)
-		{
-			case SET: "set";
-
-			case ADD: "add";
-
-			case SUBTRACT: "sub";
-		}
-	}
-
-	static public inline function stringToCoords(coords: Null<Dynamic>, defaultValue:Coordinates):Coordinates
-	{
-
-		return switch (coords)
-		{
-			case "", null: defaultValue;
-
-			case "cartesian": CARTESIAN;
-
-			case "polar": POLAR;
-
-			default:
-				trace("[BLOC] Warning: Invalid coordinates: " + coords);
-				defaultValue;
-		}
-	}
-
-	static public inline function coordsToString(op: Coordinates):String
-	{
-
-		return switch (op)
-		{
-			case CARTESIAN: "cartesian";
-
-			case POLAR: "polar";
-		}
 	}
 }

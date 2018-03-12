@@ -1,88 +1,33 @@
 package bloc.parser;
 
 import yaml.util.ObjectMap;
-import bloc.element.ElementUtility.ElementName;
 
 class ParserUtility
 {
-	public static inline function stringToElementName(value:String):ElementName
+	/**
+	 * Converts a string (which the parser found in the YAML document) to an enum instance.
+	 *
+	 * @param   str The string to convert.
+	 * @param   suffix The suffix for the internal names of the enum constructors. (e.g. "element")
+	 * @param   enumObj The enum object.
+	 * @param   attributeName The name for using in the error message if the string was not convertable.
+	 * @param   defaultValue The default enum instance. The function returns this if the string was not convertable.
+	 * @return  The converted enum instance.
+	 */
+	public static inline function stringToEnum<T>(str: Null<Dynamic>, suffix:String, enumObj:Enum<T>, attributeName:String, defaultValue:T):T
 	{
+		var enumInstance:T;
 
-		return switch (value)
-		{
-			case "position":
-				POSITION;
+		if (str == null || str == "") enumInstance = defaultValue;
+		else
+			try { enumInstance = Type.createEnum(enumObj, str + "_" + suffix); }
+			catch (unknown:Dynamic)
+			{
+				trace("[BLOC] Warning: Invalid " + attributeName + ": " + str);
+				enumInstance = defaultValue;
+			}
 
-			case "velocity":
-				VELOCITY;
-
-			case "shot_velocity":
-				SHOT_VELOCITY;
-
-			case "fire":
-				FIRE;
-
-			case "wait":
-				WAIT;
-
-			case "sequence":
-				SEQUENCE;
-
-			case "parallel":
-				PARALLEL;
-
-			case "repeat":
-				REPEAT;
-
-			case "endless":
-				ENDLESS;
-
-			case "if":
-				IF;
-
-			default:
-				NULL;
-		}
-	}
-
-	public static inline function elementNameToString(value:ElementName):String
-	{
-
-		return switch (value)
-		{
-			case POSITION:
-				"position";
-
-			case VELOCITY:
-				"velocity";
-
-			case SHOT_VELOCITY:
-				"shot_velocity";
-
-			case FIRE:
-				"fire";
-
-			case WAIT:
-				"wait";
-
-			case SEQUENCE:
-				"sequence";
-
-			case PARALLEL:
-				"parallel";
-
-			case REPEAT:
-				"repeat";
-
-			case ENDLESS:
-				"endless";
-
-			case IF:
-				"if";
-
-			case NULL:
-				"null";
-		}
+		return enumInstance;
 	}
 
 	public static inline function isMap(value:Null<Dynamic>):Bool

@@ -1,6 +1,7 @@
 package bloc.parser;
 
 import bloc.element.*;
+import bloc.element.ElementUtility.ElementName;
 import bloc.parser.Parser.NonParsedElement;
 
 class ElementParser
@@ -24,37 +25,37 @@ class ElementParser
 
 			var content = element.get(nameStr);
 
-			var elementName = ParserUtility.stringToElementName(nameStr);
+			var elementName = ParserUtility.stringToEnum(nameStr, "element", ElementName, "element", null_element);
 
 			parsedElement = switch (elementName)
 			{
-				case POSITION, VELOCITY, SHOT_VELOCITY:
+				case position_element, velocity_element, shot_velocity_element:
 					VectorParser.parse(elementName, content);
 
-				case FIRE:
+				case fire_element:
 					var argumentMap = element.get(nameStr);
 					var elements:Array<NonParsedElement> = argumentMap.get("pattern");
 					trace(nameStr);
 					new Fire(new Pattern("anonymous", PatternParser.parseAndFoldElements(elements)));
 
-				case WAIT:
+				case wait_element:
 					var argument:Int = element.get(nameStr);
 					trace(nameStr + " " + argument);
 					new Wait(argument);
 
-				case SEQUENCE:
+				case sequence_element:
 					trace(nameStr);
 					new Sequence(PatternParser.parseElementArray(element.get(nameStr)));
 
-				case PARALLEL:
+				case parallel_element:
 					trace(nameStr);
 					new Parallel(PatternParser.parseElementArray(element.get(nameStr)));
 
-				case ENDLESS:
+				case endless_element:
 					trace(nameStr);
 					new EndlessRepeat(PatternParser.parseAndFoldElements(element.get(nameStr)));
 
-				case IF:
+				case if_element:
 					trace(nameStr);
 					var argumentMap = element.get(nameStr);
 

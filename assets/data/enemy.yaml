@@ -1,6 +1,6 @@
 patterns:
   "player":
-    - shot_velocity: [3000, -90]
+    - shot_velocity: [3000, -90, set]
     - endless:
       - if:
           command: fire

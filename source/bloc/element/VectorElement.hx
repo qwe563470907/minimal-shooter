@@ -1,55 +1,63 @@
 package bloc.element;
 
 import bloc.element.ElementUtility;
-import bloc.parser.ParserUtility.elementNameToString;
-import bloc.parser.VectorParser.operationToString;
 
 class VectorElement extends DefaultElement
 {
 	private var _operation:Operation;
 	private var _name:ElementName;
 
+	/**
+	 *  Creates a BLOC vector element (e.g. position, velocity etc.).
+	 *
+	 *  @param   elementName The instance of enum ElementName.
+	 *  @param   v1 The first value (the x value or the vector length, depending on the coordinates).
+	 *  @param   v2 The second value (the y value or the vector angle, depending on the coordinates).
+	 *  @param   operation The instance of enum Operation.
+	 *  @param   coords The instance of enum Coordinates.
+	 *  @return  The created vector element.
+	 */
 	public static inline function create(elementName:ElementName, v1:Float, v2:Float, operation:Operation, coords:Coordinates):VectorElement
 	{
 		var vector = new Vector();
 
 		switch (coords)
 		{
-			case CARTESIAN: vector.setCartesian(v1, v2);
+			case cartesian_coords: vector.setCartesian(v1, v2);
 
-			case POLAR: vector.setPolar(v1, v2);
+			case polar_coords: vector.setPolar(v1, v2);
 		}
 
 		return switch (elementName)
 		{
-			case POSITION:
+			case position_element:
 				switch (operation)
 				{
-					case SET: new SetPosition(elementName, vector, operation);
+					case set_operation: new SetPosition(elementName, vector, operation);
 
-					case ADD: new AddPosition(elementName, vector, operation);
+					case add_operation: new AddPosition(elementName, vector, operation);
 
-					case SUBTRACT: new SubtractPosition(elementName, vector, operation);
+					case subtract_operation: new SubtractPosition(elementName, vector, operation);
 				}
 
-			case VELOCITY:
+			case velocity_element:
 				switch (operation)
 				{
-					case SET: new SetVelocity(elementName, vector, operation);
+					case set_operation: new SetVelocity(elementName, vector, operation);
 
-					case ADD: new AddVelocity(elementName, vector, operation);
+					case add_operation: new AddVelocity(elementName, vector, operation);
 
-					case SUBTRACT: new SubtractVelocity(elementName, vector, operation);
+					case subtract_operation: new SubtractVelocity(elementName, vector, operation);
 				}
 
-			case SHOT_VELOCITY:
+			case shot_velocity_element:
 				switch (operation)
 				{
-					case SET: new SetShotVelocity(elementName, vector, operation);
+					case set_operation: new SetShotVelocity(elementName, vector, operation);
 
-					case ADD: new AddShotVelocity(elementName, vector, operation);
+					case add_operation: new AddShotVelocity(elementName, vector, operation);
 
-					case SUBTRACT: new SubtractShotVelocity(elementName, vector, operation);
+					case subtract_operation: new SubtractShotVelocity(elementName, vector, operation);
 				}
 
 			default:
@@ -69,7 +77,7 @@ class VectorElement extends DefaultElement
 
 	override public inline function toString():String
 	{
-		return elementNameToString(this._name) + " -spd " + this._vector.length + " -dir " + this._vector.angle + " -operation " + operationToString(this._operation);
+		return ElementUtility.enumToString(this._name) + " -length " + this._vector.length + " -angle " + this._vector.angle + " -operation " + ElementUtility.enumToString(this._operation);
 	}
 }
 
