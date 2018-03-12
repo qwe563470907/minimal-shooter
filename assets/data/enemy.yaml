@@ -29,9 +29,7 @@ patterns:
         - endless:
           - velocity: [7, 90, add]
   "enemy2":
-    - sequence:
-      - velocity: [500, 90]
-      - enemy1
+    - velocity: [500, 90]
 
 definitions:
   "accelerate":

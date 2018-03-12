@@ -33,20 +33,7 @@ class ElementParser
 					VectorParser.parse(elementName, content);
 
 				case fire_element:
-					trace(nameStr);
-					var argumentMap = element.get(nameStr);
-
-					if (argumentMap == null)
-					{
-						new Fire(Utility.NULL_PATTERN)
-					}
-					else
-					{
-						var elements:Null<Array<NonParsedElement>> = argumentMap.get("pattern");
-						var pattern = if (elements == null) Utility.NULL_PATTERN else new Pattern("anonymous", PatternParser.parseAndFoldElements(elements));
-
-						new Fire(pattern);
-					}
+					FireParser.parse(content);
 
 				case wait_element:
 					var argument:Int = element.get(nameStr);

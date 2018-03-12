@@ -1,5 +1,7 @@
 package bloc.parser;
 
+import bloc.Utility.NULL_ELEMENT;
+import bloc.Utility.NULL_PATTERN;
 import bloc.element.Element;
 import bloc.element.Sequence;
 
@@ -12,7 +14,11 @@ class PatternParser
 		var parsedElements:Array<Element> = [];
 
 		for (e in nonParsedElements)
-			parsedElements.push(ElementParser.parseElement(e));
+		{
+			var parsedElement = ElementParser.parseElement(e);
+
+			if (parsedElement != NULL_ELEMENT) parsedElements.push(parsedElement);
+		}
 
 		return parsedElements;
 	}
@@ -31,8 +37,15 @@ class PatternParser
 		// Check circular reference
 		if (_parsingPatternNameSet.exists(patternName))
 		{
-			trace("[BLOC] Circular reference of pattern " + patternName);
-			return Utility.NULL_PATTERN;
+			trace("[BLOC] Warning: Circular reference of pattern " + patternName);
+			return NULL_PATTERN;
+		}
+
+		// Check if the pattern exists
+		if (!Parser.nonParsedPatternMap.exists(patternName))
+		{
+			trace("[BLOC] Warning: Could not find pattern \"" + patternName + "\".");
+			return NULL_PATTERN;
 		}
 
 		// Get & check contents
@@ -40,8 +53,8 @@ class PatternParser
 
 		if (topElements == null)
 		{
-			trace("[BLOC] Pattern \"" + patternName + "\" has no content.");
-			return Utility.NULL_PATTERN;
+			trace("[BLOC] Warning: Pattern \"" + patternName + "\" has no content.");
+			return NULL_PATTERN;
 		}
 
 		// Parse contents
@@ -60,7 +73,7 @@ class PatternParser
 
 	static private function foldElements(elements:Array<Element>):Element
 	{
-		if (elements.length == 0) return Utility.NULL_ELEMENT;
+		if (elements.length == 0) return NULL_ELEMENT;
 
 		if (elements.length == 1) return elements[0];
 
