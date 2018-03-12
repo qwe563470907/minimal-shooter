@@ -10,7 +10,7 @@ class Wait extends DefaultElement
 		this.waitCount = count;
 	}
 
-	override public function run(actor:Actor):Bool
+	override public inline function run(actor:Actor):Bool
 	{
 		var state = actor.getStateManager().getCountState(this);
 		state.increment();
@@ -18,12 +18,12 @@ class Wait extends DefaultElement
 		return state.isCompleted;
 	}
 
-	override public function prepareState(manager:StateManager):Void
+	override public inline function prepareState(manager:StateManager):Void
 	{
 		manager.addCountState(this, this.waitCount + 1);
 	}
 
-	override public function resetState(actor:Actor):Void
+	override public inline function resetState(actor:Actor):Void
 	{
 		actor.getStateManager().getCountState(this).reset();
 	}

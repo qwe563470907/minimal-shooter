@@ -11,7 +11,7 @@ interface Pattern extends Element
 	public function renderElements():String;
 }
 
-class AbstractPattern implements Pattern
+private class AbstractPattern implements Pattern
 {
 	public var name(get, null):String;
 
@@ -49,7 +49,7 @@ class AbstractPattern implements Pattern
 	}
 }
 
-class NonNullPattern extends AbstractPattern
+private class NonNullPattern extends AbstractPattern
 {
 	private var _topElement:Element;
 
@@ -105,6 +105,6 @@ class NullPattern extends AbstractPattern
 {
 	public function new ()
 	{
-		super("null");
+		super("null pattern");
 	}
 }

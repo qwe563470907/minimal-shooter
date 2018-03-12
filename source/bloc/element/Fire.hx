@@ -12,7 +12,7 @@ class Fire extends DefaultElement
 		this._pattern = pattern;
 	}
 
-	override public function run(actor:Actor):Bool
+	override public inline function run(actor:Actor):Bool
 	{
 		actor.fire(this._pattern);
 

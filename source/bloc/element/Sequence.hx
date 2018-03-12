@@ -25,7 +25,7 @@ class Sequence extends List
 		return true;
 	}
 
-	override public function prepareState(manager:StateManager):Void
+	override public inline function prepareState(manager:StateManager):Void
 	{
 		super.prepareState(manager);
 
@@ -33,7 +33,7 @@ class Sequence extends List
 		manager.addCountState(this, actionListLength);
 	}
 
-	override public function resetState(actor:Actor):Void
+	override public inline function resetState(actor:Actor):Void
 	{
 		actor.getStateManager().getCountState(this).reset();
 	}

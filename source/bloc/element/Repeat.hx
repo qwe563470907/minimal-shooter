@@ -14,7 +14,7 @@ class Repeat extends DefaultElement
 		this.repetitionCount = count;
 	}
 
-	override public function run(actor:Actor):Bool
+	override public inline function run(actor:Actor):Bool
 	{
 		var state = actor.getStateManager().getCountState(this);
 
@@ -31,13 +31,13 @@ class Repeat extends DefaultElement
 		return true;
 	}
 
-	override public function prepareState(manager:StateManager):Void
+	override public inline function prepareState(manager:StateManager):Void
 	{
 		manager.countStateMap.set(this, new CountState(this.repetitionCount));
 		this.action.prepareState(manager);
 	}
 
-	override public function resetState(actor:Actor):Void
+	override public inline function resetState(actor:Actor):Void
 	{
 		actor.getStateManager().getCountState(this).reset();
 	}
