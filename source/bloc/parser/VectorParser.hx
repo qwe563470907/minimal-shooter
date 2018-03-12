@@ -18,31 +18,40 @@ class VectorParser
 
 			if (isMap(content))
 			{
-				var value = content.get("value");
+				var values = content.get("values");
 
-				if (value == null)
-					throw "Found no \"value\" attribute.";
+				if (values == null)
+					throw "Found no \"values\" attribute.";
 
-				if (!isSequence(value))
-					throw "Invalid \"value\" attribute. This must be an array of two numbers.";
+				if (!isSequence(values))
+					throw "Invalid \"values\" attribute: " + values;
 
-				if (!isValidValue(value))
-					throw "Invalid \"value\" attribute. This must be an array of two numbers.";
+				if (!isValidValues(values))
+					throw "Invalid \"values\" attribute: " + values;
 
-				var coords = stringToCoords(content.get("coordinates"), POLAR);
 				var operation = stringToOperation(content.get("operation"), SET);
 
-				return VectorElement.create(elementName, value[0], value[1], coords, operation);
+				var defaultCoords = if (elementName == POSITION && operation == SET) CARTESIAN else POLAR;
+
+				var coords = stringToCoords(content.get("coordinates"), defaultCoords);
+
+				return VectorElement.create(elementName, values[0], values[1], operation, coords);
 			}
 			else if (isSequence(content))
 			{
-				if (!isValidValue(content))
-					throw "Invalid \"value\" attribute. This must be an array of two numbers.";
+				if (!isValidContentArray(content))
+					throw "Invalid attributes: " + content;
 
-				return VectorElement.create(elementName, content[0], content[1], POLAR, SET);
+				var operation = stringToOperation(content[2], SET);
+
+				var defaultCoords = if (elementName == POSITION && operation == SET) CARTESIAN else POLAR;
+
+				var coords = stringToCoords(content[3], defaultCoords);
+
+				return VectorElement.create(elementName, content[0], content[1], operation, coords);
 			}
 			else
-				throw "Invalid attributes. The attributes must be either a map or an array of two numbers.";
+				throw "Invalid attributes. The attributes must be either a map or an array.";
 		}
 		catch (message:String)
 		{
@@ -52,12 +61,17 @@ class VectorParser
 		}
 	}
 
-	static private function isValidValue(array:Array<Dynamic>):Bool
+	static private inline function isValidValues(array:Array<Dynamic>):Bool
 	{
 		return array.length == 2 && isFloat(array[0]) && isFloat(array[1]);
 	}
 
-	static public function stringToOperation(op: Dynamic, defaultValue:Operation):Operation
+	static private inline function isValidContentArray(array:Array<Dynamic>):Bool
+	{
+		return array.length >= 2 && array.length <= 4 && isFloat(array[0]) && isFloat(array[1]);
+	}
+
+	static public inline function stringToOperation(op: Null<Dynamic>, defaultValue:Operation):Operation
 	{
 
 		return switch (op)
@@ -70,11 +84,13 @@ class VectorParser
 
 			case "subtract": SUBTRACT;
 
-			default: throw "Invalid operation: " + op;
+			default:
+				trace("[BLOC] Invalid operation: " + op);
+				defaultValue;
 		}
 	}
 
-	static public function operationToString(op: Operation):String
+	static public inline function operationToString(op: Operation):String
 	{
 
 		return switch (op)
@@ -87,7 +103,7 @@ class VectorParser
 		}
 	}
 
-	static public function stringToCoords(coords: Null<String>, defaultValue:Coordinates):Coordinates
+	static public inline function stringToCoords(coords: Null<Dynamic>, defaultValue:Coordinates):Coordinates
 	{
 
 		return switch (coords)
@@ -98,11 +114,13 @@ class VectorParser
 
 			case "polar": POLAR;
 
-			default: throw "Invalid coordinates: " + coords;
+			default:
+				trace("[BLOC] Warning: Invalid coordinates: " + coords);
+				defaultValue;
 		}
 	}
 
-	static public function coordsToString(op: Coordinates):String
+	static public inline function coordsToString(op: Coordinates):String
 	{
 
 		return switch (op)

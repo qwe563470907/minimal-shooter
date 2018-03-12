@@ -1,10 +1,6 @@
 patterns:
   "player":
-    - shot_velocity: [2000, -90]
-    - shot_velocity:
-        value: [3000, -90]
-        coordinates: polar
-        operation: set
+    - shot_velocity: [3000, -90]
     - endless:
       - if:
           command: fire
@@ -36,9 +32,7 @@ patterns:
             else:
               - velocity: [900, 90]
         - endless:
-          - velocity:
-              value: [7, 90]
-              operation: add
+          - velocity: [7, 90, add]
   "enemy2":
     - sequence:
       - velocity: [500, 90]

@@ -6,10 +6,10 @@ import bloc.parser.VectorParser.operationToString;
 
 class VectorElement extends DefaultElement
 {
-	private var _name:ElementName;
 	private var _operation:Operation;
+	private var _name:ElementName;
 
-	public static function create(elementName:ElementName, v1:Float, v2:Float, coords:Coordinates, operation:Operation):VectorElement
+	public static inline function create(elementName:ElementName, v1:Float, v2:Float, operation:Operation, coords:Coordinates):VectorElement
 	{
 		var vector = new Vector();
 
