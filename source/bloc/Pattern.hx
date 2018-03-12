@@ -2,6 +2,9 @@ package bloc;
 
 import bloc.element.Element;
 
+/**
+ * Composition of BLOC elements. A BLOC pattern can be also an element in another pattern.
+ */
 interface Pattern extends Element
 {
 	public var name(get, null):String;
@@ -46,9 +49,6 @@ class AbstractPattern implements Pattern
 	}
 }
 
-/**
- * Composition of BLOC elements. A BLOC pattern can be also an element in another pattern.
- */
 class NonNullPattern extends AbstractPattern
 {
 	private var _topElement:Element;
