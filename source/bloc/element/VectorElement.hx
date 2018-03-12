@@ -50,6 +50,16 @@ class VectorElement extends DefaultElement
 					case subtract_operation: new SubtractVelocity(elementName, vector, operation);
 				}
 
+			case shot_position_element:
+				switch (operation)
+				{
+					case set_operation: new SetShotPosition(elementName, vector, operation);
+
+					case add_operation: new AddShotPosition(elementName, vector, operation);
+
+					case subtract_operation: new SubtractShotPosition(elementName, vector, operation);
+				}
+
 			case shot_velocity_element:
 				switch (operation)
 				{
@@ -154,6 +164,45 @@ private class SubtractVelocity extends VectorElement
 	override public inline function run(actor:Actor):Bool
 	{
 		actor.shotVelocity.subtract(this._vector);
+
+		return true;
+	}
+}
+
+private class SetShotPosition extends VectorElement
+{
+	public function new (name:ElementName, vector:Vector, operation:Operation)
+	{ super(name, vector, operation); }
+
+	override public inline function run(actor:Actor):Bool
+	{
+		actor.shotPosition.set(this._vector);
+
+		return true;
+	}
+}
+
+private class AddShotPosition extends VectorElement
+{
+	public function new (name:ElementName, vector:Vector, operation:Operation)
+	{ super(name, vector, operation); }
+
+	override public inline function run(actor:Actor):Bool
+	{
+		actor.shotPosition.add(this._vector);
+
+		return true;
+	}
+}
+
+private class SubtractShotPosition extends VectorElement
+{
+	public function new (name:ElementName, vector:Vector, operation:Operation)
+	{ super(name, vector, operation); }
+
+	override public inline function run(actor:Actor):Bool
+	{
+		actor.shotPosition.subtract(this._vector);
 
 		return true;
 	}

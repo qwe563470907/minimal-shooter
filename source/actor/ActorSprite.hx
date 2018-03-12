@@ -13,8 +13,8 @@ class ActorSprite extends FlxSprite // implements ICleanable
 
 	public var position:Vector;
 	public var motionVelocity:Vector;
+	public var shotPosition:Vector;
 	public var shotVelocity:Vector;
-	public var shotOffset:Vector;
 
 	public var halfWidth:Float;
 	public var halfHeight:Float;
@@ -34,8 +34,8 @@ class ActorSprite extends FlxSprite // implements ICleanable
 		// childActors = new CleanableGroup<Actor>(256);
 		position = new Vector();
 		motionVelocity = new Vector();
+		shotPosition = new Vector();
 		shotVelocity = new Vector();
-		shotOffset = new Vector();
 	}
 
 	// public function clean():Void
@@ -126,8 +126,8 @@ class ActorSprite extends FlxSprite // implements ICleanable
 	public inline function fire(pattern:Pattern):ActorSprite
 	{
 		var newBullet = army.newBullet();
-		newBullet.position.set(this.position);
-		newBullet.motionVelocity.setCartesian(0, 0);
+		newBullet.position.set(this.position).add(this.shotPosition);
+		newBullet.motionVelocity.set(this.shotVelocity);
 		newBullet.setBlocPattern(pattern);
 
 		return this;

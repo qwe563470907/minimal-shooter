@@ -47,6 +47,7 @@ enum ElementName
 {
 	position_element;
 	velocity_element;
+	shot_position_element;
 	shot_velocity_element;
 	fire_element;
 	wait_element;

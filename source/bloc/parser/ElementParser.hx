@@ -29,14 +29,24 @@ class ElementParser
 
 			parsedElement = switch (elementName)
 			{
-				case position_element, velocity_element, shot_velocity_element:
+				case position_element, velocity_element, shot_position_element, shot_velocity_element:
 					VectorParser.parse(elementName, content);
 
 				case fire_element:
-					var argumentMap = element.get(nameStr);
-					var elements:Array<NonParsedElement> = argumentMap.get("pattern");
 					trace(nameStr);
-					new Fire(new Pattern("anonymous", PatternParser.parseAndFoldElements(elements)));
+					var argumentMap = element.get(nameStr);
+
+					if (argumentMap == null)
+					{
+						new Fire(Utility.NULL_PATTERN)
+					}
+					else
+					{
+						var elements:Null<Array<NonParsedElement>> = argumentMap.get("pattern");
+						var pattern = if (elements == null) Utility.NULL_PATTERN else new Pattern("anonymous", PatternParser.parseAndFoldElements(elements));
+
+						new Fire(pattern);
+					}
 
 				case wait_element:
 					var argument:Int = element.get(nameStr);

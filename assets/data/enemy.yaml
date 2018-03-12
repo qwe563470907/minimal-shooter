@@ -5,15 +5,10 @@ patterns:
       - if:
           command: fire
           then:
+            - shot_position: [50, 0, set]
             - fire:
-                pattern:
-                  - velocity: [3000, -85]
+            - shot_position: [50, 180, set]
             - fire:
-                pattern:
-                  - velocity: [3000, -90]
-            - fire:
-                pattern:
-                  - velocity: [3000, -95]
             - wait: 3
   "enemy1":
     - parallel:
