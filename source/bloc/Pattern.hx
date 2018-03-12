@@ -2,42 +2,109 @@ package bloc;
 
 import bloc.element.Element;
 
-/**
- * Composition of BLOC elements. A BLOC pattern can be also an element in another pattern.
- */
-class Pattern implements Element
+interface Pattern extends Element
 {
-	public var name:String = "";
-	public var topElement:Element;
+	public var name(get, null):String;
+	public function renderElements():String;
+}
 
-	public function new (name:String, topElement:Element)
+class AbstractPattern implements Pattern
+{
+	public var name(get, null):String;
+
+	public function new (name:String)
 	{
 		this.name = name;
-		this.topElement = topElement;
 	}
 
 	public function run(actor:Actor):Bool
 	{
-		return topElement.run(actor);
+		return true;
 	}
 
 	public function prepareState(manager:StateManager):Void
 	{
-		topElement.prepareState(manager);
 	}
 
 	public function resetState(actor:Actor):Void
 	{
-		topElement.resetState(actor);
+	}
+
+	public function renderElements():String
+	{
+		return "no elements";
 	}
 
 	public function toString():String
 	{
-		return name;
+		return this.name;
 	}
 
-	public function render():String
+	inline function get_name():String
 	{
-		return topElement.toString();
+		return this.name;
+	}
+}
+
+/**
+ * Composition of BLOC elements. A BLOC pattern can be also an element in another pattern.
+ */
+class NonNullPattern extends AbstractPattern
+{
+	private var _topElement:Element;
+
+	public function new (name:String, topElement:Element)
+	{
+		super(name);
+		this._topElement = topElement;
+	}
+
+	override public inline function run(actor:Actor):Bool
+	{
+		return _topElement.run(actor);
+	}
+
+	override public inline function prepareState(manager:StateManager):Void
+	{
+		_topElement.prepareState(manager);
+	}
+
+	override public inline function resetState(actor:Actor):Void
+	{
+		_topElement.resetState(actor);
+	}
+
+	override public inline function renderElements():String
+	{
+		return _topElement.toString();
+	}
+}
+
+class NamedPattern extends NonNullPattern
+{
+	public function new (name:String, topElement:Element)
+	{
+		super(name, topElement);
+	}
+}
+
+class AnonymousPattern extends NonNullPattern
+{
+	public function new (topElement:Element)
+	{
+		super("anonymous", topElement);
+	}
+
+	override public function toString():String
+	{
+		return this.name + ":\n" + bloc.element.ElementUtility.indent(this.renderElements());
+	}
+}
+
+class NullPattern extends AbstractPattern
+{
+	public function new ()
+	{
+		super("null");
 	}
 }

@@ -29,7 +29,7 @@ class FireParser
 				{
 					var element = PatternParser.parseAndFoldElements(content);	// Interpret as a list of elements.
 
-					if (element != NULL_ELEMENT) new Pattern("anonymous", element);
+					if (element != NULL_ELEMENT) new Pattern.AnonymousPattern(element);
 					else NULL_PATTERN;
 				}
 				else if (isMap(content))
@@ -50,14 +50,14 @@ class FireParser
 					{
 						var element = PatternParser.parseAndFoldElements(patternValue);	// Interpret as a list of elements.
 
-						if (element != NULL_ELEMENT) new Pattern("anonymous", element);
+						if (element != NULL_ELEMENT) new Pattern.AnonymousPattern(element);
 						else NULL_PATTERN;
 					}
 					else if (isMap(patternValue))
 					{
 						var element = ElementParser.parseElement(patternValue);	// Interpret as a single element.
 
-						if (element != NULL_ELEMENT) new Pattern("anonymous", element);
+						if (element != NULL_ELEMENT) new Pattern.AnonymousPattern(element);
 						else NULL_PATTERN;
 					}
 					else

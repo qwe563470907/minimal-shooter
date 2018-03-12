@@ -63,9 +63,9 @@ class PatternParser
 		var parsedElement = parseAndFoldElements(topElements);
 
 		// Complete parsing
-		var parsedPattern = new Pattern(patternName, parsedElement);
+		var parsedPattern = new Pattern.NamedPattern(patternName, parsedElement);
 		Parser.patternDictionary.set(patternName, parsedPattern);
-		trace("[" + patternName + "]\n" + parsedPattern.render());
+		trace("[" + patternName + "]\n" + parsedPattern.renderElements());
 		_parsingPatternNameSet.remove(patternName);
 
 		return parsedPattern;
