@@ -11,13 +11,12 @@ patterns:
             - fire:
             - wait: 3
   "enemy1":
+    - shot_velocity: [400, 90, set, polar, absolute]
     - parallel:
       - endless:
         - sequence:
           - fire:
-              pattern:
-                - velocity: [400, 90]
-          - wait: 120
+          - wait: 60
       - sequence:
         - wait: 240
         - if:

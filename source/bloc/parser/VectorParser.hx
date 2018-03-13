@@ -9,8 +9,17 @@ class VectorParser
 {
 	static public function parse(elementName:ElementName, content: Null<Dynamic>):Element
 	{
+		var element:Element;
+
 		try
 		{
+			/**
+			 * The content should be any of the following:
+			 * - a map of attributes: values [, operation [, coordinates [, reference]]]
+			 * - an array of: value1, value2 [, operation [, coordinates [, reference]]]
+			 * (The reference attribute is only for elements "shot_position", "shot_velocity" and operation "set".)
+			 */
+
 			if (content == null)
 				throw "Found no attributes.";
 
@@ -27,26 +36,22 @@ class VectorParser
 				if (!isValidValues(values))
 					throw "Invalid \"values\" attribute: " + values;
 
-				var operation = stringToEnum(content.get("operation"), "operation", Operation, "operation", set_operation);
-
-				var defaultCoords = if (elementName == position_element && operation == set_operation) cartesian_coords else polar_coords;
-
-				var coords = stringToEnum(content.get("coordinates"), "coords", Coordinates, "coordinates", defaultCoords);
-
-				return VectorElement.create(elementName, values[0], values[1], operation, coords);
+				var operation = getOperation(content.get("operation"));
+				var coords = getCoordinates(content.get("coordinates"));
+				var reference = getReference(content.get("reference"), elementName, operation);
+				element = VectorElementBuilder.create(elementName, values[0], values[1], operation, coords, reference);
 			}
 			else if (isSequence(content))
 			{
 				if (!isValidContentArray(content))
 					throw "Invalid attributes: " + content;
 
-				var operation = stringToEnum(content[2], "operation", Operation, "operation", set_operation);
+				var arrayLength:Int = content.length;
+				var operation = getOperation(if (arrayLength >= 3) content[2] else null);
+				var coords = getCoordinates(if (arrayLength >= 4) content[3] else null);
+				var reference = getReference(if (arrayLength >= 5) content[4] else null, elementName, operation);
 
-				var defaultCoords = if (elementName == position_element && operation == set_operation) cartesian_coords else polar_coords;
-
-				var coords = stringToEnum(content[3], "coords", Coordinates, "coordinates", defaultCoords);
-
-				return VectorElement.create(elementName, content[0], content[1], operation, coords);
+				element = VectorElementBuilder.create(elementName, content[0], content[1], operation, coords, reference);
 			}
 			else
 				throw "Invalid attributes. The attributes must be either a map or an array.";
@@ -54,18 +59,62 @@ class VectorParser
 		catch (message:String)
 		{
 			trace("[BLOC] Warning: Element <" + ElementUtility.enumToString(elementName) + ">: " + message);
-
-			return Utility.NULL_ELEMENT;
+			element = Utility.NULL_ELEMENT;
 		}
+
+		return element;
 	}
 
-	static private inline function isValidValues(array:Array<Dynamic>):Bool
+	private static inline function isValidValues(array:Array<Dynamic>):Bool
 	{
 		return array.length == 2 && isFloat(array[0]) && isFloat(array[1]);
 	}
 
-	static private inline function isValidContentArray(array:Array<Dynamic>):Bool
+	private static inline function isValidContentArray(array:Array<Dynamic>):Bool
 	{
-		return array.length >= 2 && array.length <= 4 && isFloat(array[0]) && isFloat(array[1]);
+		return array.length >= 2 && isFloat(array[0]) && isFloat(array[1]);
+	}
+
+	private static inline function getOperation(operationValue:Null<Dynamic>):Operation
+	{
+		return stringToEnum(operationValue, "operation", Operation, "operation", add_operation);
+	}
+
+	private static inline function getCoordinates(coordinatesValue:Null<Dynamic>):Coordinates
+	{
+		return stringToEnum(coordinatesValue, "coords", Coordinates, "coordinates", polar_coords);
+	}
+
+	private static inline function getReference(referenceValue:Null<Dynamic>, elementName:ElementName, operation:Operation):Null<Reference>
+	{
+
+		return switch (elementName)
+		{
+			case shot_position_element, shot_velocity_element:
+				switch (operation)
+				{
+					case set_operation:
+						stringToEnum(referenceValue, "reference", Reference, "reference", getDefaultReference(elementName));
+
+					default:
+						null;
+				}
+
+			default:
+				null;
+		}
+	}
+
+	private static inline function getDefaultReference(elementName:ElementName):Reference
+	{
+
+		return switch (elementName)
+		{
+			case shot_position_element: relative_reference;
+
+			case shot_velocity_element: absolute_reference;
+
+			default: throw "[BLOC] VectorParser class: Reached the code which should be unreachable. Maybe a bug.";
+		}
 	}
 }

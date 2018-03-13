@@ -5,6 +5,8 @@ package bloc;
  */
 class Vector
 {
+	private static var _dummyReference:Vector = new Vector();
+
 	/**
 	 * The x value in cartesian coordinates system.
 	 */
@@ -28,15 +30,19 @@ class Vector
 	private var _cartesianCoords:CartesianCoordsVector;
 	private var _polarCoords:PolarCoordsVector;
 
-	private var _xUpdated:Bool = true;
-	private var _yUpdated:Bool = true;
-	private var _lengthUpdated:Bool = true;
-	private var _angleUpdated:Bool = true;
+	private var _xUpdated:Bool;
+	private var _yUpdated:Bool;
+	private var _lengthUpdated:Bool;
+	private var _angleUpdated:Bool;
+
+	private var _referer:Referer;
+	private var _reference:Vector;
 
 	public function new ()
 	{
 		this._cartesianCoords = new CartesianCoordsVector();
 		this._polarCoords = new PolarCoordsVector();
+		this.reset();
 	}
 
 	/**
@@ -69,7 +75,7 @@ class Vector
 	}
 
 	/**
-	 * Resets the values to zero.
+	 * Resets the vector so that it will be an absolute zero vector.
 	 *
 	 * @return  This vector.
 	 */
@@ -81,6 +87,7 @@ class Vector
 		this._yUpdated = true;
 		this._lengthUpdated = true;
 		this._angleUpdated = true;
+		this.setAbsoluteReference();
 
 		return this;
 	}
@@ -130,7 +137,7 @@ class Vector
 	 */
 	public inline function addCartesian(x:Float, y:Float):Vector
 	{
-		setCartesian(this.x + x, this.y + y);
+		this.setCartesian(this.x + x, this.y + y);
 
 		return this;
 	}
@@ -144,7 +151,7 @@ class Vector
 
 	public inline function add(vector:Vector):Vector
 	{
-		addCartesian(vector.x, vector.y);
+		this.addCartesian(vector.x, vector.y);
 		vector.putWeak();
 
 		return this;
@@ -159,7 +166,7 @@ class Vector
 	 */
 	public inline function subtractCartesian(x:Float = 0, y:Float = 0):Vector
 	{
-		setCartesian(this.x - x, this.y - y);
+		this.setCartesian(this.x - x, this.y - y);
 
 		return this;
 	}
@@ -172,7 +179,7 @@ class Vector
 	 */
 	public inline function subtract(vector:Vector):Vector
 	{
-		subtractCartesian(vector.x, vector.y);
+		this.subtractCartesian(vector.x, vector.y);
 		vector.putWeak();
 
 		return this;
@@ -190,6 +197,43 @@ class Vector
 			this.length = maxLength;
 
 		return this;
+	}
+
+	/**
+	 * Sets the vector as an absolute vector. At default the vector is absolute.
+	 *
+	 * @return  This vector.
+	 */
+	public inline function setAbsoluteReference():Vector
+	{
+		this._referer = Referers.absolute;
+		this._reference = Vector._dummyReference;
+
+		return this;
+	}
+
+	/**
+	 * Sets the vector's reference. This enables the vector to be considered as a relative vector.
+	 *
+	 * @param   reference The reference vector.
+	 * @return  This vector.
+	 */
+	public inline function setRelativeReference(reference:Vector):Vector
+	{
+		this._referer = Referers.relative;
+		this._reference = reference;
+
+		return this;
+	}
+
+	/**
+	 * Calculates the absolute coordinates and copies that values to the target vector.
+	 *
+	 * @param   target The vector for receiving the result.
+	 */
+	public inline function calculateAbsolute(target:Vector):Void
+	{
+		this._referer.refer(this, this._reference, target);
 	}
 
 	/**
@@ -240,14 +284,14 @@ class Vector
 
 	inline function get_x()
 	{
-		updateX();
+		this.updateX();
 
 		return this._cartesianCoords.x;
 	}
 
 	inline function get_y()
 	{
-		updateY();
+		this.updateY();
 
 		return this._cartesianCoords.y;
 	}
@@ -255,7 +299,7 @@ class Vector
 	inline function set_x(v:Float)
 	{
 		this._xUpdated = true;
-		updateY();
+		this.updateY();
 		this._lengthUpdated = false;
 		this._angleUpdated = false;
 
@@ -264,7 +308,7 @@ class Vector
 
 	inline function set_y(v:Float)
 	{
-		updateX();
+		this.updateX();
 		this._yUpdated = true;
 		this._lengthUpdated = false;
 		this._angleUpdated = false;
@@ -274,14 +318,14 @@ class Vector
 
 	inline function get_length()
 	{
-		updateLength();
+		this.updateLength();
 
 		return this._polarCoords.length;
 	}
 
 	inline function get_angle()
 	{
-		updateAngle();
+		this.updateAngle();
 
 		return this._polarCoords.angle;
 	}
@@ -289,7 +333,7 @@ class Vector
 	inline function set_length(v:Float)
 	{
 		this._lengthUpdated = true;
-		updateAngle();
+		this.updateAngle();
 		this._xUpdated = false;
 		this._yUpdated = false;
 
@@ -298,7 +342,7 @@ class Vector
 
 	inline function set_angle(v:Float)
 	{
-		updateLength();
+		this.updateLength();
 		this._angleUpdated = true;
 		this._xUpdated = false;
 		this._yUpdated = false;
@@ -316,16 +360,15 @@ private class CartesianCoordsVector
 	public var y:Float = 0;
 
 	public function new ()
-	{
-	}
+	{}
 
-	public inline function set(vector:CartesianCoordsVector)
+	public inline function set(vector:CartesianCoordsVector):Void
 	{
 		this.x = vector.x;
 		this.y = vector.y;
 	}
 
-	public inline function setCoords(x:Float, y:Float)
+	public inline function setCoords(x:Float, y:Float):Void
 	{
 		this.x = x;
 		this.y = y;
@@ -355,16 +398,15 @@ private class PolarCoordsVector
 	public var angle:Float = 0;
 
 	public function new ()
-	{
-	}
+	{}
 
-	public inline function set(vector:PolarCoordsVector)
+	public inline function set(vector:PolarCoordsVector):Void
 	{
 		this.length = vector.length;
 		this.angle = vector.angle;
 	}
 
-	public inline function setCoords(length:Float, angle:Float)
+	public inline function setCoords(length:Float, angle:Float):Void
 	{
 		this.length = length;
 		this.angle = angle;
@@ -379,4 +421,38 @@ private class PolarCoordsVector
 	{
 		return this.length * Math.sin(this.angle * TO_RADIANS);
 	}
+}
+
+private interface Referer
+{
+	public function refer(vector:Vector, reference:Vector, target:Vector):Void;
+}
+
+private class AbsoluteReferer implements Referer
+{
+	public function new ()
+	{}
+
+	public inline function refer(vector:Vector, reference:Vector, target:Vector):Void
+	{
+		target.set(vector);
+	}
+}
+
+private class RelativeReferer implements Referer
+{
+	public function new ()
+	{}
+
+	public inline function refer(vector:Vector, reference:Vector, target:Vector):Void
+	{
+		reference.calculateAbsolute(target);
+		target.add(vector);
+	}
+}
+
+private class Referers
+{
+	public static var absolute = new AbsoluteReferer();
+	public static var relative = new RelativeReferer();
 }

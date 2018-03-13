@@ -43,6 +43,12 @@ enum Coordinates
 	polar_coords;
 }
 
+enum Reference
+{
+	absolute_reference;
+	relative_reference;
+}
+
 enum ElementName
 {
 	position_element;

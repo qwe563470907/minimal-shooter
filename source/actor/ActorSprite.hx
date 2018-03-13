@@ -35,6 +35,7 @@ class ActorSprite extends FlxSprite // implements ICleanable
 		position = new Vector();
 		motionVelocity = new Vector();
 		shotPosition = new Vector();
+		shotPosition.setRelativeReference(position);	// relative vector at default
 		shotVelocity = new Vector();
 	}
 
@@ -126,8 +127,8 @@ class ActorSprite extends FlxSprite // implements ICleanable
 	public inline function fire(pattern:Pattern):ActorSprite
 	{
 		var newBullet = army.newBullet();
-		newBullet.position.set(this.position).add(this.shotPosition);
-		newBullet.motionVelocity.set(this.shotVelocity);
+		this.shotPosition.calculateAbsolute(newBullet.position);
+		this.shotVelocity.calculateAbsolute(newBullet.motionVelocity);
 		newBullet.setBlocPattern(pattern);
 
 		return this;
