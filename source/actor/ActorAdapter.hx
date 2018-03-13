@@ -26,7 +26,7 @@ class ActorAdapter implements bloc.Actor
 	// static private var _temporalVector:Vector = new TemporalVector(0, 0);
 
 	public var position(get, never):Vector;
-	public var motionVelocity(get, never):Vector;
+	public var velocity(get, never):Vector;
 	public var shotPosition(get, never):Vector;
 	public var shotVelocity(get, never):Vector;
 
@@ -96,7 +96,7 @@ class ActorAdapter implements bloc.Actor
 		return this._actor.position;
 	}
 
-	inline function get_motionVelocity()
+	inline function get_velocity()
 	{
 		return this._actor.motionVelocity;
 	}

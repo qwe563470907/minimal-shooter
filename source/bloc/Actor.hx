@@ -3,7 +3,7 @@ package bloc;
 interface Actor
 {
 	public var position(get, never):Vector;
-	public var motionVelocity(get, never):Vector;
+	public var velocity(get, never):Vector;
 	public var shotPosition(get, never):Vector;
 	public var shotVelocity(get, never):Vector;
 	// Vector reference for shot_position and shot_velocity ???

@@ -163,7 +163,7 @@ private class SetVelocity extends VectorElement
 
 	override public inline function run(actor:Actor):Bool
 	{
-		actor.motionVelocity.set(this._vector);
+		actor.velocity.set(this._vector);
 
 		return true;
 	}
@@ -176,7 +176,7 @@ private class AddVelocity extends VectorElement
 
 	override public inline function run(actor:Actor):Bool
 	{
-		actor.motionVelocity.add(this._vector);
+		actor.velocity.add(this._vector);
 
 		return true;
 	}
@@ -298,7 +298,7 @@ private class SetShotVelocityRelative extends SetShotVelocity
 
 	override public inline function run(actor:Actor):Bool
 	{
-		actor.shotVelocity.setRelativeReference(actor.motionVelocity);
+		actor.shotVelocity.setRelativeReference(actor.velocity);
 		actor.shotVelocity.set(this._vector);
 
 		return true;

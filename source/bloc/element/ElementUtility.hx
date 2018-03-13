@@ -52,9 +52,17 @@ enum Reference
 enum ElementName
 {
 	position_element;
+	distance_element;
+	bearing_element;
 	velocity_element;
+	speed_element;
+	direction_element;
 	shot_position_element;
+	shot_distance_element;
+	shot_bearing_element;
 	shot_velocity_element;
+	shot_speed_element;
+	shot_direction_element;
 	fire_element;
 	wait_element;
 	sequence_element;

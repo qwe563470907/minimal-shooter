@@ -60,6 +60,10 @@ class ElementParser
 				case position_element, velocity_element, shot_position_element, shot_velocity_element:
 					VectorParser.parse(elementName, content);
 
+				case distance_element, bearing_element, speed_element, direction_element,
+						shot_distance_element, shot_bearing_element, shot_speed_element, shot_direction_element:
+					ScalarParser.parse(elementName, content);
+
 				case fire_element:
 					FireParser.parse(content);
 
