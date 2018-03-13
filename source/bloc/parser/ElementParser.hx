@@ -8,6 +8,12 @@ import bloc.Utility.NULL_ELEMENT;
 
 class ElementParser
 {
+	/**
+	 * Parses the single element extracted from BLOC file.
+	 *
+	 * @param   nonParsedElement The element before parsing. Expected to be either a mapping with a single key-value pair or a pattern name (will be validated in this method).
+	 * @return  The parsed element instance.
+	 */
 	static public inline function parseElement(nonParsedElement:Null<Dynamic>):Element
 	{
 		var parsedElement:Element;
@@ -83,7 +89,7 @@ class ElementParser
 		}
 		catch (message:String)
 		{
-			trace("[BLOC] Warning: Element <" + elementNameString + ">: " + message);
+			trace("[BLOC] Warning: Element <" + elementNameString + ">: Invalid content." + message);
 			parsedElement = NULL_ELEMENT;
 		}
 

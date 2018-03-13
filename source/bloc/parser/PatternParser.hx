@@ -9,6 +9,12 @@ class PatternParser
 {
 	static private var _parsingPatternNameSet = new Map<String, Bool>();
 
+	/**
+	 * Parses the pattern extracted from BLOC file and stores the result in Parser class.
+	 *
+	 * @param   patternName The name of the pattern written in BLOC file.
+	 * @return  The parsed pattern instance.
+	 */
 	static public function parsePattern(patternName:String):Pattern
 	{
 		// Check if already parsed
@@ -43,14 +49,15 @@ class PatternParser
 		return parsedPattern;
 	}
 
+	/**
+	 * Parses the content of a pattern extracted from BLOC file.
+	 *
+	 * @param   content The content of a pattern before parsing. Expected to be any of null, a list of elements or a pattern name.
+	 * @param   patternName (Optional) The name of the pattern written in BLOC file. Can be omitted if the pattern is anonymous.
+	 * @return  The parsed pattern instance.
+	 */
 	static public inline function parsePatternContent(content:Null<Dynamic>, ?patternName:Null<String>):Pattern
 	{
-		/**
-		 * The value of "pattern" attribute should be any of the following:
-		 * - null
-		 * - a list of elements
-		 * - a pattern name
-		 */
 
 		return if (content == null)
 		{
@@ -77,6 +84,12 @@ class PatternParser
 		}
 	}
 
+	/**
+	 * Parses an array of non-parsed elements.
+	 *
+	 * @param   nonParsedElements The array of non-parsed elements.
+	 * @return  The array of parsed element instances.
+	 */
 	static public inline function parseElementArray(nonParsedElements:Array<Dynamic>):Array<Element>
 	{
 		var parsedElements:Array<Element> = [];
@@ -91,6 +104,13 @@ class PatternParser
 		return parsedElements;
 	}
 
+	/**
+	 * Parses an array of non-parsed elements and fold them to a single element instance.
+	 * If the parsing result is an array of multiple elements, they will be folded as a single <sequence> element.
+	 *
+	 * @param   nonParsedElements The array of non-parsed elements.
+	 * @return  The parsed and folded element instance.
+	 */
 	static public inline function parseAndFoldElements(nonParsedElements:Array<Dynamic>):Element
 	{
 		return foldElements(parseElementArray(nonParsedElements));

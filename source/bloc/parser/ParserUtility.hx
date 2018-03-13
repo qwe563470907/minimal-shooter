@@ -5,14 +5,14 @@ import yaml.util.ObjectMap;
 class ParserUtility
 {
 	/**
-	 * Converts a string (which the parser found in the YAML document) to an enum instance.
+	 * Converts a string extracted from BLOC file to an enum instance.
 	 *
 	 * @param   str The string to convert.
 	 * @param   suffix The suffix for the internal names of the enum constructors. (e.g. "element")
 	 * @param   enumObj The enum object.
 	 * @param   attributeName The name for using in the error message if the string was not convertable.
-	 * @param   defaultValue The default enum instance. The function returns this if the string was not convertable.
-	 * @return  The converted enum instance.
+	 * @param   defaultValue The default enum instance.
+	 * @return  The converted enum instance, or the provided default value if the provided string was not convertable.
 	 */
 	public static inline function stringToEnum<T>(str: Null<Dynamic>, suffix:String, enumObj:Enum<T>, attributeName:String, defaultValue:T):T
 	{

@@ -7,19 +7,28 @@ import bloc.parser.ParserUtility.*;
 
 class VectorParser
 {
+	/**
+	 * Parses the content of any vector element.
+	 *
+	 * @param   content The content of any vector element. This should be either:
+	 *     (1) a mapping of attributes:
+	 *         "values" (an array of two numbers),
+	 *         "operation",
+	 *         "coordinates",
+	 *         "reference".
+	 *     (2) an array of:
+	 *         value1, value2, operation, coordinates, reference.
+	 *     Only the values are mandatory.
+	 *     The "reference" attribute is used only for cases where element is either "shot_position" or "shot_velocity" and operation is "set".
+	 *     This format will be checked in this method.
+	 * @return  The parsed element instance.
+	 */
 	static public function parse(elementName:ElementName, content: Null<Dynamic>):Element
 	{
 		var element:Element;
 
 		try
 		{
-			/**
-			 * The content should be any of the following:
-			 * - a map of attributes: values [, operation [, coordinates [, reference]]]
-			 * - an array of: value1, value2 [, operation [, coordinates [, reference]]]
-			 * (The reference attribute is only for elements "shot_position", "shot_velocity" and operation "set".)
-			 */
-
 			if (content == null)
 				throw "Found no attributes.";
 

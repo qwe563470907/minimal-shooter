@@ -92,7 +92,7 @@ class AnonymousPattern extends NonNullPattern
 {
 	public function new (topElement:Element)
 	{
-		super("anonymous", topElement);
+		super("anonymous pattern", topElement);
 	}
 
 	override public function toString():String

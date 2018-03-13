@@ -1,51 +1,74 @@
 package bloc.parser;
 
+import bloc.element.Element;
 import bloc.element.IfBranch;
 import bloc.parser.ParserUtility.*;
+import bloc.Utility.*;
 
 class IfParser
 {
-	public static inline function parse(content:Dynamic)
+	/**
+	 * Parses the content of <if> element.
+	 *
+	 * @param   content The content of <if> element. This should be a map of the following attributes:
+	 *     "expression" (String),
+	 *     "command" (String),
+	 *     "then" (pattern),
+	 *     "else" (pattern).
+	 *     The patterns can be either named or anonymous.
+	 *     Each attribute is nullable, but the following must be non-null and valid.
+	 *     (1) either one of "expression" or "command".
+	 *     (2) either one of "then" or "else".
+	 *     This format will be checked in this method.
+	 * @return  The parsed <if> element instance.
+	 */
+	public static inline function parse(content:Dynamic):Element
 	{
-		/**
-		 * The content should be a map of the following attributes:
-		 * - expression (String)
-		 * - command (String)
-		 * - then
-		 * - else
-		 * Each attribute is nullable.
-		 */
+		var parsedElement:Element;
 
-		var expression:Null<Dynamic> = content.get("expression");
-
-		if (expression != null && !isString(expression))
+		try
 		{
-			trace("[BLOC] Warning: Element <if>: The expression must be a string.");
-			expression = null;
-		}
+			if (!isMap(content))
+				throw "Invalid content. The following object must be a mapping of attributes: " + content;
 
-		var command:Null<Dynamic> = content.get("command");
+			var expression:Null<Dynamic> = content.get("expression");
 
-		if (command != null && !isString(command))
-		{
-			trace("[BLOC] Warning: Element <if>: \"command\" attribute must be a string.");
-			command = null;
-		}
+			if (expression != null && !isString(expression))
+			{
+				throw "Invalid \"expression\" attribute. This must be a string: " + expression;
+				expression = null;
+			}
 
-		var nonParsedThenElements:Null<Dynamic> = content.get("then");
-		var nonParsedElseElements:Null<Dynamic> = content.get("else");
+			var command:Null<Dynamic> = content.get("command");
 
-		return if (expression == null && command == null)
-		{
-			trace("[BLOC] Warning: Element <if>: Found neither expression nor command.");
-			Utility.NULL_ELEMENT;
-		}
-		else
-			new IfBranch(
+			if (command != null && !isString(command))
+			{
+				throw "Invalid \"command\" attribute. This must be a string: " + expression;
+				command = null;
+			}
+
+			var thenPattern = PatternParser.parsePatternContent(content.get("then"));
+			var elsePattern = PatternParser.parsePatternContent(content.get("else"));
+
+			if (expression == null && command == null)
+				throw "Found neither \"expression\" nor \"command\" attribute.";
+
+			if (thenPattern == NULL_PATTERN && elsePattern == NULL_PATTERN)
+				throw "Found neither \"then\" nor \"else\" attribute.";
+
+			parsedElement = new IfBranch(
 			  expression,
 			  command,
-			  PatternParser.parsePatternContent(nonParsedThenElements),
-			  PatternParser.parsePatternContent(nonParsedElseElements)
+			  thenPattern,
+			  elsePattern
 			);
+		}
+		catch (message:String)
+		{
+			trace("[BLOC] Warning: Element <if>: " + message);
+			parsedElement = NULL_ELEMENT;
+		}
+
+		return parsedElement;
 	}
 }
