@@ -11,6 +11,19 @@ class NullElement extends DefaultElement
 		super();
 	}
 
+	override public inline function run(actor:Actor):Bool
+	{
+		return true;
+	}
+
+	override public inline function prepareState(manager:StateManager):Void
+	{
+	}
+
+	override public inline function resetState(actor:Actor):Void
+	{
+	}
+
 	override public function toString():String
 	{
 		return "null element";

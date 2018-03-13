@@ -2,17 +2,17 @@ package bloc.element;
 
 class Parallel extends List
 {
-	public function new (actionList:Array<Element>)
+	public function new (elements:Array<Element>)
 	{
-		super(actionList);
+		super(elements);
 	}
 
 	override public inline function run(actor:Actor):Bool
 	{
 		var completedAll = true;
 
-		for (i in 0...this.actionList.length)
-			completedAll = this.actionList[i].run(actor) && completedAll;
+		for (i in 0...this.elements.length)
+			completedAll = this.elements[i].run(actor) && completedAll;
 
 		if (completedAll) this.resetChildrenState(actor);
 

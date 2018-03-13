@@ -2,9 +2,9 @@ package bloc.element;
 
 class EndlessRepeat extends Sequence
 {
-	public function new (action:Element, ?intervalWaitCount:Int)
+	public function new (pattern:Pattern, ?intervalWaitCount:Int)
 	{
-		super([action, new Wait(intervalWaitCount)]);
+		super([pattern, new Wait(intervalWaitCount)]);
 	}
 
 	override public inline function run(actor:Actor):Bool

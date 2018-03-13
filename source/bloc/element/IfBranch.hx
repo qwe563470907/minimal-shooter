@@ -14,9 +14,9 @@ class IfBranch extends ConditionalBranch
 	private var _hasExpression:Bool;
 	private var _hasCommand:Bool;
 
-	public function new (expression:Null<String>, command:Null<String>, thenElement:Element, elseElement:Element)
+	public function new (expression:Null<String>, command:Null<String>, thenPattern:Pattern, elsePattern:Pattern)
 	{
-		super(thenElement, elseElement);
+		super(thenPattern, elsePattern);
 
 		if (expression != null)
 		{
@@ -52,7 +52,7 @@ class IfBranch extends ConditionalBranch
 		return "if:\n" + indent(str) + "\n" + super.toString();
 	}
 
-	override private function setActiveBranch(actor:Actor, state:ConditionalBranchState):Element
+	override private function setActiveBranch(actor:Actor, state:ConditionalBranchState):Pattern
 	{
 		var expEvalResult:Bool;
 

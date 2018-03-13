@@ -2,9 +2,9 @@ package bloc.element;
 
 class Sequence extends List
 {
-	public function new (actionList:Array<Element>)
+	public function new (elements:Array<Element>)
 	{
-		super(actionList);
+		super(elements);
 	}
 
 	override public function run(actor:Actor):Bool
@@ -13,7 +13,7 @@ class Sequence extends List
 
 		while (!state.isCompleted)
 		{
-			var completed = this.actionList[state.count].run(actor);
+			var completed = this.elements[state.count].run(actor);
 
 			if (!completed) return false;
 
@@ -29,8 +29,8 @@ class Sequence extends List
 	{
 		super.prepareState(manager);
 
-		var actionListLength = this.actionList.length;
-		manager.addCountState(this, actionListLength);
+		var elementsLength = this.elements.length;
+		manager.addCountState(this, elementsLength);
 	}
 
 	override public inline function resetState(actor:Actor):Void

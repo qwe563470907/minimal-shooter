@@ -4,13 +4,13 @@ import bloc.state.CountState;
 
 class Repeat extends DefaultElement
 {
-	public var action:Element;
+	public var element:Pattern;
 	private var repetitionCount:Int;
 
-	public function new (action:Element, count:Int)
+	public function new (element:Pattern, count:Int)
 	{
 		super();
-		this.action = action;
+		this.element = element;
 		this.repetitionCount = count;
 	}
 
@@ -20,11 +20,11 @@ class Repeat extends DefaultElement
 
 		while (!state.isCompleted)
 		{
-			var completed = this.action.run(actor);
+			var completed = this.element.run(actor);
 
 			if (!completed) return false;
 
-			this.action.resetState(actor);
+			this.element.resetState(actor);
 			state.increment();
 		}
 
@@ -34,7 +34,7 @@ class Repeat extends DefaultElement
 	override public inline function prepareState(manager:StateManager):Void
 	{
 		manager.countStateMap.set(this, new CountState(this.repetitionCount));
-		this.action.prepareState(manager);
+		this.element.prepareState(manager);
 	}
 
 	override public inline function resetState(actor:Actor):Void

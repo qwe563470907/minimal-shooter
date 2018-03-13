@@ -3,29 +3,51 @@ package bloc.parser;
 import bloc.element.*;
 import bloc.element.ElementUtility.ElementName;
 import bloc.parser.Parser.NonParsedElement;
+import bloc.parser.ParserUtility.*;
+import bloc.Utility.NULL_ELEMENT;
 
 class ElementParser
 {
-	static public function parseElement(nonParsedNode:Dynamic):Element
+	static public inline function parseElement(nonParsedElement:Null<Dynamic>):Element
 	{
 		var parsedElement:Element;
 
-		if (Std.is(nonParsedNode, NonParsedElement))
+		try
 		{
-			var element:NonParsedElement = cast nonParsedNode;
-			var nameStr:String;
-
-			try
-			{ nameStr = getFirstKey(element); }
-			catch (message:String)
+			if (nonParsedElement == null)
+				parsedElement = NULL_ELEMENT;
+			else if (isMap(nonParsedElement))
 			{
-				trace(message);
-				return Utility.NULL_ELEMENT;
+				var elementNameString = getFirstKey(nonParsedElement);	// Interpret as a mapping with a single key-value pair.
+				var content = nonParsedElement.get(elementNameString);
+				var elementName = ParserUtility.stringToEnum(elementNameString, "element", ElementName, "element", null_element);
+
+				parsedElement = parseElementContent(elementName, elementNameString, content);
+			}
+			else
+			{
+				var patternName:String = cast nonParsedElement;	// Interpret as a string as it may be a pattern name.
+				parsedElement = PatternParser.parsePattern(patternName);
 			}
 
-			var content = element.get(nameStr);
+			if (parsedElement == null || !Std.is(parsedElement, Element))
+				throw "Failed to parse element:\n" + nonParsedElement;
+		}
+		catch (message:String)
+		{
+			trace("[BLOC] Warning: Invalid element. " + message);
+			parsedElement = NULL_ELEMENT;
+		}
 
-			var elementName = ParserUtility.stringToEnum(nameStr, "element", ElementName, "element", null_element);
+		return parsedElement;
+	}
+
+	static private inline function parseElementContent(elementName:ElementName, elementNameString:String, content:Null<Dynamic>):Element
+	{
+		var parsedElement:Element;
+
+		try
+		{
 
 			parsedElement = switch (elementName)
 			{
@@ -36,105 +58,33 @@ class ElementParser
 					FireParser.parse(content);
 
 				case wait_element:
-					var argument:Int = element.get(nameStr);
-					trace(nameStr + " " + argument);
-					new Wait(argument);
+					if (isInt(content)) new Wait(content);
+					else if (isFloat(content)) new Wait(Math.floor(content));
+					else throw "Passed a non-number value: " + content;
 
 				case sequence_element:
-					trace(nameStr);
-					new Sequence(PatternParser.parseElementArray(element.get(nameStr)));
+					if (isSequence(content)) new Sequence(PatternParser.parseElementArray(content));
+					else throw "Following object must be a list of elements:\n" + content;
 
 				case parallel_element:
-					trace(nameStr);
-					new Parallel(PatternParser.parseElementArray(element.get(nameStr)));
+					if (isSequence(content)) new Parallel(PatternParser.parseElementArray(content));
+					else throw "Following object must be a list of elements:\n" + content;
 
 				case endless_element:
-					trace(nameStr);
-					new EndlessRepeat(PatternParser.parseAndFoldElements(element.get(nameStr)));
+					new EndlessRepeat(PatternParser.parsePatternContent(content));
 
 				case if_element:
-					trace(nameStr);
-					var argumentMap = element.get(nameStr);
-
-					var expression = argumentMap.get("expression");
-
-					if (expression != null && Std.is(expression, String) != true)
-					{
-						trace("[BLOC] Warning: The expression of <if> element must be a string.");
-						expression = null;
-					}
-
-					var command = argumentMap.get("command");
-
-					if (command != null && Std.is(command, String) != true)
-					{
-						trace("[BLOC] Warning: The command of <if> element must be a string.");
-						command = null;
-					}
-
-					var nonParsedThenElements = argumentMap.get("then");
-
-					if (nonParsedThenElements == null)
-						nonParsedThenElements = [];
-					else if (Std.is(nonParsedThenElements, Array) != true)
-					{
-						trace("[BLOC] Warning: \"then\" of <if> element must be a list of elements.");
-						nonParsedThenElements = [];
-					}
-
-					var nonParsedElseElements = argumentMap.get("else");
-
-					if (nonParsedElseElements == null)
-						nonParsedElseElements = [];
-					else if (Std.is(nonParsedElseElements, Array) != true)
-					{
-						trace("[BLOC] Warning: \"else\" of <if> element must be a list of elements.");
-						nonParsedElseElements = [];
-					}
-
-					if (expression == null && command == null)
-					{
-						trace("[BLOC] Warning: <if> element must have either an expression or a command.");
-						Utility.NULL_ELEMENT;
-					}
-					else
-						new IfBranch(
-						  expression,
-						  command,
-						  PatternParser.parseAndFoldElements(nonParsedThenElements),
-						  PatternParser.parseAndFoldElements(nonParsedElseElements)
-						);
+					IfParser.parse(content);
 
 				default:
 					// definition?
-					Utility.NULL_ELEMENT;
+					NULL_ELEMENT;
 			}
 		}
-		else if (Std.is(nonParsedNode, String))
+		catch (message:String)
 		{
-			var patternName:String = cast(nonParsedNode, String);
-
-			if (Parser.nonParsedPatternMap.exists(patternName))
-			{
-				trace("Found pattern alias " + patternName);
-				parsedElement = PatternParser.parsePattern(patternName);
-			}
-			else
-			{
-				trace("[BLOC] No pattern found for alias " + patternName);
-				parsedElement = Utility.NULL_ELEMENT;
-			}
-		}
-		else
-		{
-			trace("[BLOC] Following object should be a map or string:\n" + nonParsedNode);
-			parsedElement = Utility.NULL_ELEMENT;
-		}
-
-		if (parsedElement == null || !Std.is(parsedElement, Element))
-		{
-			trace("[BLOC] Failed to parse element:\n" + nonParsedNode);
-			return Utility.NULL_ELEMENT;
+			trace("[BLOC] Warning: Element <" + elementNameString + ">: " + message);
+			parsedElement = NULL_ELEMENT;
 		}
 
 		return parsedElement;
@@ -142,17 +92,19 @@ class ElementParser
 
 	static private function getFirstKey(object:NonParsedElement):String
 	{
-		if (!Std.is(object, NonParsedElement))
-			throw "[BLOC] Following object should be a map:\n" + object.toString();
-
 		var keys = object.keys();
 
 		if (keys == null)
-			throw "[BLOC] Error: Expected a mapping but received object without keys.";
+			throw "Expected a mapping but received object without keys:\n" + object.toString();
 
 		if (!keys.hasNext())
-			throw "[BLOC] Error: Found an empty mapping.";
+			throw "Found an empty mapping.";
 
-		return keys.next();
+		var firstKey = keys.next();
+
+		if (keys.hasNext())
+			throw "Multiple key-value pairs for a single element:\n" + object.toString();
+
+		return firstKey;
 	}
 }

@@ -5,14 +5,14 @@ import bloc.state.ConditionalBranchState;
 
 class ConditionalBranch extends DefaultElement
 {
-	private var _then:Element;
-	private var _else:Element;
+	private var _then:Pattern;
+	private var _else:Pattern;
 
-	private function new (thenElement:Element, elseElement:Element)
+	private function new (thenPattern:Pattern, elsePattern:Pattern)
 	{
 		super();
-		this._then = thenElement;
-		this._else = elseElement;
+		this._then = thenPattern;
+		this._else = elsePattern;
 	}
 
 	override public function run(actor:Actor):Bool
@@ -56,7 +56,7 @@ class ConditionalBranch extends DefaultElement
 		this._else.resetState(actor);
 	}
 
-	private function setActiveBranch(actor:Actor, state:ConditionalBranchState):Element
+	private function setActiveBranch(actor:Actor, state:ConditionalBranchState):Pattern
 	{
 		state.setActiveBranch(_then);
 
