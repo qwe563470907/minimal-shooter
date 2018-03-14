@@ -9,7 +9,7 @@ class EndlessRepeat extends Sequence
 
 	override public inline function run(actor:Actor):Bool
 	{
-		if (super.run(actor))
+		while (super.run(actor))
 			this.resetState(actor);
 
 		return false;
