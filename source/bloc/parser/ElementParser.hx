@@ -80,6 +80,9 @@ class ElementParser
 					if (isSequence(content)) new Parallel(PatternParser.parseElementArray(content));
 					else throw "Following object must be a list of elements:\n" + content;
 
+				case loop_element:
+					LoopParser.parse(content);
+
 				case endless_element:
 					new EndlessRepeat(PatternParser.parsePatternContent(content));
 

@@ -33,7 +33,7 @@ class EnemyGenerator extends FlxBasic
 			newEnemy.position.setCartesian(_random.float(100, FlxG.width - 100), -50);
 			newEnemy.motionVelocity.setCartesian(0, 50);
 			newEnemy.syncBlocToFlixel();
-			var action = _blocPatternDictionary.get("enemy1");
+			var action = _blocPatternDictionary.get("enemy2");
 			newEnemy.setBlocPattern(action);
 		}
 	}

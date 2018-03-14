@@ -67,7 +67,7 @@ enum ElementName
 	wait_element;
 	sequence_element;
 	parallel_element;
-	repeat_element;
+	loop_element;
 	endless_element;
 	if_element;
 	command_element;

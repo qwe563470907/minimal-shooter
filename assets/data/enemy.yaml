@@ -28,7 +28,23 @@ patterns:
         - endless:
           - velocity: [7, 90, add]
   "enemy2":
-    - velocity: [500, 90]
+    - velocity: [1000, 90]
+    - wait: 25
+    - speed: [0, set]
+    - shot_distance: 60
+    - shot_speed: 200
+    - loop:
+        count: 300
+        pattern:
+          - shot_bearing: 3
+          - loop:
+              count: 4
+              pattern:
+                - shot_bearing: 90
+                - shot_direction: 3
+                - fire:
+          - wait: 2
+    - velocity: [1000, 90]
 
 definitions:
   "accelerate":
