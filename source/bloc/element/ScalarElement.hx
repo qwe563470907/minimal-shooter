@@ -35,7 +35,11 @@ class ScalarElement extends DefaultElement
 
 	override public function toString():String
 	{
-		return ElementUtility.enumToString(this._name) + " -val " + this._value + " -op " + ElementUtility.enumToString(this._operation);
+		return (
+		  ElementUtility.enumToString(this._name) +
+		  " -val " + this._value +
+		  " -op " + ElementUtility.enumToString(this._operation)
+		);
 	}
 }
 
@@ -55,56 +59,17 @@ class ScalarElementBuilder
 	  operation:Operation
 	):ScalarElement
 	{
-		var scalarOperator:AbstractScalarOperator;
-		var vectorGetter:AbstractVectorGetter;
-
-		switch (elementName)
+		try
 		{
-			case distance_element, speed_element, shot_distance_element, shot_speed_element:
-				// Length group
-				scalarOperator = switch (operation)
-				{
-					case set_operation: ScalarOperators.setLength;
+			var scalarOperator = ScalarOperators.chooseScalarOperator(elementName, operation);
+			var vectorGetter = VectorGetters.chooseVectorGetter(elementName);
 
-					case add_operation: ScalarOperators.addLength;
-
-					case subtract_operation: ScalarOperators.subtractLength;
-				}
-
-			case bearing_element, direction_element, shot_bearing_element, shot_direction_element:
-				// Angle group
-				scalarOperator = switch (operation)
-				{
-					case set_operation: ScalarOperators.setAngle;
-
-					case add_operation: ScalarOperators.addAngle;
-
-					case subtract_operation: ScalarOperators.subtractAngle;
-				}
-
-			default:
-				throw "[BLOC] ScalarElement.create(): Invalid element. Maybe a bug.";
+			return new ScalarElement(elementName, value, operation, vectorGetter, scalarOperator);
 		}
-
-		switch (elementName)
+		catch (message:String)
 		{
-			case distance_element, bearing_element:
-				vectorGetter = VectorGetters.positionGetter;
-
-			case speed_element, direction_element:
-				vectorGetter = VectorGetters.velocityGetter;
-
-			case shot_distance_element, shot_bearing_element:
-				vectorGetter = VectorGetters.shotPositionGetter;
-
-			case shot_speed_element, shot_direction_element:
-				vectorGetter = VectorGetters.shotVelocityGetter;
-
-			default:
-				throw "[BLOC] ScalarElement.create(): Invalid element. Maybe a bug.";
+			throw "ScalarElement.create(): " + message;
 		}
-
-		return new ScalarElement(elementName, value, operation, vectorGetter, scalarOperator);
 	}
 }
 
@@ -116,6 +81,36 @@ private class ScalarOperators
 	public static var setAngle = new SetAngle();
 	public static var addAngle = new AddAngle();
 	public static var subtractAngle = new SubtractAngle();
+
+	public static inline function chooseScalarOperator(elementName:ElementName, operation:Operation):AbstractScalarOperator
+	{
+
+		return switch (elementName)
+		{
+			case distance_element, speed_element, shot_distance_element, shot_speed_element:	// Length group
+				switch (operation)
+				{
+					case set_operation: ScalarOperators.setLength;
+
+					case add_operation: ScalarOperators.addLength;
+
+					case subtract_operation: ScalarOperators.subtractLength;
+				}
+
+			case bearing_element, direction_element, shot_bearing_element, shot_direction_element:	// Angle group
+				switch (operation)
+				{
+					case set_operation: ScalarOperators.setAngle;
+
+					case add_operation: ScalarOperators.addAngle;
+
+					case subtract_operation: ScalarOperators.subtractAngle;
+				}
+
+			default:
+				throw "Invalid element. Maybe a bug.";
+		}
+	}
 }
 
 private class AbstractScalarOperator

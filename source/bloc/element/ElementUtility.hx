@@ -81,6 +81,28 @@ class VectorGetters
 	public static var shotPositionGetter = new ShotPositionGetter();
 	public static var shotVelocityGetter = new ShotVelocityGetter();
 	public static var nullVectorGetter = new NullVectorGetter();
+
+	public static inline function chooseVectorGetter(elementName:ElementName):AbstractVectorGetter
+	{
+
+		return switch (elementName)
+		{
+			case position_element, distance_element, bearing_element:
+				VectorGetters.positionGetter;
+
+			case velocity_element, speed_element, direction_element:
+				VectorGetters.velocityGetter;
+
+			case shot_position_element, shot_distance_element, shot_bearing_element:
+				VectorGetters.shotPositionGetter;
+
+			case shot_velocity_element, shot_speed_element, shot_direction_element:
+				VectorGetters.shotVelocityGetter;
+
+			default:
+				throw "Passed invalid element to VectorGetters class. Maybe a bug.";
+		}
+	}
 }
 
 class AbstractVectorGetter

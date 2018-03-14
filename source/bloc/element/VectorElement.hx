@@ -43,7 +43,12 @@ class VectorElement extends DefaultElement
 
 	override public function toString():String
 	{
-		return ElementUtility.enumToString(this._name) + " -len " + this._valueVector.length + " -ang " + this._valueVector.angle + " -op " + ElementUtility.enumToString(this._operation);
+		return (
+		  ElementUtility.enumToString(this._name) +
+		  " -len " + this._valueVector.length +
+		  " -ang " + this._valueVector.angle +
+		  " -op " + ElementUtility.enumToString(this._operation)
+		);
 	}
 }
 
@@ -69,6 +74,50 @@ class VectorElementBuilder
 	  reference:Null<Reference>
 	):VectorElement
 	{
+		try
+		{
+			var valueVector = createValueVector(v1, v2, coords);
+			var operandVectorGetter = VectorGetters.chooseVectorGetter(elementName);
+			var vectorOperator = VectorOperators.chooseVectorOperator(operation);
+
+			var validatedReference = validateReference(operation, elementName, reference);
+			var referenceSetter = ReferenceSetters.chooseReferenceSetter(validatedReference);
+
+			var referenceVectorGetter = switch (validatedReference)
+			{
+				case absolute_reference: VectorGetters.nullVectorGetter;
+
+				case relative_reference:
+					switch (elementName)
+					{
+						case shot_position_element: VectorGetters.positionGetter;
+
+						case shot_velocity_element: VectorGetters.velocityGetter;
+
+						default: throw "Validation of reference failed. Maybe a bug.";
+					}
+
+				case null: VectorGetters.nullVectorGetter;
+			}
+
+			return new VectorElement(
+			    elementName,
+			    valueVector,
+			    operation,
+			    operandVectorGetter,
+			    vectorOperator,
+			    referenceSetter,
+			    referenceVectorGetter
+			  );
+		}
+		catch (message:String)
+		{
+			throw "VectorElement.create(): " + message;
+		}
+	}
+
+	private static inline function createValueVector(v1:Float, v2:Float, coords:Coordinates):Vector
+	{
 		var vector = new Vector();
 
 		switch (coords)
@@ -78,84 +127,30 @@ class VectorElementBuilder
 			case polar_coords: vector.setPolar(v1, v2);
 		}
 
-		var operandVectorGetter = switch (elementName)
-		{
-			case position_element:
-				VectorGetters.positionGetter;
+		return vector;
+	}
 
-			case velocity_element:
-				VectorGetters.velocityGetter;
+	private static inline function validateReference(operation:Operation, elementName:ElementName, reference:Reference):Null<Reference>
+	{
 
-			case shot_position_element:
-				VectorGetters.shotPositionGetter;
-
-			case shot_velocity_element:
-				VectorGetters.shotVelocityGetter;
-
-			default:
-				throw "[BLOC] ScalarElement.create(): Invalid element. Maybe a bug.";
-		}
-
-		var vectorOperator:AbstractVectorOperator;
-		var referenceSetter:AbstractReferenceSetter = ReferenceSetters.nullReferenceSetter;
-		var referenceVectorGetter:AbstractVectorGetter = VectorGetters.nullVectorGetter;
-
-		switch (operation)
+		return switch (operation)
 		{
 			case set_operation:
-				vectorOperator = VectorOperators.setVector;
-
 				switch (elementName)
 				{
-					case shot_position_element:
+					case shot_position_element, shot_velocity_element:
 						switch (reference)
 						{
-							case null:
-								throw "[BLOC] VectorElement.create(): Attribute \"reference\" is null. Maybe a bug.";
+							case null: throw "Attribute \"reference\" is null. Maybe a bug.";
 
-							case absolute_reference:
-								referenceSetter = ReferenceSetters.absoluteReferenceSetter;
-								referenceVectorGetter = VectorGetters.nullVectorGetter;
-
-							case relative_reference:
-								referenceSetter = ReferenceSetters.relativeReferenceSetter;
-								referenceVectorGetter = VectorGetters.positionGetter;
+							default: reference;
 						}
 
-					case shot_velocity_element:
-						switch (reference)
-						{
-							case null:
-								throw "[BLOC] VectorElement.create(): Attribute \"reference\" is null. Maybe a bug.";
-
-							case absolute_reference:
-								referenceSetter = ReferenceSetters.absoluteReferenceSetter;
-								referenceVectorGetter = VectorGetters.nullVectorGetter;
-
-							case relative_reference:
-								referenceSetter = ReferenceSetters.relativeReferenceSetter;
-								referenceVectorGetter = VectorGetters.velocityGetter;
-						}
-
-					default:
+					default: null;
 				}
 
-			case add_operation:
-				vectorOperator = VectorOperators.addVector;
-
-			case subtract_operation:
-				vectorOperator = VectorOperators.subtractVector;
+			default: null;
 		}
-
-		return new VectorElement(
-		    elementName,
-		    vector,
-		    operation,
-		    operandVectorGetter,
-		    vectorOperator,
-		    referenceSetter,
-		    referenceVectorGetter
-		  );
 	}
 }
 
@@ -166,6 +161,19 @@ private class VectorOperators
 	public static var setVector = new SetVector();
 	public static var addVector = new AddVector();
 	public static var subtractVector = new SubtractVector();
+
+	public static inline function chooseVectorOperator(operation:Operation):AbstractVectorOperator
+	{
+
+		return switch (operation)
+		{
+			case set_operation: VectorOperators.setVector;
+
+			case add_operation: VectorOperators.addVector;
+
+			case subtract_operation: VectorOperators.subtractVector;
+		}
+	}
 }
 
 private class AbstractVectorOperator
@@ -202,6 +210,19 @@ private class ReferenceSetters
 	public static var absoluteReferenceSetter = new AbsoluteReferenceSetter();
 	public static var relativeReferenceSetter = new RelativeReferenceSetter();
 	public static var nullReferenceSetter = new NullReferenceSetter();
+
+	public static inline function chooseReferenceSetter(reference:Reference):AbstractReferenceSetter
+	{
+
+		return switch (reference)
+		{
+			case absolute_reference: ReferenceSetters.absoluteReferenceSetter;
+
+			case relative_reference: ReferenceSetters.relativeReferenceSetter;
+
+			case null: ReferenceSetters.nullReferenceSetter;
+		}
+	}
 }
 
 private class AbstractReferenceSetter
