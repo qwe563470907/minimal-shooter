@@ -5,20 +5,45 @@ import bloc.element.ElementUtility;
 class VectorElement extends DefaultElement
 {
 	private var _name:ElementName;
-	private var _vector:Vector;
+	private var _valueVector:Vector;
 	private var _operation:Operation;
+	private var _operandVectorGetter:AbstractVectorGetter;
+	private var _vectorOperator:AbstractVectorOperator;
+	private var _referenceSetter:AbstractReferenceSetter;
+	private var _referenceVectorGetter:AbstractVectorGetter;
 
-	private function new (name:ElementName, vector:Vector, operation:Operation)
+	public function new (
+	  name:ElementName,
+	  valueVector:Vector,
+	  operation:Operation,
+	  operandVectorGetter:AbstractVectorGetter,
+	  vectorOperator:AbstractVectorOperator,
+	  referenceSetter:AbstractReferenceSetter,
+	  referenceVectorGetter:AbstractVectorGetter
+	)
 	{
 		super();
 		this._name = name;
-		this._vector = vector;
+		this._valueVector = valueVector;
 		this._operation = operation;
+		this._operandVectorGetter = operandVectorGetter;
+		this._vectorOperator = vectorOperator;
+		this._referenceSetter = referenceSetter;
+		this._referenceVectorGetter = referenceVectorGetter;
+	}
+
+	override public inline function run(actor:Actor):Bool
+	{
+		var operandVector = this._operandVectorGetter.get(actor);
+		this._referenceSetter.set(operandVector, this._referenceVectorGetter.get(actor));
+		this._vectorOperator.operate(operandVector, this._valueVector);
+
+		return true;
 	}
 
 	override public function toString():String
 	{
-		return ElementUtility.enumToString(this._name) + " -len " + this._vector.length + " -ang " + this._vector.angle + " -op " + ElementUtility.enumToString(this._operation);
+		return ElementUtility.enumToString(this._name) + " -len " + this._valueVector.length + " -ang " + this._valueVector.angle + " -op " + ElementUtility.enumToString(this._operation);
 	}
 }
 
@@ -53,280 +78,160 @@ class VectorElementBuilder
 			case polar_coords: vector.setPolar(v1, v2);
 		}
 
-		return switch (elementName)
+		var operandVectorGetter = switch (elementName)
 		{
 			case position_element:
-				switch (operation)
-				{
-					case set_operation: new SetPosition(vector);
-
-					case add_operation: new AddPosition(vector);
-
-					case subtract_operation: new SubtractPosition(vector);
-				}
+				VectorGetters.positionGetter;
 
 			case velocity_element:
-				switch (operation)
-				{
-					case set_operation: new SetVelocity(vector);
-
-					case add_operation: new AddVelocity(vector);
-
-					case subtract_operation: new SubtractVelocity(vector);
-				}
+				VectorGetters.velocityGetter;
 
 			case shot_position_element:
-				if (reference == null) throw "[BLOC] VectorElement.create(): Attribute \"reference\" is null. Maybe a bug.";
-
-				switch (operation)
-				{
-					case set_operation:
-						switch (reference)
-						{
-							case absolute_reference: new SetShotPositionAbsolute(vector);
-
-							case relative_reference: new SetShotPositionRelative(vector);
-						}
-
-					case add_operation: new AddShotPosition(vector);
-
-					case subtract_operation: new SubtractShotPosition(vector);
-				}
+				VectorGetters.shotPositionGetter;
 
 			case shot_velocity_element:
-				if (reference == null) throw "[BLOC] VectorElement.create(): Attribute \"reference\" is null. Maybe a bug.";
-
-				switch (operation)
-				{
-					case set_operation:
-						switch (reference)
-						{
-							case absolute_reference: new SetShotVelocityAbsolute(vector);
-
-							case relative_reference: new SetShotVelocityRelative(vector);
-						}
-
-					case add_operation: new AddShotVelocity(vector);
-
-					case subtract_operation: new SubtractShotVelocity(vector);
-				}
+				VectorGetters.shotVelocityGetter;
 
 			default:
-				throw "[BLOC] VectorElement.create(): Invalid element. Maybe a bug.";
+				throw "[BLOC] ScalarElement.create(): Invalid element. Maybe a bug.";
 		}
+
+		var vectorOperator:AbstractVectorOperator;
+		var referenceSetter:AbstractReferenceSetter = ReferenceSetters.nullReferenceSetter;
+		var referenceVectorGetter:AbstractVectorGetter = VectorGetters.nullVectorGetter;
+
+		switch (operation)
+		{
+			case set_operation:
+				vectorOperator = VectorOperators.setVector;
+
+				switch (elementName)
+				{
+					case shot_position_element:
+						switch (reference)
+						{
+							case null:
+								throw "[BLOC] VectorElement.create(): Attribute \"reference\" is null. Maybe a bug.";
+
+							case absolute_reference:
+								referenceSetter = ReferenceSetters.absoluteReferenceSetter;
+								referenceVectorGetter = VectorGetters.nullVectorGetter;
+
+							case relative_reference:
+								referenceSetter = ReferenceSetters.relativeReferenceSetter;
+								referenceVectorGetter = VectorGetters.positionGetter;
+						}
+
+					case shot_velocity_element:
+						switch (reference)
+						{
+							case null:
+								throw "[BLOC] VectorElement.create(): Attribute \"reference\" is null. Maybe a bug.";
+
+							case absolute_reference:
+								referenceSetter = ReferenceSetters.absoluteReferenceSetter;
+								referenceVectorGetter = VectorGetters.nullVectorGetter;
+
+							case relative_reference:
+								referenceSetter = ReferenceSetters.relativeReferenceSetter;
+								referenceVectorGetter = VectorGetters.velocityGetter;
+						}
+
+					default:
+				}
+
+			case add_operation:
+				vectorOperator = VectorOperators.addVector;
+
+			case subtract_operation:
+				vectorOperator = VectorOperators.subtractVector;
+		}
+
+		return new VectorElement(
+		    elementName,
+		    vector,
+		    operation,
+		    operandVectorGetter,
+		    vectorOperator,
+		    referenceSetter,
+		    referenceVectorGetter
+		  );
 	}
 }
 
-private class SetPosition extends VectorElement
+
+
+private class VectorOperators
 {
-	public function new (vector:Vector)
-	{ super(position_element, vector, set_operation); }
+	public static var setVector = new SetVector();
+	public static var addVector = new AddVector();
+	public static var subtractVector = new SubtractVector();
+}
 
-	override public inline function run(actor:Actor):Bool
+private class AbstractVectorOperator
+{
+	public function new () {}
+
+	public function operate(operandVector:Vector, otherVector:Vector):Void
 	{
-		actor.position.set(this._vector);
-
-		return true;
 	}
 }
 
-private class AddPosition extends VectorElement
+private class SetVector extends AbstractVectorOperator
 {
-	public function new (vector:Vector)
-	{ super(position_element, vector, add_operation); }
+	override public inline function operate(operandVector:Vector, otherVector:Vector):Void
+	{ operandVector.set(otherVector); }
+}
 
-	override public inline function run(actor:Actor):Bool
+private class AddVector extends AbstractVectorOperator
+{
+	override public inline function operate(operandVector:Vector, otherVector:Vector):Void
+	{ operandVector.add(otherVector); }
+}
+
+private class SubtractVector extends AbstractVectorOperator
+{
+	override public inline function operate(operandVector:Vector, otherVector:Vector):Void
+	{ operandVector.subtract(otherVector); }
+}
+
+
+
+private class ReferenceSetters
+{
+	public static var absoluteReferenceSetter = new AbsoluteReferenceSetter();
+	public static var relativeReferenceSetter = new RelativeReferenceSetter();
+	public static var nullReferenceSetter = new NullReferenceSetter();
+}
+
+private class AbstractReferenceSetter
+{
+	public function new () {}
+
+	public function set(operandVector:Vector, referenceVector:Vector):Void
 	{
-		actor.position.add(this._vector);
-
-		return true;
 	}
 }
 
-private class SubtractPosition extends VectorElement
+private class AbsoluteReferenceSetter extends AbstractReferenceSetter
 {
-	public function new (vector:Vector)
-	{ super(position_element, vector, subtract_operation); }
-
-	override public inline function run(actor:Actor):Bool
+	override public inline function set(operandVector:Vector, referenceVector:Vector):Void
 	{
-		actor.position.subtract(this._vector);
-
-		return true;
+		operandVector.setAbsoluteReference();
 	}
 }
 
-private class SetVelocity extends VectorElement
+private class RelativeReferenceSetter extends AbstractReferenceSetter
 {
-	public function new (vector:Vector)
-	{ super(velocity_element, vector, set_operation); }
-
-	override public inline function run(actor:Actor):Bool
+	override public inline function set(operandVector:Vector, referenceVector:Vector):Void
 	{
-		actor.velocity.set(this._vector);
-
-		return true;
+		operandVector.setRelativeReference(referenceVector);
 	}
 }
 
-private class AddVelocity extends VectorElement
+private class NullReferenceSetter extends AbstractReferenceSetter
 {
-	public function new (vector:Vector)
-	{ super(velocity_element, vector, add_operation); }
-
-	override public inline function run(actor:Actor):Bool
+	override public inline function set(operandVector:Vector, referenceVector:Vector):Void
 	{
-		actor.velocity.add(this._vector);
-
-		return true;
-	}
-}
-
-private class SubtractVelocity extends VectorElement
-{
-	public function new (vector:Vector)
-	{ super(velocity_element, vector, subtract_operation); }
-
-	override public inline function run(actor:Actor):Bool
-	{
-		actor.shotVelocity.subtract(this._vector);
-
-		return true;
-	}
-}
-
-private class SetShotVectorElement extends VectorElement
-{
-	private var _reference:Reference;
-
-	public function new (name:ElementName, vector:Vector, reference:Reference)
-	{
-		super(name, vector, set_operation);
-		this._reference = reference;
-	}
-
-	override public function toString():String
-	{
-		return super.toString() + " -ref " + ElementUtility.enumToString(this._reference);
-	}
-}
-
-private class SetShotPosition extends SetShotVectorElement
-{
-	public function new (vector:Vector, reference:Reference)
-	{ super(shot_position_element, vector, reference); }
-}
-
-private class SetShotPositionAbsolute extends SetShotPosition
-{
-	public function new (vector:Vector)
-	{ super(vector, absolute_reference); }
-
-	override public inline function run(actor:Actor):Bool
-	{
-		actor.shotPosition.setAbsoluteReference();
-		actor.shotPosition.set(this._vector);
-
-		return true;
-	}
-}
-
-private class SetShotPositionRelative extends SetShotPosition
-{
-	public function new (vector:Vector)
-	{ super(vector, relative_reference); }
-
-	override public inline function run(actor:Actor):Bool
-	{
-		actor.shotPosition.setRelativeReference(actor.position);
-		actor.shotPosition.set(this._vector);
-
-		return true;
-	}
-}
-
-private class AddShotPosition extends VectorElement
-{
-	public function new (vector:Vector)
-	{ super(shot_position_element, vector, add_operation); }
-
-	override public inline function run(actor:Actor):Bool
-	{
-		actor.shotPosition.add(this._vector);
-
-		return true;
-	}
-}
-
-private class SubtractShotPosition extends VectorElement
-{
-	public function new (vector:Vector)
-	{ super(shot_position_element, vector, subtract_operation); }
-
-	override public inline function run(actor:Actor):Bool
-	{
-		actor.shotPosition.subtract(this._vector);
-
-		return true;
-	}
-}
-
-private class SetShotVelocity extends SetShotVectorElement
-{
-	public function new (vector:Vector, reference:Reference)
-	{ super(shot_velocity_element, vector, reference); }
-}
-
-private class SetShotVelocityAbsolute extends SetShotVelocity
-{
-	public function new (vector:Vector)
-	{ super(vector, absolute_reference); }
-
-	override public inline function run(actor:Actor):Bool
-	{
-		actor.shotVelocity.setAbsoluteReference();
-		actor.shotVelocity.set(this._vector);
-
-		return true;
-	}
-}
-
-private class SetShotVelocityRelative extends SetShotVelocity
-{
-	public function new (vector:Vector)
-	{ super(vector, relative_reference); }
-
-	override public inline function run(actor:Actor):Bool
-	{
-		actor.shotVelocity.setRelativeReference(actor.velocity);
-		actor.shotVelocity.set(this._vector);
-
-		return true;
-	}
-}
-
-private class AddShotVelocity extends VectorElement
-{
-	public function new (vector:Vector)
-	{ super(shot_velocity_element, vector, add_operation); }
-
-	override public inline function run(actor:Actor):Bool
-	{
-		actor.shotVelocity.add(this._vector);
-
-		return true;
-	}
-}
-
-private class SubtractShotVelocity extends VectorElement
-{
-	public function new (vector:Vector)
-	{ super(shot_velocity_element, vector, subtract_operation); }
-
-	override public inline function run(actor:Actor):Bool
-	{
-		actor.shotVelocity.subtract(this._vector);
-
-		return true;
 	}
 }

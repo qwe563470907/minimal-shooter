@@ -7,15 +7,15 @@ class ScalarElement extends DefaultElement
 	private var _name:ElementName;
 	private var _value:Float;
 	private var _operation:Operation;
-	private var _vectorGetter:VectorGetter;
-	private var _scalarOperator:ScalarOperator;
+	private var _vectorGetter:AbstractVectorGetter;
+	private var _scalarOperator:AbstractScalarOperator;
 
 	public function new (
 	  name:ElementName,
 	  value:Float,
 	  operation:Operation,
-	  vectorGetter:VectorGetter,
-	  scalarOperator:ScalarOperator
+	  vectorGetter:AbstractVectorGetter,
+	  scalarOperator:AbstractScalarOperator
 	)
 	{
 		super();
@@ -55,8 +55,8 @@ class ScalarElementBuilder
 	  operation:Operation
 	):ScalarElement
 	{
-		var scalarOperator:ScalarOperator;
-		var vectorGetter:VectorGetter;
+		var scalarOperator:AbstractScalarOperator;
+		var vectorGetter:AbstractVectorGetter;
 
 		switch (elementName)
 		{
@@ -108,49 +108,6 @@ class ScalarElementBuilder
 	}
 }
 
-private class VectorGetters
-{
-	public static var positionGetter = new PositionGetter();
-	public static var velocityGetter = new VelocityGetter();
-	public static var shotPositionGetter = new ShotPositionGetter();
-	public static var shotVelocityGetter = new ShotVelocityGetter();
-}
-
-private class VectorGetter
-{
-	public function new () {}
-
-	public function get(actor:Actor):Vector
-	{
-		return new Vector();	// dummy to be overridden
-	}
-}
-
-private class PositionGetter extends VectorGetter
-{
-	override public inline function get(actor:Actor):Vector
-	{ return actor.position; }
-}
-
-private class VelocityGetter extends VectorGetter
-{
-	override public inline function get(actor:Actor):Vector
-	{ return actor.velocity; }
-}
-
-private class ShotPositionGetter extends VectorGetter
-{
-	override public inline function get(actor:Actor):Vector
-	{ return actor.shotPosition; }
-}
-
-private class ShotVelocityGetter extends VectorGetter
-{
-	override public inline function get(actor:Actor):Vector
-	{ return actor.shotVelocity; }
-}
-
-
 private class ScalarOperators
 {
 	public static var setLength = new SetLength();
@@ -161,7 +118,7 @@ private class ScalarOperators
 	public static var subtractAngle = new SubtractAngle();
 }
 
-private class ScalarOperator
+private class AbstractScalarOperator
 {
 	public function new () {}
 
@@ -170,37 +127,37 @@ private class ScalarOperator
 	}
 }
 
-private class SetLength extends ScalarOperator
+private class SetLength extends AbstractScalarOperator
 {
 	override public inline function operate(vector:Vector, value:Float):Void
 	{ vector.length = value; }
 }
 
-private class AddLength extends ScalarOperator
+private class AddLength extends AbstractScalarOperator
 {
 	override public inline function operate(vector:Vector, value:Float):Void
 	{ vector.length += value; }
 }
 
-private class SubtractLength extends ScalarOperator
+private class SubtractLength extends AbstractScalarOperator
 {
 	override public inline function operate(vector:Vector, value:Float):Void
 	{ vector.length -= value; }
 }
 
-private class SetAngle extends ScalarOperator
+private class SetAngle extends AbstractScalarOperator
 {
 	override public inline function operate(vector:Vector, value:Float):Void
 	{ vector.angle = value; }
 }
 
-private class AddAngle extends ScalarOperator
+private class AddAngle extends AbstractScalarOperator
 {
 	override public inline function operate(vector:Vector, value:Float):Void
 	{ vector.angle += value; }
 }
 
-private class SubtractAngle extends ScalarOperator
+private class SubtractAngle extends AbstractScalarOperator
 {
 	override public inline function operate(vector:Vector, value:Float):Void
 	{ vector.angle -= value; }

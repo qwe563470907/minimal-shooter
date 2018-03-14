@@ -72,3 +72,55 @@ enum ElementName
 	if_element;
 	null_element;
 }
+
+
+class VectorGetters
+{
+	public static var positionGetter = new PositionGetter();
+	public static var velocityGetter = new VelocityGetter();
+	public static var shotPositionGetter = new ShotPositionGetter();
+	public static var shotVelocityGetter = new ShotVelocityGetter();
+	public static var nullVectorGetter = new NullVectorGetter();
+}
+
+class AbstractVectorGetter
+{
+	public function new () {}
+
+	public function get(actor:Actor):Vector
+	{
+		return new Vector();	// dummy to be overridden
+	}
+}
+
+private class PositionGetter extends AbstractVectorGetter
+{
+	override public inline function get(actor:Actor):Vector
+	{ return actor.position; }
+}
+
+private class VelocityGetter extends AbstractVectorGetter
+{
+	override public inline function get(actor:Actor):Vector
+	{ return actor.velocity; }
+}
+
+private class ShotPositionGetter extends AbstractVectorGetter
+{
+	override public inline function get(actor:Actor):Vector
+	{ return actor.shotPosition; }
+}
+
+private class ShotVelocityGetter extends AbstractVectorGetter
+{
+	override public inline function get(actor:Actor):Vector
+	{ return actor.shotVelocity; }
+}
+
+private class NullVectorGetter extends AbstractVectorGetter
+{
+	private static var dummyVector = new Vector();
+
+	override public inline function get(actor:Actor):Vector
+	{ return dummyVector; }
+}
