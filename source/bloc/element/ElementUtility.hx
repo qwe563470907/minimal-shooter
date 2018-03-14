@@ -70,6 +70,7 @@ enum ElementName
 	repeat_element;
 	endless_element;
 	if_element;
+	command_element;
 	null_element;
 }
 

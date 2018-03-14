@@ -15,7 +15,7 @@ class ConditionalBranch extends DefaultElement
 		this._else = elsePattern;
 	}
 
-	override public function run(actor:Actor):Bool
+	override public inline function run(actor:Actor):Bool
 	{
 		var state = actor.getStateManager().getBranchState(this);
 		var activeBranch = state.activeBranch;
@@ -38,14 +38,14 @@ class ConditionalBranch extends DefaultElement
 		return indent(thenStr + "\n" + elseStr);
 	}
 
-	override public function prepareState(manager:StateManager):Void
+	override public inline function prepareState(manager:StateManager):Void
 	{
 		manager.branchStateMap.set(this, new ConditionalBranchState());
 		this._then.prepareState(manager);
 		this._else.prepareState(manager);
 	}
 
-	override public function resetState(actor:Actor):Void
+	override public inline function resetState(actor:Actor):Void
 	{
 		actor.getStateManager().getBranchState(this).reset();
 	}
@@ -58,7 +58,7 @@ class ConditionalBranch extends DefaultElement
 
 	private function setActiveBranch(actor:Actor, state:ConditionalBranchState):Pattern
 	{
-		state.setActiveBranch(_then);
+		state.setActiveBranch(_then);	// dummy code to be overridden
 
 		return _then;
 	}

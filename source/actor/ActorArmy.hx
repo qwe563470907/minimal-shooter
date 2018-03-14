@@ -1,15 +1,20 @@
 package actor;
 
-import flixel.group.FlxGroup;
+import flixel.FlxBasic;
 import flixel.FlxState;
+import flixel.group.FlxGroup;
+import bloc.Command;
 
-class ActorArmy
+class ActorArmy extends FlxBasic
 {
 	public var agents:FlxTypedGroup<Agent>;
 	public var bullets:FlxTypedGroup<Bullet>;
+	private var _commands:Array<Command>;
 
 	public function new (state:FlxState, agentCapacity:Int, bulletCapacity:Int, agentFactory:Void->Agent, bulletFactory:Void->Bullet)
 	{
+		super();
+
 		agents = new FlxTypedGroup<Agent>(agentCapacity);
 
 		for (i in 0...agentCapacity)
@@ -31,6 +36,34 @@ class ActorArmy
 		}
 
 		state.add(bullets);
+
+		_commands = [];
+		state.add(this);
+	}
+
+	override public function update(elapsed:Float):Void
+	{
+		for (agent in agents)
+		{
+			for (command in _commands)
+				agent.adapter.receiveCommand(command);
+		}
+
+		for (bullet in bullets)
+		{
+			for (command in _commands)
+				bullet.adapter.receiveCommand(command);
+		}
+
+		while (_commands.length > 0)
+			_commands.pop();
+
+		super.update(elapsed);
+	}
+
+	public inline function registerCommand(command:Command):Void
+	{
+		_commands.push(command);
 	}
 
 	public inline function newAgent():Agent

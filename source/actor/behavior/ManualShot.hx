@@ -1,30 +1,23 @@
 package actor.behavior;
 
+import bloc.Command;
+
 class ManualShot implements Behavior
 {
-	var userInput:UserInput;
+	var _userInput:UserInput;
+	var _fireCommand:Command;
 
 	public function new (Input:UserInput)
 	{
-		userInput = Input;
+		_userInput = Input;
+		_fireCommand = new Command("fire");
 	}
 
 	public function run(actor:ActorSprite):Void
 	{
-		if (!userInput.isShooting)
+		if (!_userInput.isShooting)
 			return;
 
-		actor.adapter.receiveCommand("fire");
-
-		// var directionAngle = -90;
-		// var speed = 3000;
-		// actor.shotOffset.setCartesian(-30, 0);
-		// actor.fire(speed, directionAngle);
-		// actor.shotOffset.setCartesian(-10, -10);
-		// actor.fire(speed, directionAngle);
-		// actor.shotOffset.setCartesian(10, -10);
-		// actor.fire(speed, directionAngle);
-		// actor.shotOffset.setCartesian(30, 0);
-		// actor.fire(speed, directionAngle);
+		actor.adapter.receiveCommand(_fireCommand);
 	}
 }

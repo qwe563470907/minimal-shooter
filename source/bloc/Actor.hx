@@ -6,17 +6,24 @@ interface Actor
 	public var velocity(get, never):Vector;
 	public var shotPosition(get, never):Vector;
 	public var shotVelocity(get, never):Vector;
-	// Vector reference for shot_position and shot_velocity ???
 
 	public function getStateManager():StateManager;
 	public function fire(pattern:Pattern):Actor;
 	public function kill():Void;
 
 	/**
-	 *  Checks if this actor has recently received the specified command string.
+	 * Sends the specified command.
+	 * The receiver actor will receive the command from the last of the current frame to the beginning of the next frame.
 	 *
-	 *  @param   String command
+	 * @param   command The command to send.
+	 */
+	public function sendCommand(command:Command):Void;
+
+	/**
+	 *  Checks if this actor has recently received the specified command text.
+	 *
+	 *  @param   commandText The command text to check.
 	 *  @return  True if received.
 	 */
-	public function hasReceivedCommand(command:String):Bool;
+	public function hasReceivedCommand(commandText:String):Bool;
 }

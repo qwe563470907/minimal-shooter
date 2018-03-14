@@ -4,27 +4,13 @@ import bloc.Pattern;
 import bloc.Utility;
 import bloc.Vector;
 import bloc.StateManager;
-import haxe.ds.StringMap;
-
-// private class TemporalVector implements Vector
-// {
-// 	public var x:Float;
-// 	public var y:Float;
-
-// 	public function new (x:Float, y:Float)
-// 	{
-// 		this.x = x;
-// 		this.y = y;
-// 	}
-// }
+import bloc.Command;
 
 /**
  * Adapter for Actor class and BLOC package.
  */
 class ActorAdapter implements bloc.Actor
 {
-	// static private var _temporalVector:Vector = new TemporalVector(0, 0);
-
 	public var position(get, never):Vector;
 	public var velocity(get, never):Vector;
 	public var shotPosition(get, never):Vector;
@@ -33,21 +19,21 @@ class ActorAdapter implements bloc.Actor
 	private var _actor:ActorSprite;
 	private var _blocPattern:Pattern;
 	private var _blocStateManager:StateManager;
-	private var _receivedCommands:StringSet;
+	private var _receivedCommandTextSet:StringSet;
 
 	public function new (actor:ActorSprite)
 	{
 		this._actor = actor;
 		this._blocStateManager = new StateManager();
 		this._blocPattern = Utility.NULL_PATTERN;
-		this._receivedCommands = new StringSet();
+		this._receivedCommandTextSet = new StringSet();
 	}
 
 	public inline function reset():Void
 	{
 		this._blocStateManager.clear();
 		this._blocPattern = Utility.NULL_PATTERN;
-		this._receivedCommands.clear();
+		this._receivedCommandTextSet.clear();
 	}
 
 	public inline function fire(pattern:Pattern):bloc.Actor
@@ -63,23 +49,29 @@ class ActorAdapter implements bloc.Actor
 	public inline function runBulletHellPattern():Void
 	{
 		this._blocPattern.run(this);
-		this._receivedCommands.clear();
+
+		this._receivedCommandTextSet.clear();
+	}
+
+	public function sendCommand(command:Command):Void
+	{
+		this._actor.army.registerCommand(command);
 	}
 
 	/**
-	 * Receives and stores the specified command string.
+	 * Receives and stores the specified command.
 	 * The received commands will be cleared every time after running the BLOC pattern.
 	 *
-	 * @param   String command
+	 * @param   command
 	 */
-	public inline function receiveCommand(command:String):Void
+	public inline function receiveCommand(command:Command):Void
 	{
-		this._receivedCommands.add(command);
+		this._receivedCommandTextSet.add(command.commandText);
 	}
 
-	public inline function hasReceivedCommand(command:String):Bool
+	public inline function hasReceivedCommand(commandText:String):Bool
 	{
-		return this._receivedCommands.exists(command);
+		return this._receivedCommandTextSet.exists(commandText);
 	}
 
 	public function getStateManager():StateManager
@@ -112,21 +104,25 @@ class ActorAdapter implements bloc.Actor
 	}
 }
 
-class StringSet extends StringMap<Bool>
+class StringSet extends haxe.ds.StringMap<Bool>
 {
+	private var _keys:Array<String>;
+
 	public function new ()
 	{
 		super();
+		this._keys = [];
 	}
 
 	public inline function add(key:String)
 	{
 		this.set(key, true);
+		this._keys.push(key);
 	}
 
 	public inline function clear():Void
 	{
-		for (key in this.keys())
-			this.remove(key);
+		while (this._keys.length > 0)
+			this.remove(this._keys.pop());
 	}
 }

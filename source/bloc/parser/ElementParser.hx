@@ -86,6 +86,10 @@ class ElementParser
 				case if_element:
 					IfParser.parse(content);
 
+				case command_element:
+					if (isString(content)) new SendCommand(content);
+					else throw "Following must be a string:\n" + content;
+
 				default:
 					// definition?
 					NULL_ELEMENT;

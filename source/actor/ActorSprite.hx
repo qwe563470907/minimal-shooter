@@ -67,7 +67,7 @@ class ActorSprite extends FlxSprite // implements ICleanable
 		(position.y + halfHeight < FlxG.worldBounds.y - margin) || (position.y - halfHeight > FlxG.worldBounds.bottom + margin);
 	}
 
-	override public inline function update(elapsed:Float):Void
+	override public function update(elapsed:Float):Void
 	{
 		this.halfWidth = 0.5 * this.width;
 		this.halfHeight = 0.5 * this.height;

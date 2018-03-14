@@ -10,11 +10,11 @@ class IfBranch extends ConditionalBranch
 	private var _interpreter:hscript.Interp;
 	private var _expression:String;
 	private var _parsedExpression:hscript.Expr;
-	private var _command:String;
+	private var _commandText:String;
 	private var _hasExpression:Bool;
 	private var _hasCommand:Bool;
 
-	public function new (expression:Null<String>, command:Null<String>, thenPattern:Pattern, elsePattern:Pattern)
+	public function new (expression:Null<String>, commandText:Null<String>, thenPattern:Pattern, elsePattern:Pattern)
 	{
 		super(thenPattern, elsePattern);
 
@@ -27,9 +27,9 @@ class IfBranch extends ConditionalBranch
 		}
 		else this._hasExpression = false;
 
-		if (command != null)
+		if (commandText != null)
 		{
-			this._command = command;
+			this._commandText = commandText;
 			this._hasCommand = true;
 		}
 		else this._hasCommand = false;
@@ -47,12 +47,12 @@ class IfBranch extends ConditionalBranch
 		}
 
 		if (this._hasCommand)
-			str += "command:\n" + indent(this._command);
+			str += "command:\n" + indent(this._commandText.toString());
 
 		return "if:\n" + indent(str) + "\n" + super.toString();
 	}
 
-	override private function setActiveBranch(actor:Actor, state:ConditionalBranchState):Pattern
+	override private inline function setActiveBranch(actor:Actor, state:ConditionalBranchState):Pattern
 	{
 		var expEvalResult:Bool;
 
@@ -69,7 +69,7 @@ class IfBranch extends ConditionalBranch
 		else
 			expEvalResult = false;
 
-		var cmdEvalResult = if (this._hasCommand) actor.hasReceivedCommand(this._command) else false;
+		var cmdEvalResult = if (this._hasCommand) actor.hasReceivedCommand(this._commandText) else false;
 
 		var branch = if (expEvalResult || cmdEvalResult) this._then else this._else;
 
