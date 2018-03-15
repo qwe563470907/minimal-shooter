@@ -36,6 +36,7 @@
 	<haxelib name="flixel" /> <!-- v4.3.0 -->
 	<haxelib name="yaml" /> <!-- v1.3.0 -->
 	<haxelib name="hscript" /> <!-- v2.1.1 -->
+	<haxelib name="tweenxcore" /> <!-- v1.0.3 -->
 	<!--
 		Other depending libraries:
 			hxcpp v3.4.64
@@ -53,6 +54,8 @@
 	<!--<haxelib name="nape" />-->
 
 	<!-- ______________________________ Haxedefines _____________________________ -->
+
+	<haxeflag name="-dce full" />
 
 	<!--Enable the Flixel core recording system-->
 	<!--<haxedef name="FLX_RECORD" />-->
