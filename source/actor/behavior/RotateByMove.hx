@@ -1,7 +1,5 @@
 package actor.behavior;
 
-import flixel.FlxG;
-
 class RotateByMove implements Behavior
 {
 	var standardSpeed:Float;
@@ -15,6 +13,6 @@ class RotateByMove implements Behavior
 
 	public function run(actor:ActorSprite):Void
 	{
-		actor.angle += (standardAngularVelocity / FlxG.updateFramerate) * (actor.motionVelocity.length / standardSpeed);
+		actor.angle += (standardAngularVelocity) * (actor.motionVelocity.length / standardSpeed);
 	}
 }

@@ -30,9 +30,9 @@ class PlayState extends FlxState
 			player.angularVelocity = 60;
 			var userInput = new UserInput();
 			player.addBehavior(new ListenInput(userInput));
-			player.addBehavior(new ManualMove(userInput, 800, 200));
+			player.addBehavior(new ManualMove(userInput, 17, 5));
 			player.addBehavior(new ManualShot(userInput));
-			player.addBehavior(new RotateByMove(800, 600));
+			player.addBehavior(new RotateByMove(17, 10));
 
 			return player;
 		};
@@ -63,7 +63,7 @@ class PlayState extends FlxState
 			var enemy = new Agent();
 			enemy.setGraphic(AssetPaths.enemy__png, 360);
 			enemy.angularVelocity = 60;
-			enemy.addBehavior(new RotateByMove(800, 600));
+			enemy.addBehavior(new RotateByMove(17, 10));
 			enemy.addBehavior(dieOutOfWorldBehavior);
 
 			return enemy;

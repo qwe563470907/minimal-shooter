@@ -1,6 +1,6 @@
 patterns:
   "player":
-    - shot_velocity: [3000, -90, set]
+    - shot_velocity: [50, -90, set]
     - endless:
       - if:
           command: fire
@@ -22,17 +22,17 @@ patterns:
         - if:
             expression: 1 == 1
             then:
-              - velocity: [100, -90]
+              - velocity: [2, -90]
             else:
-              - velocity: [900, 90]
+              - velocity: [15, 90]
         - endless:
-          - velocity: [7, 90, add]
+          - velocity: [0.5, 90, add]
   "enemy2":
-    - velocity: [1000, 90]
+    - velocity: [16, 90, set]
     - wait: 25
     - speed: [0, set]
     - shot_distance: 60
-    - shot_speed: 200
+    - shot_speed: 4
     - loop:
         count: 300
         pattern:
@@ -44,7 +44,7 @@ patterns:
                 - shot_direction: 3
                 - fire:
           - wait: 2
-    - velocity: [1000, 90]
+    - velocity: [16, 90]
 
 definitions:
   "accelerate":

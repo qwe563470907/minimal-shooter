@@ -87,13 +87,13 @@ class ActorSprite extends FlxSprite // implements ICleanable
 	public inline function syncBlocToFlixel():Void
 	{
 		setPosition(position.x - halfWidth, position.y - halfHeight);
-		velocity.set(motionVelocity.x, motionVelocity.y);
+		velocity.set(motionVelocity.x * 60, motionVelocity.y * 60);
 	}
 
 	public inline function syncFlixelToBloc():Void
 	{
 		position.setCartesian(x + halfWidth, y + halfHeight);
-		motionVelocity.setCartesian(velocity.x, velocity.y);
+		motionVelocity.setCartesian(velocity.x / 60, velocity.y / 60);
 	}
 
 	override public function kill():Void
