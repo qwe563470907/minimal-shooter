@@ -35,32 +35,33 @@ class VectorParser
 			if (isMap(content))
 			{
 				var values = content.get("values");
+				validateValues(values);
 
-				if (values == null)
-					throw "Found no \"values\" attribute.";
+				var operationString = content.get("operation");
+				validateOperation(operationString);
+				var operation = getOperation(operationString);
 
-				if (!isSequence(values))
-					throw "Invalid \"values\" attribute: " + values;
+				var value1 = content[1];
+				var value2 = content[2];
 
-				if (!isValidValues(values))
-					throw "Invalid \"values\" attribute: " + values;
-
-				var operation = getOperation(content.get("operation"));
 				var coords = getCoordinates(content.get("coordinates"));
 				var reference = getReference(content.get("reference"), elementName, operation);
-				element = VectorElementBuilder.create(elementName, values[0], values[1], operation, coords, reference);
+
+				element = VectorElementBuilder.create(elementName, value1, value2, operation, coords, reference);
 			}
 			else if (isSequence(content))
 			{
-				if (!isValidContentArray(content))
-					throw "Invalid attributes: " + content;
+				validateContentArray(content);
+
+				var operation = getOperation(content[0]);
+				var value1 = content[1];
+				var value2 = content[2];
 
 				var arrayLength:Int = content.length;
-				var operation = getOperation(if (arrayLength >= 3) content[2] else null);
 				var coords = getCoordinates(if (arrayLength >= 4) content[3] else null);
 				var reference = getReference(if (arrayLength >= 5) content[4] else null, elementName, operation);
 
-				element = VectorElementBuilder.create(elementName, content[0], content[1], operation, coords, reference);
+				element = VectorElementBuilder.create(elementName, value1, value2, operation, coords, reference);
 			}
 			else
 				throw "Invalid attributes. The attributes must be either a map or an array.";
@@ -74,9 +75,32 @@ class VectorParser
 		return element;
 	}
 
-	private static inline function isValidValues(array:Array<Dynamic>):Bool
+	private static inline function validateOperation(operationString:Null<Dynamic>):Void
 	{
-		return array.length == 2 && isFloat(array[0]) && isFloat(array[1]);
+		if (operationString == null || operationString == "")
+			throw "Found no \"operation\" attribute.";
+
+		if (!isString(operationString))
+			throw "Invalid \"operation\" attribute: " + operationString;
+	}
+
+	private static inline function validateValues(values:Null<Dynamic>):Void
+	{
+		if (values == null)
+			throw "Found no \"values\" attribute.";
+
+		if (!isSequence(values) || values.length != 2 || !isFloat(values[0] || !isFloat(values[1])))
+			throw "Invalid \"values\" attribute: " + values;
+	}
+
+	private static inline function validateContentArray(array:Array<Dynamic>):Void
+	{
+		if (array.length < 3) throw "Not enough attributes.";
+
+		validateOperation(array[0]);
+
+		if (!isFloat(array[1]) || !isFloat(array[2]))
+			throw "Invalid attributes: " + array;
 	}
 
 	private static inline function isValidContentArray(array:Array<Dynamic>):Bool

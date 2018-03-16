@@ -11,10 +11,9 @@ class ScalarParser
 	 * Parses the content of any scalar element.
 	 *
 	 * @param   content The content of any scalar element. This should be either:
-	 *     (1) a mapping of attributes: "value", "operation".
-	 *     (2) an array of: value, operation.
-	 *     (3) a value number.
-	 *     Only the value is mandatory. Default operation is "add".
+	 *     (1) a mapping of attributes: "operation", "value".
+	 *     (2) an array of: operation, value.
+	 *     Both attributes are mandatory.
 	 *     This format will be checked in this method.
 	 * @return  The parsed element instance.
 	 */
@@ -29,28 +28,22 @@ class ScalarParser
 
 			if (isMap(content))
 			{
+				var operationString = content.get("operation");
+				validateOperation(operationString);
+				var operation = getOperation(operationString);
+
 				var value = content.get("value");
+				validateValue(value);
 
-				if (value == null)
-					throw "Found no \"value\" attribute.";
-
-				if (!isFloat(value))
-					throw "Invalid \"value\" attribute: " + value;
-
-				var operation = getOperation(content.get("operation"));
 				element = ScalarElementBuilder.create(elementName, value, operation);
 			}
 			else if (isSequence(content))
 			{
-				if (!isValidContentArray(content))
-					throw "Invalid attributes: " + content;
-
-				var operation = getOperation(if (content.length >= 2) content[1] else null);
-
-				element = ScalarElementBuilder.create(elementName, content[0], operation);
+				validateContentArray(content);
+				var operation = getOperation(content[0]);
+				var value = content[1];
+				element = ScalarElementBuilder.create(elementName, value, operation);
 			}
-			else if (isFloat(content))
-				element = ScalarElementBuilder.create(elementName, content, add_operation);
 			else
 				throw "Invalid attributes. The attributes must be either a map or an array.";
 		}
@@ -63,13 +56,34 @@ class ScalarParser
 		return element;
 	}
 
-	private static inline function isValidContentArray(array:Array<Dynamic>):Bool
+	private static inline function validateOperation(operationString:Null<Dynamic>):Void
 	{
-		return array.length >= 1 && isFloat(array[0]);
+		if (operationString == null || operationString == "")
+			throw "Found no \"operation\" attribute.";
+
+		if (!isString(operationString))
+			throw "Invalid \"operation\" attribute: " + operationString;
+	}
+
+	private static inline function validateValue(value:Null<Dynamic>):Void
+	{
+		if (value == null)
+			throw "Found no \"value\" attribute.";
+
+		if (!isFloat(value))
+			throw "Invalid \"value\" attribute: " + value;
+	}
+
+	private static inline function validateContentArray(array:Array<Dynamic>):Void
+	{
+		if (array.length < 2) throw "Not enough attributes.";
+
+		validateOperation(array[0]);
+		validateValue(array[1]);
 	}
 
 	private static inline function getOperation(operationValue:Null<Dynamic>):Operation
 	{
-		return stringToEnum(operationValue, "operation", Operation, "operation", add_operation);
+		return stringToEnum(operationValue, "operation", Operation, "operation", set_operation);
 	}
 }
