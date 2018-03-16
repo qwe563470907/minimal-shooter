@@ -1,6 +1,7 @@
 package actor.behavior;
 
 import flixel.FlxG;
+import bloc.DirectionAngle;
 
 class ManualMove implements Behavior
 {
@@ -21,7 +22,7 @@ class ManualMove implements Behavior
 		{
 			actor.motionVelocity.setPolar(
 			  userInput.isBraking ? lowSpeed:highSpeed,
-			  userInput.movingAngle
+			  DirectionAngle.fromDegrees(userInput.movingAngle)
 			);
 		}
 		else

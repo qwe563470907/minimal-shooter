@@ -1,17 +1,17 @@
 patterns:
   "player":
-    - shot_velocity: [set, 50, -90]
+    - shot_velocity: [set, 50, 0]
     - endless:
       - if:
           command: fire
           then:
-            - shot_position: [set, 50, 0]
+            - shot_position: [set, 50, 90]
             - fire:
-            - shot_position: [set, 50, 180]
+            - shot_position: [set, 50, -90]
             - fire:
             - wait: 3
   "enemy1":
-    - shot_velocity: [set, 400, 90, polar, absolute]
+    - shot_velocity: [set, 400, 180, polar, absolute]
     - parallel:
       - endless:
         - sequence:
@@ -22,13 +22,13 @@ patterns:
         - if:
             expression: 1 == 1
             then:
-              - velocity: [add, 2, -90]
+              - velocity: [add, 2, 0]
             else:
-              - velocity: [add, 15, 90]
+              - velocity: [add, 15, 180]
         - endless:
-          - velocity: [add, 0.5, 90]
+          - velocity: [add, 0.5, 180]
   "enemy2":
-    - velocity: [set, 16, 90]
+    - velocity: [set, 16, 180]
     - wait: 25
     - speed: [set, 0]
     - shot_distance: [add, 60]
@@ -44,7 +44,7 @@ patterns:
                 - shot_direction: [add, 3]
                 - fire:
           - wait: 2
-    - velocity: [set, 16, 90]
+    - velocity: [set, 16, 180]
 
 definitions:
   "accelerate":

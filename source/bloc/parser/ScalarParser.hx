@@ -2,7 +2,8 @@ package bloc.parser;
 
 import bloc.element.Element;
 import bloc.element.ElementUtility;
-import bloc.element.ScalarElement;
+import bloc.element.LengthElement;
+import bloc.element.AngleElement;
 import bloc.parser.ParserUtility.*;
 
 class ScalarParser
@@ -35,14 +36,14 @@ class ScalarParser
 				var value = content.get("value");
 				validateValue(value);
 
-				element = ScalarElementBuilder.create(elementName, value, operation);
+				element = createElementInstance(elementName, value, operation);
 			}
 			else if (isSequence(content))
 			{
 				validateContentArray(content);
 				var operation = getOperation(content[0]);
 				var value = content[1];
-				element = ScalarElementBuilder.create(elementName, value, operation);
+				element = createElementInstance(elementName, value, operation);
 			}
 			else
 				throw "Invalid attributes. The attributes must be either a map or an array.";
@@ -85,5 +86,22 @@ class ScalarParser
 	private static inline function getOperation(operationValue:Null<Dynamic>):Operation
 	{
 		return stringToEnum(operationValue, "operation", Operation, "operation", set_operation);
+	}
+
+	private static inline function createElementInstance(elementName:ElementName, value:Float, operation:Operation):Element
+	{
+
+		return switch (elementName)
+		{
+			case distance_element, speed_element, shot_distance_element, shot_speed_element:
+				LengthElementBuilder.create(elementName, value, operation);
+
+			case bearing_element, direction_element, shot_bearing_element, shot_direction_element:
+				AngleElementBuilder.create(elementName, value, operation);
+
+			default:
+				throw "Invalid element. Maybe a bug.";
+
+		}
 	}
 }

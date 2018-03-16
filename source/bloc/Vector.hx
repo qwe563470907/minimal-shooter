@@ -25,7 +25,7 @@ class Vector
 	/**
 	 * The angle (degrees) in polar coordinates system.
 	 */
-	public var angle(get, set):Float;
+	public var angle(get, set):DirectionAngle;
 
 	private var _cartesianCoords:CartesianCoordsVector;
 	private var _polarCoords:PolarCoordsVector;
@@ -82,7 +82,7 @@ class Vector
 	public inline function reset():Vector
 	{
 		this._cartesianCoords.setCoords(0, 0);
-		this._polarCoords.setCoords(0, 0);
+		this._polarCoords.setCoords(0, DirectionAngle.fromZero());
 		this._xUpdated = true;
 		this._yUpdated = true;
 		this._lengthUpdated = true;
@@ -117,7 +117,7 @@ class Vector
 	 * @param   angle The angle value.
 	 * @return  This vector.
 	 */
-	public inline function setPolar(length:Float, angle:Float):Vector
+	public inline function setPolar(length:Float, angle:DirectionAngle):Vector
 	{
 		this._lengthUpdated = true;
 		this._angleUpdated = true;
@@ -340,7 +340,7 @@ class Vector
 		return this._polarCoords.length = v;
 	}
 
-	inline function set_angle(v:Float)
+	inline function set_angle(v:DirectionAngle)
 	{
 		this.updateLength();
 		this._angleUpdated = true;
@@ -351,9 +351,10 @@ class Vector
 	}
 }
 
+
+
 private class CartesianCoordsVector
 {
-	private static var TO_DEGREES = 180 / Math.PI;
 	private static var EPSILON = 0.0000001;
 
 	public var x:Float = 0;
@@ -379,9 +380,9 @@ private class CartesianCoordsVector
 		return Math.sqrt(this.x * this.x + this.y * this.y);
 	}
 
-	public inline function getAngle():Float
+	public inline function getAngle():DirectionAngle
 	{
-		return if (this.hasZeroLength()) 0 else Math.atan2(this.y, this.x) * TO_DEGREES;
+		return if (this.hasZeroLength()) DirectionAngle.fromZero() else DirectionAngle.fromRadians(Math.atan2(this.y, this.x));
 	}
 
 	public inline function hasZeroLength():Bool
@@ -392,10 +393,8 @@ private class CartesianCoordsVector
 
 private class PolarCoordsVector
 {
-	private static var TO_RADIANS = Math.PI / 180;
-
 	public var length:Float = 0;
-	public var angle:Float = 0;
+	public var angle:DirectionAngle = DirectionAngle.fromZero();
 
 	public function new ()
 	{}
@@ -406,7 +405,7 @@ private class PolarCoordsVector
 		this.angle = vector.angle;
 	}
 
-	public inline function setCoords(length:Float, angle:Float):Void
+	public inline function setCoords(length:Float, angle:DirectionAngle):Void
 	{
 		this.length = length;
 		this.angle = angle;
@@ -414,45 +413,46 @@ private class PolarCoordsVector
 
 	public inline function getX():Float
 	{
-		return this.length * Math.cos(this.angle * TO_RADIANS);
+		return this.length * Math.cos(this.angle.toRadians());
 	}
 
 	public inline function getY():Float
 	{
-		return this.length * Math.sin(this.angle * TO_RADIANS);
+		return this.length * Math.sin(this.angle.toRadians());
 	}
 }
 
-private interface Referer
-{
-	public function refer(vector:Vector, reference:Vector, target:Vector):Void;
-}
 
-private class AbsoluteReferer implements Referer
-{
-	public function new ()
-	{}
-
-	public inline function refer(vector:Vector, reference:Vector, target:Vector):Void
-	{
-		target.set(vector);
-	}
-}
-
-private class RelativeReferer implements Referer
-{
-	public function new ()
-	{}
-
-	public inline function refer(vector:Vector, reference:Vector, target:Vector):Void
-	{
-		reference.calculateAbsolute(target);
-		target.add(vector);
-	}
-}
 
 private class Referers
 {
 	public static var absolute = new AbsoluteReferer();
 	public static var relative = new RelativeReferer();
+}
+
+private class Referer
+{
+	public function new ()
+	{}
+
+	public function refer(vector:Vector, reference:Vector, target:Vector):Void
+	{
+	}
+}
+
+private class AbsoluteReferer extends Referer
+{
+	override public inline function refer(vector:Vector, reference:Vector, target:Vector):Void
+	{
+		target.set(vector);
+	}
+}
+
+private class RelativeReferer extends Referer
+{
+	override public inline function refer(vector:Vector, reference:Vector, target:Vector):Void
+	{
+		reference.calculateAbsolute(target);
+		target.add(vector);
+	}
 }

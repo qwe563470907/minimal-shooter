@@ -1,5 +1,6 @@
 package bloc.element;
 
+import bloc.DirectionAngle;
 import bloc.element.ElementUtility;
 
 class VectorElement extends DefaultElement
@@ -45,9 +46,9 @@ class VectorElement extends DefaultElement
 	{
 		return (
 		  ElementUtility.enumToString(this._name) +
+		  " -op " + ElementUtility.enumToString(this._operation) +
 		  " -len " + this._valueVector.length +
-		  " -ang " + this._valueVector.angle +
-		  " -op " + ElementUtility.enumToString(this._operation)
+		  " -ang " + this._valueVector.angle
 		);
 	}
 }
@@ -59,7 +60,7 @@ class VectorElementBuilder
 	 *
 	 * @param   elementName The instance of enum ElementName.
 	 * @param   v1 The first value (the x value or the vector length, depending on the coordinates).
-	 * @param   v2 The second value (the y value or the vector angle, depending on the coordinates).
+	 * @param   v2 The second value (the y value or the vector direction angle in BLOC degrees, depending on the coordinates).
 	 * @param   operation The instance of enum Operation.
 	 * @param   coords The instance of enum Coordinates.
 	 * @param   reference The reference of enum Coordinates. Only for shot_position and shot_velocity elements.
@@ -124,7 +125,7 @@ class VectorElementBuilder
 		{
 			case cartesian_coords: vector.setCartesian(v1, v2);
 
-			case polar_coords: vector.setPolar(v1, v2);
+			case polar_coords: vector.setPolar(v1, DirectionAngle.fromBlocDegrees(v2));
 		}
 
 		return vector;
