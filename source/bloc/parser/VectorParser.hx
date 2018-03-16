@@ -12,13 +12,13 @@ class VectorParser
 	 *
 	 * @param   content The content of any vector element. This should be either:
 	 *     (1) a mapping of attributes:
-	 *         "values" (an array of two numbers),
 	 *         "operation",
+	 *         "values" (an array of two numbers),
 	 *         "coordinates",
 	 *         "reference".
 	 *     (2) an array of:
-	 *         value1, value2, operation, coordinates, reference.
-	 *     Only the values are mandatory.
+	 *         operation, value1, value2, coordinates, reference.
+	 *     The operation and values are mandatory. The "coordinates" attribute is "polar" at default.
 	 *     The "reference" attribute is used only for cases where element is either "shot_position" or "shot_velocity" and operation is "set".
 	 *     This format will be checked in this method.
 	 * @return  The parsed element instance.
@@ -101,11 +101,6 @@ class VectorParser
 
 		if (!isFloat(array[1]) || !isFloat(array[2]))
 			throw "Invalid attributes: " + array;
-	}
-
-	private static inline function isValidContentArray(array:Array<Dynamic>):Bool
-	{
-		return array.length >= 2 && isFloat(array[0]) && isFloat(array[1]);
 	}
 
 	private static inline function getOperation(operationValue:Null<Dynamic>):Operation
