@@ -24,13 +24,14 @@ class EnemyGenerator extends FlxBasic
 	{
 		super.update(elapsed);
 
-		if (_random.bool(1))
+		if (_random.bool(5))
 		{
 			if (_army.agents.countLiving() >= 1)
 				return;
 
 			var newEnemy = _army.newAgent();
-			newEnemy.position.setCartesian(_random.float(100, FlxG.width - 100), -50);
+			var worldCenterX = 0.5 * FlxG.width;
+			newEnemy.position.setCartesian(_random.float(worldCenterX - 200, worldCenterX + 200), -50);
 			newEnemy.motionVelocity.setCartesian(0, 50);
 			newEnemy.syncBlocToFlixel();
 			var action = _blocPatternDictionary.get("enemy2");

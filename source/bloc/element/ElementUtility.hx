@@ -1,5 +1,8 @@
 package bloc.element;
 
+using bloc.Utility;
+import bloc.Utility.*;
+
 class ElementUtility
 {
 	/**
@@ -157,4 +160,88 @@ private class NullVectorGetter extends AbstractVectorGetter
 
 	override public inline function get(actor:Actor):Vector
 	{ return dummyVector; }
+}
+
+
+
+class FloatGetters
+{
+	public static var xGetter = new XGetter();
+	public static var yGetter = new YGetter();
+	public static var lengthGetter = new LengthGetter();
+
+	public static inline function chooseFloatGetter(elementName:ElementName):AbstractFloatGetter
+	{
+
+		return switch (elementName)
+		{
+			case distance_element, speed_element, shot_distance_element, shot_speed_element: FloatGetters.lengthGetter;
+
+			default:
+				throw "Passed invalid element to FloatGetters class. Maybe a bug.";
+		}
+	}
+}
+
+class AbstractFloatGetter
+{
+	public function new () {}
+
+	public function get(vector:Vector):FloatRef
+	{
+		return NULL_FLOAT_REF;	// dummy to be overridden
+	}
+}
+
+private class XGetter extends AbstractFloatGetter
+{
+	override public inline function get(vector:Vector):FloatRef
+	{ return vector.xRef; }
+}
+
+private class YGetter extends AbstractFloatGetter
+{
+	override public inline function get(vector:Vector):FloatRef
+	{ return vector.yRef; }
+}
+
+private class LengthGetter extends AbstractFloatGetter
+{
+	override public inline function get(vector:Vector):FloatRef
+	{ return vector.lengthRef; }
+}
+
+
+
+class AngleGetters
+{
+	public static var angleGetter = new AngleGetter();
+
+	public static inline function chooseAngleGetter(elementName:ElementName):AbstractAngleGetter
+	{
+
+		return switch (elementName)
+		{
+			case bearing_element, direction_element, shot_bearing_element, shot_direction_element: AngleGetters.angleGetter;
+
+			default:
+				throw "Passed invalid element to DirectionAngleGetters class. Maybe a bug.";
+		}
+	}
+}
+
+class AbstractAngleGetter
+{
+	public function new () {}
+
+	public function get(vector:Vector):DirectionAngleRef
+	{
+		return NULL_DIRECTION_ANGLE_REF;	// dummy to be overridden
+	}
+}
+
+private class AngleGetter extends AbstractAngleGetter
+{
+	override public inline function get(vector:Vector):DirectionAngleRef
+	{ return vector.angleRef; }
 }

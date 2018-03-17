@@ -67,6 +67,7 @@ abstract AngleInterval(Float)
 	@:op(A + B) static public function intervalPlusDirection(a:AngleInterval, b:DirectionAngle):DirectionAngle;
 	@:op(A + B) static public function intervalPlusInterval(a:AngleInterval, b:AngleInterval):AngleInterval;
 	@:op(A - B) static public function directionMinusInterval(a:DirectionAngle, b:AngleInterval):DirectionAngle;
+	@:op(A - B) static public function intervalMinusDirection(a:AngleInterval, b:DirectionAngle):AngleInterval;
 	@:op(A - B) static public function intervalMinusInterval(a:AngleInterval, b:AngleInterval):AngleInterval;
 	@:op(A * B) static public function floatTimesInterval(a:Float, b:AngleInterval):AngleInterval;
 	@:op(A * B) static public function intervalFloatTimes(a:AngleInterval, b:Float):AngleInterval;

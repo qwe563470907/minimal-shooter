@@ -28,22 +28,38 @@ patterns:
         - endless:
           - velocity: [add, 0.5, 180]
   "enemy2":
-    - velocity: [set, 16, 180]
-    - wait: 25
-    - speed: [set, 0]
+    - velocity: [set, 30, 180]
+    - speed:
+        operation: set
+        value: 0
+        frames: 30
     - shot_distance: [add, 60]
-    - shot_bearing_angular_velocity: [set, 1.5]
-    - shot_speed: [add, 4]
-    - loop:
-        count: 300
-        pattern:
-          - loop:
-              count: 4
-              pattern:
-                - shot_bearing: [add, 90]
-                - shot_direction: [add, 3]
-                - fire:
-          - wait: 2
+    - shot_speed: [set, 3]
+    - shot_direction_angular_velocity:
+        operation: set
+        value: 1
+    - parallel:
+      - shot_direction_angular_velocity:
+          operation: set
+          value: 9
+          frames: 300
+      - loop:
+          count: 300
+          pattern:
+            - loop:
+                count: 4
+                pattern:
+                  - shot_bearing: [add, 90]
+                  - fire:
+                      - speed:
+                          operation: set
+                          value: 10
+                          frames: 15
+                      - direction:
+                          operation: add
+                          value: 60
+                          frames: 30
+            - wait: 2
     - velocity: [set, 16, 180]
 
 definitions:

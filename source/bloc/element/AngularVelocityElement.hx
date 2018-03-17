@@ -3,6 +3,7 @@ package bloc.element;
 using tink.core.Ref;
 import bloc.AngleInterval;
 import bloc.element.ElementUtility;
+import bloc.state.AngleIntervalState;
 
 class AngularVelocityElement extends DefaultElement
 {
@@ -28,16 +29,119 @@ class AngularVelocityElement extends DefaultElement
 		this._operator = operator;
 	}
 
+	override public function toString():String
+	{
+		return ElementUtility.enumToString(this._name) +	" -op " + ElementUtility.enumToString(this._operation) + " -val " + this._value;
+	}
+}
+
+class NoWaitAngularVelocityElement extends AngularVelocityElement
+{
 	override public inline function run(actor:Actor):Bool
 	{
 		this._operator.operate(this._angularVelocityGetter.get(actor), this._value);
 
 		return true;
 	}
+}
+
+class ContinuousAngularVelocityElement extends AngularVelocityElement
+{
+	private var _frameCount:Int;
+
+	public function new (
+	  name:ElementName,
+	  operation:Operation,
+	  value:AngleInterval,
+	  angularVelocityGetter:AngularVelocityGetter,
+	  operator:AngularVelocityOperator,
+	  frames:Int
+	)
+	{
+		super(name, operation, value, angularVelocityGetter, operator);
+		this._frameCount = frames;
+	}
 
 	override public function toString():String
 	{
-		return ElementUtility.enumToString(this._name) +	" -op " + ElementUtility.enumToString(this._operation) + " -val " + this._value;
+		return super.toString() + " -frm " + this._frameCount;
+	}
+}
+
+class FixedContinuousAngularVelocityElement extends ContinuousAngularVelocityElement
+{
+	private var _dividedValue:AngleInterval;
+
+	public function new (
+	  name:ElementName,
+	  operation:Operation,
+	  value:AngleInterval,
+	  angularVelocityGetter:AngularVelocityGetter,
+	  operator:AngularVelocityOperator,
+	  frames:Int
+	)
+	{
+		super(name, operation, value, angularVelocityGetter, operator, frames);
+		this._dividedValue = value / cast(frames, Float);
+	}
+
+	override public inline function run(actor:Actor):Bool
+	{
+		this._operator.operate(this._angularVelocityGetter.get(actor), this._dividedValue);
+
+		var countState = actor.getStateManager().getCountState(this);
+		countState.increment();
+
+		return countState.isCompleted;
+	}
+
+	override public inline function prepareState(manager:StateManager):Void
+	{
+		manager.addCountState(this, this._frameCount + 1);
+	}
+
+	override public inline function resetState(actor:Actor):Void
+	{
+		actor.getStateManager().getCountState(this).reset();
+	}
+}
+
+class DynamicContinuousAngularVelocityElement extends ContinuousAngularVelocityElement
+{
+	override public function run(actor:Actor):Bool
+	{
+		var angleState = actor.getStateManager().getAngleIntervalState(this);
+		var value = angleState.value;
+
+		if (value == null) value = setValue(actor, angleState);
+
+		this._operator.operate(this._angularVelocityGetter.get(actor), value);
+
+		var countState = actor.getStateManager().getCountState(this);
+		countState.increment();
+
+		return countState.isCompleted;
+	}
+
+	override public function prepareState(manager:StateManager):Void
+	{
+		manager.addCountState(this, this._frameCount + 1);
+		manager.addAngleIntervalState(this);
+	}
+
+	override public function resetState(actor:Actor):Void
+	{
+		var manager = actor.getStateManager();
+		manager.getCountState(this).reset();
+		manager.getAngleIntervalState(this).reset();
+	}
+
+	private function setValue(actor:Actor, state:AngleIntervalState):AngleInterval
+	{
+		var currentValue = this._angularVelocityGetter.get(actor).value;
+		var valueDifference = this._value - currentValue;
+
+		return state.value = valueDifference / (this._frameCount + 1);
 	}
 }
 
@@ -51,12 +155,14 @@ class AngularVelocityElementBuilder
 	 * @param   elementName The instance of enum ElementName.
 	 * @param   value The value in degrees.
 	 * @param   operation The instance of enum Operation.
+	 * @param   frames The duration frame count.
 	 * @return  The created element instance.
 	 */
 	public static inline function create(
 	  elementName:ElementName,
 	  value:Float,
-	  operation:Operation
+	  operation:Operation,
+	  frames:Int
 	):AngularVelocityElement
 	{
 		try
@@ -65,7 +171,20 @@ class AngularVelocityElementBuilder
 			var angularVelocityGetter = AngularVelocityGetters.chooseAngularVelocityGetter(elementName);
 			var operator = AngularVelocityOperators.chooseAngularVelocityOperator(operation);
 
-			return new AngularVelocityElement(elementName, operation, angleInterval, angularVelocityGetter, operator);
+			return if (frames == 0)
+				new NoWaitAngularVelocityElement(elementName, operation, angleInterval, angularVelocityGetter, operator);
+			else
+			{
+				switch (operation)
+				{
+					case set_operation:
+						new DynamicContinuousAngularVelocityElement(elementName, operation, angleInterval, angularVelocityGetter, AngularVelocityOperators.addAngularVelocity, frames);
+
+					case add_operation, subtract_operation:
+						new FixedContinuousAngularVelocityElement(elementName, operation, angleInterval, angularVelocityGetter, operator, frames);
+				}
+			}
+
 		}
 		catch (message:String)
 		{

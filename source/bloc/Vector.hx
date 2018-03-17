@@ -1,5 +1,8 @@
 package bloc;
 
+using bloc.Utility;
+import bloc.Utility.EPSILON;
+
 /**
  * Vector class intended to use in both cartesian and polar coordinates.
  */
@@ -27,6 +30,26 @@ class Vector
 	 */
 	public var angle(get, set):DirectionAngle;
 
+	/**
+	 * The reference to the x value.
+	 */
+	public var xRef(default, null):VectorXReference;
+
+	/**
+	 * The reference to the y value.
+	 */
+	public var yRef(default, null):VectorYReference;
+
+	/**
+	 * The reference to the length value.
+	 */
+	public var lengthRef(default, null):VectorLengthReference;
+
+	/**
+	 * The reference to the angle value.
+	 */
+	public var angleRef(default, null):VectorAngleReference;
+
 	private var _cartesianCoords:CartesianCoordsVector;
 	private var _polarCoords:PolarCoordsVector;
 
@@ -42,6 +65,10 @@ class Vector
 	{
 		this._cartesianCoords = new CartesianCoordsVector();
 		this._polarCoords = new PolarCoordsVector();
+		this.xRef = new VectorXReference(this);
+		this.yRef = new VectorYReference(this);
+		this.lengthRef = new VectorLengthReference(this);
+		this.angleRef = new VectorAngleReference(this);
 		this.reset();
 	}
 
@@ -385,7 +412,7 @@ private class CartesianCoordsVector
 
 	public inline function hasZeroLength():Bool
 	{
-		return Math.abs(x) < Utility.EPSILON && Math.abs(y) < Utility.EPSILON;
+		return Math.abs(x) < EPSILON && Math.abs(y) < EPSILON;
 	}
 }
 
@@ -453,4 +480,58 @@ private class RelativeReferer extends Referer
 		reference.calculateAbsolute(target);
 		target.add(vector);
 	}
+}
+
+
+
+private class VectorValueReference
+{
+	private var _vector:Vector;
+
+	public function new (vector:Vector)
+	{ this._vector = vector; }
+}
+
+private class VectorXReference extends VectorValueReference implements FloatRef
+{
+	public var value(get, set):Float;
+
+	public inline function get_value()
+	{ return this._vector.x; }
+
+	public inline function set_value(value:Float)
+	{ return this._vector.x = value; }
+}
+
+private class VectorYReference extends VectorValueReference implements FloatRef
+{
+	public var value(get, set):Float;
+
+	public inline function get_value()
+	{ return this._vector.y; }
+
+	public inline function set_value(value:Float)
+	{ return this._vector.y = value; }
+}
+
+private class VectorLengthReference extends VectorValueReference implements FloatRef
+{
+	public var value(get, set):Float;
+
+	public inline function get_value()
+	{ return this._vector.length; }
+
+	public inline function set_value(value:Float)
+	{ return this._vector.length = value; }
+}
+
+private class VectorAngleReference extends VectorValueReference implements DirectionAngleRef
+{
+	public var value(get, set):DirectionAngle;
+
+	public inline function get_value()
+	{ return this._vector.angle; }
+
+	public inline function set_value(value:DirectionAngle)
+	{ return this._vector.angle = value; }
 }
