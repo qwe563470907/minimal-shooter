@@ -23,6 +23,8 @@ class ActorAdapter implements bloc.Actor
 	public var shotBearingAngularVelocity(get, never):Ref<AngleInterval>;
 	public var shotDirectionAngularVelocity(get, never):Ref<AngleInterval>;
 
+	public var hasCompletedPattern:Bool;
+
 	private var _actor:ActorSprite;
 	private var _blocPattern:Pattern;
 	private var _blocStateManager:StateManager;
@@ -34,6 +36,7 @@ class ActorAdapter implements bloc.Actor
 		this._blocStateManager = new StateManager();
 		this._blocPattern = Utility.NULL_PATTERN;
 		this._receivedCommandTextSet = new StringSet();
+		this.hasCompletedPattern = false;
 	}
 
 	public inline function reset():Void
@@ -41,6 +44,7 @@ class ActorAdapter implements bloc.Actor
 		this._blocStateManager.clear();
 		this._blocPattern = Utility.NULL_PATTERN;
 		this._receivedCommandTextSet.clear();
+		this.hasCompletedPattern = false;
 	}
 
 	public inline function fire(pattern:Pattern):bloc.Actor
@@ -55,9 +59,11 @@ class ActorAdapter implements bloc.Actor
 
 	public inline function runBulletHellPattern():Void
 	{
-		this._blocPattern.run(this);
-
-		this._receivedCommandTextSet.clear();
+		if (!this.hasCompletedPattern)
+		{
+			this.hasCompletedPattern = this._blocPattern.run(this);
+			this._receivedCommandTextSet.clear();
+		}
 	}
 
 	public function sendCommand(command:Command):Void
