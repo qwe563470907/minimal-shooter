@@ -106,7 +106,7 @@ class AngleElementBuilder
 	 * @param   elementName The instance of enum ElementName.
 	 * @param   value The value in BLOC degrees (0 for North, clockwise).
 	 * @param   operation The instance of enum Operation.
-	 * @return  The created vector element.
+	 * @return  The created element instance.
 	 */
 	public static inline function create(
 	  elementName:ElementName,
@@ -135,7 +135,7 @@ class AngleElementBuilder
 		}
 		catch (message:String)
 		{
-			throw "AngleElement.create(): " + message;
+			throw "AngleElementBuilder.create(): " + message;
 		}
 	}
 }

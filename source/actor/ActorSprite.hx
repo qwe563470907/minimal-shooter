@@ -6,6 +6,7 @@ import flixel.FlxSprite;
 import flixel.FlxG;
 import actor.behavior.*;
 import bloc.Pattern;
+import bloc.AngleInterval;
 
 class ActorSprite extends FlxSprite // implements ICleanable
 {
@@ -15,6 +16,11 @@ class ActorSprite extends FlxSprite // implements ICleanable
 	public var motionVelocity:Vector;
 	public var shotPosition:Vector;
 	public var shotVelocity:Vector;
+
+	public var bearingAngularVelocity:AngleInterval;
+	public var directionAngularVelocity:AngleInterval;
+	public var shotBearingAngularVelocity:AngleInterval;
+	public var shotDirectionAngularVelocity:AngleInterval;
 
 	public var halfWidth:Float;
 	public var halfHeight:Float;
@@ -76,6 +82,7 @@ class ActorSprite extends FlxSprite // implements ICleanable
 			behavior.run(this);
 
 		adapter.runBulletHellPattern();
+		applyAngularVelocities();
 		properFrameCount++;
 		// childActors.forEach(removeNonExistingChild);
 
@@ -146,5 +153,16 @@ class ActorSprite extends FlxSprite // implements ICleanable
 		adapter.reset();
 
 		return this;
+	}
+
+	private inline function applyAngularVelocities():Void
+	{
+		if (!bearingAngularVelocity.isZero()) position.angle += bearingAngularVelocity;
+
+		if (!directionAngularVelocity.isZero()) motionVelocity.angle += directionAngularVelocity;
+
+		if (!shotBearingAngularVelocity.isZero()) shotPosition.angle += shotBearingAngularVelocity;
+
+		if (!shotDirectionAngularVelocity.isZero()) shotVelocity.angle += shotDirectionAngularVelocity;
 	}
 }

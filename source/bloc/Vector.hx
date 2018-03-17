@@ -355,8 +355,6 @@ class Vector
 
 private class CartesianCoordsVector
 {
-	private static var EPSILON = 0.0000001;
-
 	public var x:Float = 0;
 	public var y:Float = 0;
 
@@ -387,7 +385,7 @@ private class CartesianCoordsVector
 
 	public inline function hasZeroLength():Bool
 	{
-		return Math.abs(x) < EPSILON && Math.abs(y) < EPSILON;
+		return Math.abs(x) < Utility.EPSILON && Math.abs(y) < Utility.EPSILON;
 	}
 }
 

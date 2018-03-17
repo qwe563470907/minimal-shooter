@@ -3,6 +3,7 @@ package actor;
 import bloc.Pattern;
 import bloc.Utility;
 import bloc.Vector;
+import bloc.AngleInterval;
 import bloc.StateManager;
 import bloc.Command;
 
@@ -15,6 +16,11 @@ class ActorAdapter implements bloc.Actor
 	public var velocity(get, never):Vector;
 	public var shotPosition(get, never):Vector;
 	public var shotVelocity(get, never):Vector;
+
+	public var bearingAngularVelocity(get, set):AngleInterval;
+	public var directionAngularVelocity(get, set):AngleInterval;
+	public var shotBearingAngularVelocity(get, set):AngleInterval;
+	public var shotDirectionAngularVelocity(get, set):AngleInterval;
 
 	private var _actor:ActorSprite;
 	private var _blocPattern:Pattern;
@@ -84,24 +90,42 @@ class ActorAdapter implements bloc.Actor
 	}
 
 	inline function get_position()
-	{
-		return this._actor.position;
-	}
+	{ return this._actor.position; }
 
 	inline function get_velocity()
-	{
-		return this._actor.motionVelocity;
-	}
+	{ return this._actor.motionVelocity; }
 
 	inline function get_shotPosition()
-	{
-		return this._actor.shotPosition;
-	}
+	{ return this._actor.shotPosition; }
 
 	inline function get_shotVelocity()
-	{
-		return this._actor.shotVelocity;
-	}
+	{ return this._actor.shotVelocity; }
+
+	inline function get_bearingAngularVelocity()
+	{ return this._actor.bearingAngularVelocity; }
+
+	inline function get_directionAngularVelocity()
+	{ return this._actor.directionAngularVelocity; }
+
+	inline function get_shotBearingAngularVelocity()
+	{ return this._actor.shotBearingAngularVelocity; }
+
+	inline function get_shotDirectionAngularVelocity()
+	{ return this._actor.shotDirectionAngularVelocity; }
+
+	inline function set_bearingAngularVelocity(value:AngleInterval)
+	{ return this._actor.bearingAngularVelocity = value; }
+
+	inline function set_directionAngularVelocity(value:AngleInterval)
+	{ return this._actor.directionAngularVelocity = value; }
+
+	inline function set_shotBearingAngularVelocity(value:AngleInterval)
+	{ return this._actor.shotBearingAngularVelocity = value; }
+
+	inline function set_shotDirectionAngularVelocity(value:AngleInterval)
+	{ return this._actor.shotDirectionAngularVelocity = value; }
+
+
 }
 
 class StringSet extends haxe.ds.StringMap<Bool>

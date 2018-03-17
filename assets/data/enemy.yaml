@@ -32,11 +32,11 @@ patterns:
     - wait: 25
     - speed: [set, 0]
     - shot_distance: [add, 60]
+    - shot_bearing_angular_velocity: [set, 1.5]
     - shot_speed: [add, 4]
     - loop:
         count: 300
         pattern:
-          - shot_bearing: [add, 3]
           - loop:
               count: 4
               pattern:

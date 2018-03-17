@@ -4,6 +4,7 @@ import bloc.element.Element;
 import bloc.element.ElementUtility;
 import bloc.element.LengthElement;
 import bloc.element.AngleElement;
+import bloc.element.AngularVelocityElement;
 import bloc.parser.ParserUtility.*;
 
 class ScalarParser
@@ -98,6 +99,10 @@ class ScalarParser
 
 			case bearing_element, direction_element, shot_bearing_element, shot_direction_element:
 				AngleElementBuilder.create(elementName, value, operation);
+
+			case bearing_angular_velocity_element, direction_angular_velocity_element,
+					shot_bearing_angular_velocity_element, shot_direction_angular_velocity_element:
+				AngularVelocityElementBuilder.create(elementName, value, operation);
 
 			default:
 				throw "Invalid element. Maybe a bug.";

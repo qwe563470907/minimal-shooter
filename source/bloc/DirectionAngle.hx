@@ -2,9 +2,6 @@ package bloc;
 
 abstract DirectionAngle(Float)
 {
-	private static var TO_RADIANS = Math.PI / 180.0;
-	private static var TO_DEGREES = 180.0 / Math.PI;
-
 	private inline function new (radians:Float)
 	{ this = radians; }
 
@@ -24,7 +21,7 @@ abstract DirectionAngle(Float)
 	 * @return  DirectionAngle
 	 */
 	public static inline function fromDegrees(degrees:Float):DirectionAngle
-		return fromRadians(degrees * TO_RADIANS);
+		return fromRadians(degrees * Utility.TO_RADIANS);
 
 	/**
 	 * Creates an direction angle value from radians (0 for the direction of 3 o'clock, clockwise).
@@ -57,7 +54,7 @@ abstract DirectionAngle(Float)
 	 * @return  Float
 	 */
 	public inline function toDegrees():Float
-		return toRadians() * TO_DEGREES;
+		return toRadians() * Utility.TO_DEGREES;
 
 	/**
 	 * Converts the direction angle to Float in BLOC degrees (0 for the direction of 12 o'clock, clockwise).
@@ -74,6 +71,14 @@ abstract DirectionAngle(Float)
 	 */
 	@:to public inline function toString():String
 		return "" + 0.01 * Math.round(100.0 * toBlocDegrees());
+
+	/**
+	 * Returns true if the value is zero or very nearly zero.
+	 *
+	 * @return  Bool
+	 */
+	public inline function isZero():Bool
+		return Math.abs(this) < Utility.EPSILON;
 
 	@:op(A - B) static public function subtract(a:DirectionAngle, b:DirectionAngle):AngleInterval;
 }

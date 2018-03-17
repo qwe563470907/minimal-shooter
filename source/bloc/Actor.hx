@@ -7,6 +7,11 @@ interface Actor
 	public var shotPosition(get, never):Vector;
 	public var shotVelocity(get, never):Vector;
 
+	public var bearingAngularVelocity(get, set):AngleInterval;
+	public var directionAngularVelocity(get, set):AngleInterval;
+	public var shotBearingAngularVelocity(get, set):AngleInterval;
+	public var shotDirectionAngularVelocity(get, set):AngleInterval;
+
 	public function getStateManager():StateManager;
 	public function fire(pattern:Pattern):Actor;
 	public function kill():Void;

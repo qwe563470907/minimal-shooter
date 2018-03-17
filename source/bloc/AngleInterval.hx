@@ -2,9 +2,6 @@ package bloc;
 
 abstract AngleInterval(Float)
 {
-	private static var TO_RADIANS = Math.PI / 180.0;
-	private static var TO_DEGREES = 180.0 / Math.PI;
-
 	private inline function new (radians:Float)
 	{ this = radians; }
 
@@ -15,7 +12,7 @@ abstract AngleInterval(Float)
 	 * @return  AngleInterval
 	 */
 	public static inline function fromDegrees(degrees:Float):AngleInterval
-		return fromRadians(degrees * TO_RADIANS);
+		return fromRadians(degrees * Utility.TO_RADIANS);
 
 	/**
 	 * Creates an angle interval value from radians.
@@ -48,7 +45,7 @@ abstract AngleInterval(Float)
 	 * @return  Float
 	 */
 	public inline function toDegrees():Float
-		return toRadians() * TO_DEGREES;
+		return toRadians() * Utility.TO_DEGREES;
 
 	/**
 	 * Converts the angle interval to String in degrees.
@@ -57,6 +54,14 @@ abstract AngleInterval(Float)
 	 */
 	@:to public inline function toString():String
 		return "" + 0.01 * Math.round(100.0 * toDegrees());
+
+	/**
+	 * Returns true if the value is zero or very nearly zero.
+	 *
+	 * @return  Bool
+	 */
+	public inline function isZero():Bool
+		return Math.abs(this) < Utility.EPSILON;
 
 	@:op(A + B) static public function directionPlusInterval(a:DirectionAngle, b:AngleInterval):DirectionAngle;
 	@:op(A + B) static public function intervalPlusDirection(a:AngleInterval, b:DirectionAngle):DirectionAngle;
