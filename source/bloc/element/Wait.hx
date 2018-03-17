@@ -32,4 +32,9 @@ class Wait extends DefaultElement
 	{
 		return "wait " + this.waitCount;
 	}
+
+	override public inline function containsWait():Bool
+	{
+		return true;
+	}
 }

@@ -21,4 +21,9 @@ class DefaultElement implements Element
 	{
 		return "";
 	}
+
+	public function containsWait():Bool
+	{
+		return false;
+	}
 }

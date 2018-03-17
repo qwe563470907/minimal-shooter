@@ -9,14 +9,15 @@ patterns:
             - fire:
             - shot_position: [set, 50, -90]
             - fire:
-            - wait: 3
+            - wait: 4
+          else:
+            - wait: 1
   "enemy1":
     - shot_velocity: [set, 400, 180, polar]
     - parallel:
       - endless:
-        - sequence:
-          - fire:
-          - wait: 60
+        - fire:
+        - wait: 60
       - sequence:
         - wait: 240
         - if:
@@ -27,6 +28,7 @@ patterns:
               - velocity: [add, 15, 180]
         - endless:
           - velocity: [add, 0.5, 180]
+          - wait: 1
   "enemy2":
     - velocity: [set, 30, 180]
     - speed:

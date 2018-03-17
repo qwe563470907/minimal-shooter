@@ -73,6 +73,11 @@ class ContinuousLengthElement extends LengthElement
 	{
 		return super.toString() + " -frm " + this._frameCount;
 	}
+
+	override public inline function containsWait():Bool
+	{
+		return true;
+	}
 }
 
 class FixedContinuousLengthElement extends ContinuousLengthElement

@@ -86,7 +86,15 @@ class ElementParser
 					LoopParser.parse(content);
 
 				case endless_element:
-					new EndlessRepeat(PatternParser.parsePatternContent(content));
+					if (isSequence(content))
+					{
+						var pattern = new Endless(PatternParser.parseElementArray(content));
+
+						if (!pattern.containsWait()) throw "Contains no element which takes one or more frames.";
+
+						pattern;
+					}
+					else throw "Following object must be a list of elements:\n" + content;
 
 				case if_element:
 					IfParser.parse(content);
@@ -102,7 +110,7 @@ class ElementParser
 		}
 		catch (message:String)
 		{
-			trace("[BLOC] Warning: Element <" + elementNameString + ">: Invalid content." + message);
+			trace("[BLOC] Warning: Element <" + elementNameString + ">: Invalid content. " + message);
 			parsedElement = NULL_ELEMENT;
 		}
 

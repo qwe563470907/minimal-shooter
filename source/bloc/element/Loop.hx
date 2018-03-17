@@ -49,4 +49,9 @@ class Loop extends DefaultElement
 
 		return "loop:\n" + indent(content);
 	}
+
+	override public inline function containsWait():Bool
+	{
+		return this._pattern.containsWait();
+	}
 }

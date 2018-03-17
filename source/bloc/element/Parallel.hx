@@ -1,5 +1,7 @@
 package bloc.element;
 
+import bloc.element.ElementUtility.indent;
+
 class Parallel extends List
 {
 	public function new (elements:Array<Element>)
@@ -21,6 +23,6 @@ class Parallel extends List
 
 	override public function toString():String
 	{
-		return "parallel:\n" + super.toString();
+		return "parallel:\n" + indent(super.toString());
 	}
 }

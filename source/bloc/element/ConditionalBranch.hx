@@ -1,5 +1,6 @@
 package bloc.element;
 
+import bloc.Utility.NULL_PATTERN;
 import bloc.element.ElementUtility.indent;
 import bloc.state.ConditionalBranchState;
 
@@ -32,10 +33,12 @@ class ConditionalBranch extends DefaultElement
 
 	override public function toString():String
 	{
-		var thenStr = "then:\n" + indent(this._then.toString());
-		var elseStr = "else:\n" + indent(this._else.toString());
+		var str = if (this._then != NULL_PATTERN) "then:\n" + indent(this._then.toString()) else "";
 
-		return indent(thenStr + "\n" + elseStr);
+		if (this._then != NULL_PATTERN && this._else != NULL_PATTERN) str += "\n";
+		str += if (this._else != NULL_PATTERN) "else:\n" + indent(this._else.toString()) else "";
+
+		return str;
 	}
 
 	override public inline function prepareState(manager:StateManager):Void
@@ -54,6 +57,11 @@ class ConditionalBranch extends DefaultElement
 	{
 		this._then.resetState(actor);
 		this._else.resetState(actor);
+	}
+
+	override public inline function containsWait():Bool
+	{
+		return this._then.containsWait() && this._else.containsWait();
 	}
 
 	private function setActiveBranch(actor:Actor, state:ConditionalBranchState):Pattern

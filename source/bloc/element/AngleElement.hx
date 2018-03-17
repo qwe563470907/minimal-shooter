@@ -131,6 +131,11 @@ class DynamicContinuousChangeAngleElement extends SetAngleElement
 		manager.getAngleIntervalState(this).reset();
 	}
 
+	override public inline function containsWait():Bool
+	{
+		return true;
+	}
+
 	private function setValue(actor:Actor, state:AngleIntervalState):AngleInterval
 	{
 		var currentValue = this._angleGetter.get(this._vectorGetter.get(actor)).value;
@@ -196,6 +201,11 @@ class ContinuousChangeAngleElement extends ChangeAngleElement
 	override public function toString():String
 	{
 		return super.toString() + " -frm " + this._frameCount;
+	}
+
+	override public inline function containsWait():Bool
+	{
+		return true;
 	}
 }
 

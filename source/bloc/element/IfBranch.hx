@@ -49,7 +49,7 @@ class IfBranch extends ConditionalBranch
 		if (this._hasCommand)
 			str += "command:\n" + indent(this._commandText.toString());
 
-		return "if:\n" + indent(str) + "\n" + super.toString();
+		return "if:\n" + indent(str) + "\n" + indent(super.toString());
 	}
 
 	override private inline function setActiveBranch(actor:Actor, state:ConditionalBranchState):Pattern

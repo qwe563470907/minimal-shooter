@@ -1,6 +1,8 @@
 package bloc.element;
 
 import bloc.Pattern;
+import bloc.Utility.NULL_PATTERN;
+import bloc.element.ElementUtility.indent;
 
 class Fire extends DefaultElement
 {
@@ -23,6 +25,10 @@ class Fire extends DefaultElement
 
 	override public function toString():String
 	{
-		return "fire";
+		var patternStr = "";
+
+		if (this._pattern != NULL_PATTERN) patternStr += ":\n" + indent(this._pattern.toString());
+
+		return "fire" + patternStr;
 	}
 }

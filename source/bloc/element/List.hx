@@ -1,7 +1,5 @@
 package bloc.element;
 
-import bloc.element.ElementUtility.indent;
-
 class List extends DefaultElement
 {
 	public var elements:Array<Element>;
@@ -26,12 +24,33 @@ class List extends DefaultElement
 
 	override public function toString():String
 	{
+		return this.render();
+	}
+
+	override public inline function containsWait():Bool
+	{
+		var result = false;
+
+		for (element in this.elements)
+		{
+			if (element.containsWait())
+			{
+				result = true;
+				break;
+			}
+		}
+
+		return result;
+	}
+
+	private inline function render():String
+	{
 		var str = "";
 		var len = this.elements.length;
 
 		for (i in 0...len)
 			str += this.elements[i].toString() + if (i < len - 1) "\n" else "";
 
-		return indent(str);
+		return str;
 	}
 }

@@ -1,12 +1,9 @@
 package bloc.element;
 
-class EndlessRepeat extends Sequence
-{
-	public function new (pattern:Pattern, ?intervalWaitCount:Int)
-	{
-		super([pattern, new Wait(intervalWaitCount)]);
-	}
+import bloc.element.ElementUtility.indent;
 
+class Endless extends Sequence
+{
 	override public inline function run(actor:Actor):Bool
 	{
 		while (super.run(actor))
@@ -17,6 +14,6 @@ class EndlessRepeat extends Sequence
 
 	override public function toString():String
 	{
-		return "endless " + super.toString();
+		return "endless:\n" + indent(this.render());
 	}
 }

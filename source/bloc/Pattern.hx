@@ -43,6 +43,11 @@ private class AbstractPattern implements Pattern
 		return this.name;
 	}
 
+	public function containsWait():Bool
+	{
+		return false;
+	}
+
 	inline function get_name():String
 	{
 		return this.name;
@@ -78,6 +83,11 @@ private class NonNullPattern extends AbstractPattern
 	{
 		return _topElement.toString();
 	}
+
+	override public inline function containsWait():Bool
+	{
+		return this._topElement.containsWait();
+	}
 }
 
 class NamedPattern extends NonNullPattern
@@ -97,7 +107,7 @@ class AnonymousPattern extends NonNullPattern
 
 	override public function toString():String
 	{
-		return this.name + ":\n" + bloc.element.ElementUtility.indent(this.renderElements());
+		return this.renderElements();
 	}
 }
 

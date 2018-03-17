@@ -1,5 +1,7 @@
 package bloc.element;
 
+import bloc.element.ElementUtility.indent;
+
 class Sequence extends List
 {
 	public function new (elements:Array<Element>)
@@ -40,6 +42,6 @@ class Sequence extends List
 
 	override public function toString():String
 	{
-		return "sequence:\n" + super.toString();
+		return "sequence:\n" + indent(super.toString());
 	}
 }
