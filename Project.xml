@@ -37,6 +37,7 @@
 	<haxelib name="yaml" /> <!-- v1.3.0 -->
 	<haxelib name="hscript" /> <!-- v2.1.1 -->
 	<haxelib name="tweenxcore" /> <!-- v1.0.3 -->
+	<haxelib name="tink_core" /> <!-- v1.16.1 -->
 	<!--
 		Other depending libraries:
 			hxcpp v3.4.64
