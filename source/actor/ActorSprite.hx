@@ -1,5 +1,6 @@
 package actor;
 
+using tink.core.Ref;
 import flixel.FlxSprite;
 // import flixel.math.FlxPoint;
 // import flixel.util.FlxArrayUtil.clearArray;
@@ -17,10 +18,10 @@ class ActorSprite extends FlxSprite // implements ICleanable
 	public var shotPosition:Vector;
 	public var shotVelocity:Vector;
 
-	public var bearingAngularVelocity:AngleInterval;
-	public var directionAngularVelocity:AngleInterval;
-	public var shotBearingAngularVelocity:AngleInterval;
-	public var shotDirectionAngularVelocity:AngleInterval;
+	public var bearingAngularVelocity:Ref<AngleInterval>;
+	public var directionAngularVelocity:Ref<AngleInterval>;
+	public var shotBearingAngularVelocity:Ref<AngleInterval>;
+	public var shotDirectionAngularVelocity:Ref<AngleInterval>;
 
 	public var halfWidth:Float;
 	public var halfHeight:Float;
@@ -38,11 +39,17 @@ class ActorSprite extends FlxSprite // implements ICleanable
 		behaviorList = [];
 		adapter = new ActorAdapter(this);
 		// childActors = new CleanableGroup<Actor>(256);
+
 		position = new Vector();
 		motionVelocity = new Vector();
 		shotPosition = new Vector();
 		shotPosition.setRelativeReference(position);	// relative vector at default
 		shotVelocity = new Vector();
+
+		bearingAngularVelocity = AngleInterval.fromZero();
+		directionAngularVelocity = AngleInterval.fromZero();
+		shotBearingAngularVelocity = AngleInterval.fromZero();
+		shotDirectionAngularVelocity = AngleInterval.fromZero();
 	}
 
 	// public function clean():Void
@@ -157,12 +164,12 @@ class ActorSprite extends FlxSprite // implements ICleanable
 
 	private inline function applyAngularVelocities():Void
 	{
-		if (!bearingAngularVelocity.isZero()) position.angle += bearingAngularVelocity;
+		if (!bearingAngularVelocity.value.isZero()) position.angle += bearingAngularVelocity.value;
 
-		if (!directionAngularVelocity.isZero()) motionVelocity.angle += directionAngularVelocity;
+		if (!directionAngularVelocity.value.isZero()) motionVelocity.angle += directionAngularVelocity.value;
 
-		if (!shotBearingAngularVelocity.isZero()) shotPosition.angle += shotBearingAngularVelocity;
+		if (!shotBearingAngularVelocity.value.isZero()) shotPosition.angle += shotBearingAngularVelocity.value;
 
-		if (!shotDirectionAngularVelocity.isZero()) shotVelocity.angle += shotDirectionAngularVelocity;
+		if (!shotDirectionAngularVelocity.value.isZero()) shotVelocity.angle += shotDirectionAngularVelocity.value;
 	}
 }

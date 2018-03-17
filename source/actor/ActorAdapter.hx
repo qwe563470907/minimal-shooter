@@ -1,5 +1,6 @@
 package actor;
 
+using tink.core.Ref;
 import bloc.Pattern;
 import bloc.Utility;
 import bloc.Vector;
@@ -17,10 +18,10 @@ class ActorAdapter implements bloc.Actor
 	public var shotPosition(get, never):Vector;
 	public var shotVelocity(get, never):Vector;
 
-	public var bearingAngularVelocity(get, set):AngleInterval;
-	public var directionAngularVelocity(get, set):AngleInterval;
-	public var shotBearingAngularVelocity(get, set):AngleInterval;
-	public var shotDirectionAngularVelocity(get, set):AngleInterval;
+	public var bearingAngularVelocity(get, never):Ref<AngleInterval>;
+	public var directionAngularVelocity(get, never):Ref<AngleInterval>;
+	public var shotBearingAngularVelocity(get, never):Ref<AngleInterval>;
+	public var shotDirectionAngularVelocity(get, never):Ref<AngleInterval>;
 
 	private var _actor:ActorSprite;
 	private var _blocPattern:Pattern;
@@ -112,20 +113,6 @@ class ActorAdapter implements bloc.Actor
 
 	inline function get_shotDirectionAngularVelocity()
 	{ return this._actor.shotDirectionAngularVelocity; }
-
-	inline function set_bearingAngularVelocity(value:AngleInterval)
-	{ return this._actor.bearingAngularVelocity = value; }
-
-	inline function set_directionAngularVelocity(value:AngleInterval)
-	{ return this._actor.directionAngularVelocity = value; }
-
-	inline function set_shotBearingAngularVelocity(value:AngleInterval)
-	{ return this._actor.shotBearingAngularVelocity = value; }
-
-	inline function set_shotDirectionAngularVelocity(value:AngleInterval)
-	{ return this._actor.shotDirectionAngularVelocity = value; }
-
-
 }
 
 class StringSet extends haxe.ds.StringMap<Bool>

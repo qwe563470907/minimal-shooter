@@ -1,5 +1,7 @@
 package bloc;
 
+using tink.core.Ref;
+
 interface Actor
 {
 	public var position(get, never):Vector;
@@ -7,10 +9,10 @@ interface Actor
 	public var shotPosition(get, never):Vector;
 	public var shotVelocity(get, never):Vector;
 
-	public var bearingAngularVelocity(get, set):AngleInterval;
-	public var directionAngularVelocity(get, set):AngleInterval;
-	public var shotBearingAngularVelocity(get, set):AngleInterval;
-	public var shotDirectionAngularVelocity(get, set):AngleInterval;
+	public var bearingAngularVelocity(get, never):Ref<AngleInterval>;
+	public var directionAngularVelocity(get, never):Ref<AngleInterval>;
+	public var shotBearingAngularVelocity(get, never):Ref<AngleInterval>;
+	public var shotDirectionAngularVelocity(get, never):Ref<AngleInterval>;
 
 	public function getStateManager():StateManager;
 	public function fire(pattern:Pattern):Actor;
