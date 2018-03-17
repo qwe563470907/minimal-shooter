@@ -11,7 +11,7 @@ patterns:
             - fire:
             - wait: 3
   "enemy1":
-    - shot_velocity: [set, 400, 180, polar, absolute]
+    - shot_velocity: [set, 400, 180, polar]
     - parallel:
       - endless:
         - sequence:
@@ -60,7 +60,10 @@ patterns:
                           value: 60
                           frames: 30
             - wait: 2
-    - velocity: [set, 16, 180]
+    - velocity:
+        operation: add
+        values: [16, 180]
+        frames: 60
 
 definitions:
   "accelerate":

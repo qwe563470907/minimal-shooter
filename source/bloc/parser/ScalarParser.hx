@@ -39,7 +39,7 @@ class ScalarParser
 
 				var frames:Null<Dynamic> = content.get("frames");
 
-				if (frames == null || (isInt(frames) && frames < 1)) frames = 1;
+				if (frames == null) frames = 0;
 
 				validateFrames(frames);
 

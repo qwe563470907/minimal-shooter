@@ -15,11 +15,13 @@ class VectorParser
 	 *         "operation",
 	 *         "values" (an array of two numbers),
 	 *         "coordinates",
-	 *         "reference".
+	 *         "reference",
+	 *         "frames".
 	 *     (2) an array of:
-	 *         operation, value1, value2, coordinates, reference.
+	 *         operation, value1, value2, coordinates (reference and frames cannot be specified).
 	 *     The operation and values are mandatory. The "coordinates" attribute is "polar" at default.
 	 *     The "reference" attribute is used only for cases where element is either "shot_position" or "shot_velocity" and operation is "set".
+	 *     The "frames" attribute is 0 at default.
 	 *     This format will be checked in this method.
 	 * @return  The parsed element instance.
 	 */
@@ -36,18 +38,23 @@ class VectorParser
 			{
 				var values = content.get("values");
 				validateValues(values);
+				var value1 = values[0];
+				var value2 = values[1];
 
 				var operationString = content.get("operation");
 				validateOperation(operationString);
 				var operation = getOperation(operationString);
 
-				var value1 = content[1];
-				var value2 = content[2];
-
 				var coords = getCoordinates(content.get("coordinates"));
 				var reference = getReference(content.get("reference"), elementName, operation);
 
-				element = VectorElementBuilder.create(elementName, value1, value2, operation, coords, reference);
+				var frames = content.get("frames");
+
+				if (frames == null) frames = 0;
+
+				validateFrames(frames);
+
+				element = VectorElementBuilder.create(elementName, value1, value2, operation, coords, reference, frames);
 			}
 			else if (isSequence(content))
 			{
@@ -59,9 +66,11 @@ class VectorParser
 
 				var arrayLength:Int = content.length;
 				var coords = getCoordinates(if (arrayLength >= 4) content[3] else null);
-				var reference = getReference(if (arrayLength >= 5) content[4] else null, elementName, operation);
 
-				element = VectorElementBuilder.create(elementName, value1, value2, operation, coords, reference);
+				var reference = getReference(null, elementName, operation);	// get default value
+				var frames = 0;
+
+				element = VectorElementBuilder.create(elementName, value1, value2, operation, coords, reference, frames);
 			}
 			else
 				throw "Invalid attributes. The attributes must be either a map or an array.";
@@ -89,7 +98,7 @@ class VectorParser
 		if (values == null)
 			throw "Found no \"values\" attribute.";
 
-		if (!isSequence(values) || values.length != 2 || !isFloat(values[0] || !isFloat(values[1])))
+		if (!isSequence(values) || values.length != 2 || !isFloat(values[0]) || !isFloat(values[1]))
 			throw "Invalid \"values\" attribute: " + values;
 	}
 
@@ -101,6 +110,12 @@ class VectorParser
 
 		if (!isFloat(array[1]) || !isFloat(array[2]))
 			throw "Invalid attributes: " + array;
+	}
+
+	private static inline function validateFrames(frames:Null<Dynamic>):Void
+	{
+		if (frames != null && (!isInt(frames) || frames < 0))
+			throw "Invalid \"frames\" attribute: " + frames + "\nThis must be zero or a positive integer.";
 	}
 
 	private static inline function getOperation(operationValue:Null<Dynamic>):Operation
@@ -142,7 +157,7 @@ class VectorParser
 
 			case shot_velocity_element: absolute_reference;
 
-			default: throw "[BLOC] VectorParser class: Reached the code which should be unreachable. Maybe a bug.";
+			default: throw "VectorParser class: Reached the code which should be unreachable. Maybe a bug.";
 		}
 	}
 }

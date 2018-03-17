@@ -2,6 +2,7 @@ package bloc.element;
 
 import bloc.DirectionAngle;
 import bloc.element.ElementUtility;
+import bloc.state.VectorState;
 
 class VectorElement extends DefaultElement
 {
@@ -33,15 +34,6 @@ class VectorElement extends DefaultElement
 		this._referenceVectorGetter = referenceVectorGetter;
 	}
 
-	override public inline function run(actor:Actor):Bool
-	{
-		var operandVector = this._operandVectorGetter.get(actor);
-		this._referenceSetter.set(operandVector, this._referenceVectorGetter.get(actor));
-		this._vectorOperator.operate(operandVector, this._valueVector);
-
-		return true;
-	}
-
 	override public function toString():String
 	{
 		return (
@@ -52,6 +44,138 @@ class VectorElement extends DefaultElement
 		);
 	}
 }
+
+class NoWaitVectorElement extends VectorElement
+{
+	override public inline function run(actor:Actor):Bool
+	{
+		var operandVector = this._operandVectorGetter.get(actor);
+		this._referenceSetter.set(operandVector, this._referenceVectorGetter.get(actor));
+		this._vectorOperator.operate(operandVector, this._valueVector);
+
+		return true;
+	}
+}
+
+class ContinuousVectorElement extends VectorElement
+{
+	private var _frameCount:Int;
+
+	public function new (
+	  name:ElementName,
+	  valueVector:Vector,
+	  operation:Operation,
+	  operandVectorGetter:AbstractVectorGetter,
+	  vectorOperator:AbstractVectorOperator,
+	  referenceSetter:AbstractReferenceSetter,
+	  referenceVectorGetter:AbstractVectorGetter,
+	  frames:Int
+	)
+	{
+		super(name, valueVector, operation, operandVectorGetter, vectorOperator, referenceSetter, referenceVectorGetter);
+		this._frameCount = frames;
+	}
+
+	override public function toString():String
+	{
+		return super.toString() + " -frm " + this._frameCount;
+	}
+}
+
+class FixedContinuousVectorElement extends ContinuousVectorElement
+{
+	private var _dividedValue:Vector;
+
+	public function new (
+	  name:ElementName,
+	  valueVector:Vector,
+	  operation:Operation,
+	  operandVectorGetter:AbstractVectorGetter,
+	  vectorOperator:AbstractVectorOperator,
+	  referenceSetter:AbstractReferenceSetter,
+	  referenceVectorGetter:AbstractVectorGetter,
+	  frames:Int
+	)
+	{
+		super(name, valueVector, operation, operandVectorGetter, vectorOperator, referenceSetter, referenceVectorGetter, frames);
+		this._dividedValue = new Vector().set(valueVector);
+		this._dividedValue.length /= cast(frames, Float);
+	}
+
+	override public inline function run(actor:Actor):Bool
+	{
+		var operandVector = this._operandVectorGetter.get(actor);
+
+		var countState = actor.getStateManager().getCountState(this);
+
+		if (countState.count == 0)
+			this._referenceSetter.set(operandVector, this._referenceVectorGetter.get(actor));
+
+		this._vectorOperator.operate(operandVector, this._dividedValue);
+
+		countState.increment();
+
+		return countState.isCompleted;
+	}
+
+	override public inline function prepareState(manager:StateManager):Void
+	{
+		manager.addCountState(this, this._frameCount + 1);
+	}
+
+	override public inline function resetState(actor:Actor):Void
+	{
+		actor.getStateManager().getCountState(this).reset();
+	}
+}
+
+class DynamicContinuousVectorElement extends ContinuousVectorElement
+{
+	override public inline function run(actor:Actor):Bool
+	{
+		var operandVector = this._operandVectorGetter.get(actor);
+		var vectorState = actor.getStateManager().getVectorState(this);
+		var value = vectorState.value;
+
+		var countState = actor.getStateManager().getCountState(this);
+
+		if (countState.count == 0)
+			this._referenceSetter.set(operandVector, this._referenceVectorGetter.get(actor));
+
+		if (value == null) value = setValue(actor, vectorState);
+
+		this._vectorOperator.operate(operandVector, value);
+
+		countState.increment();
+
+		return countState.isCompleted;
+	}
+
+	override public function prepareState(manager:StateManager):Void
+	{
+		manager.addCountState(this, this._frameCount + 1);
+		manager.addVectorState(this);
+	}
+
+	override public function resetState(actor:Actor):Void
+	{
+		var manager = actor.getStateManager();
+		manager.getCountState(this).reset();
+		manager.getVectorState(this).reset();
+	}
+
+	private function setValue(actor:Actor, state:VectorState):Vector
+	{
+		var currentValue = this._operandVectorGetter.get(actor);
+		var valuePerFrame = new Vector().set(this._valueVector);	// Todo: avoid instanciation
+		valuePerFrame.subtract(currentValue);
+		valuePerFrame.length /= (this._frameCount + 1);
+
+		return state.value = valuePerFrame;
+	}
+}
+
+
 
 class VectorElementBuilder
 {
@@ -72,7 +196,8 @@ class VectorElementBuilder
 	  v2:Float,
 	  operation:Operation,
 	  coords:Coordinates,
-	  reference:Null<Reference>
+	  reference:Null<Reference>,
+	  frames:Int
 	):VectorElement
 	{
 		try
@@ -101,15 +226,45 @@ class VectorElementBuilder
 				case null: VectorGetters.nullVectorGetter;
 			}
 
-			return new VectorElement(
-			    elementName,
-			    valueVector,
-			    operation,
-			    operandVectorGetter,
-			    vectorOperator,
-			    referenceSetter,
-			    referenceVectorGetter
-			  );
+			return if (frames == 0)
+				  new NoWaitVectorElement(
+				    elementName,
+				    valueVector,
+				    operation,
+				    operandVectorGetter,
+				    vectorOperator,
+				    referenceSetter,
+				    referenceVectorGetter
+				  );
+			else
+			{
+				switch (operation)
+				{
+					case set_operation:
+						new DynamicContinuousVectorElement(
+						  elementName,
+						  valueVector,
+						  operation,
+						  operandVectorGetter,
+						  VectorOperators.addVector,
+						  referenceSetter,
+						  referenceVectorGetter,
+						  frames
+						);
+
+					case add_operation, subtract_operation:
+						new FixedContinuousVectorElement(
+						  elementName,
+						  valueVector,
+						  operation,
+						  operandVectorGetter,
+						  vectorOperator,
+						  referenceSetter,
+						  referenceVectorGetter,
+						  frames
+						);
+				}
+			}
 		}
 		catch (message:String)
 		{
