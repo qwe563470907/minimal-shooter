@@ -15,7 +15,7 @@ interface Actor
 	public var shotDirectionAngularVelocity(get, never):Ref<AngleInterval>;
 
 	public function getStateManager():StateManager;
-	public function fire(pattern:Pattern):Actor;
+	public function fire(pattern:Pattern, bind:Bool):Actor;
 	public function kill():Void;
 
 	/**

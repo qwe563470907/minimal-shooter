@@ -47,9 +47,9 @@ class ActorAdapter implements bloc.Actor
 		this.hasCompletedPattern = false;
 	}
 
-	public inline function fire(pattern:Pattern):bloc.Actor
+	public inline function fire(pattern:Pattern, bind:Bool):bloc.Actor
 	{
-		this._actor.fire(pattern);
+		this._actor.fire(pattern, bind);
 
 		return this;
 	}

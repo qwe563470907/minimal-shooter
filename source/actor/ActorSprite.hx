@@ -32,6 +32,9 @@ class ActorSprite extends FlxSprite // implements ICleanable
 	private var behaviorList:Array<Behavior>;
 	public var adapter:ActorAdapter;
 
+	private var absolutePosition:Vector;
+	private var isBinded:Bool;
+
 	public function new ()
 	{
 		super();
@@ -50,6 +53,9 @@ class ActorSprite extends FlxSprite // implements ICleanable
 		directionAngularVelocity = AngleInterval.fromZero();
 		shotBearingAngularVelocity = AngleInterval.fromZero();
 		shotDirectionAngularVelocity = AngleInterval.fromZero();
+
+		absolutePosition = new Vector();
+		isBinded = false;
 	}
 
 	// public function clean():Void
@@ -76,8 +82,10 @@ class ActorSprite extends FlxSprite // implements ICleanable
 	 */
 	public inline function isOutOfWorld(margin:Float = 0):Bool
 	{
-		return (position.x + halfWidth < FlxG.worldBounds.x - margin) || (position.x - halfWidth > FlxG.worldBounds.right + margin) ||
-		(position.y + halfHeight < FlxG.worldBounds.y - margin) || (position.y - halfHeight > FlxG.worldBounds.bottom + margin);
+		position.calculateAbsolute(absolutePosition);
+
+		return (absolutePosition.x + halfWidth < FlxG.worldBounds.x - margin) || (absolutePosition.x - halfWidth > FlxG.worldBounds.right + margin) ||
+		(absolutePosition.y + halfHeight < FlxG.worldBounds.y - margin) || (absolutePosition.y - halfHeight > FlxG.worldBounds.bottom + margin);
 	}
 
 	override public function update(elapsed:Float):Void
@@ -100,20 +108,29 @@ class ActorSprite extends FlxSprite // implements ICleanable
 
 	public inline function syncBlocToFlixel():Void
 	{
-		setPosition(position.x - halfWidth, position.y - halfHeight);
+		position.calculateAbsolute(absolutePosition);
+		setPosition(absolutePosition.x - halfWidth, absolutePosition.y - halfHeight);
 		velocity.set(motionVelocity.x * 60, motionVelocity.y * 60);
 	}
 
 	public inline function syncFlixelToBloc():Void
 	{
-		position.setCartesian(x + halfWidth, y + halfHeight);
-		motionVelocity.setCartesian(velocity.x / 60, velocity.y / 60);
+		// Is it really OK????
+
+		if (this.isBinded)
+			position.add(motionVelocity);
+		else
+		{
+			position.setCartesian(x + halfWidth, y + halfHeight);
+			motionVelocity.setCartesian(velocity.x / 60, velocity.y / 60);
+		}
 	}
 
 	override public function kill():Void
 	{
 		super.kill();
 		setPosition(-10000, -10000);
+		isBinded = false;
 		// clearArray(behaviorList, false);
 	}
 
@@ -138,12 +155,20 @@ class ActorSprite extends FlxSprite // implements ICleanable
 		return this;
 	}
 
-	public inline function fire(pattern:Pattern):ActorSprite
+	public inline function fire(pattern:Pattern, bind:Bool):ActorSprite
 	{
 		var newBullet = army.newBullet();
-		this.shotPosition.calculateAbsolute(newBullet.position);
 		this.shotVelocity.calculateAbsolute(newBullet.motionVelocity);
 		newBullet.setBlocPattern(pattern);
+
+		if (bind)
+		{
+			newBullet.position.set(this.shotPosition);
+			newBullet.position.setRelativeReference(this.position);
+			newBullet.isBinded = true;
+		}
+		else
+			this.shotPosition.calculateAbsolute(newBullet.position);
 
 		return this;
 	}
