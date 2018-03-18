@@ -1,6 +1,8 @@
 package bloc.element;
 
-interface Element
+import de.polygonal.ds.Hashable;
+
+interface Element extends Hashable
 {
 	public function run(actor:Actor):Bool;
 	public function prepareState(manager:StateManager):Void;

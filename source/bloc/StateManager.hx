@@ -12,12 +12,15 @@ class StateManager
 	static private var NULL_FLOAT_STATE = new FloatState();
 	static private var NULL_ANGLE_INTERVAL_STATE = new AngleIntervalState();
 	static private var NULL_VECTOR_STATE = new VectorState();
+	static private var NULL_PARALLEL_STATE = new ParallelState();
 
 	public var countStateMap:Map<Element, CountState>;
 	public var branchStateMap:Map<Element, ConditionalBranchState>;
 	public var floatStateMap:Map<Element, FloatState>;
 	public var angleIntervalStateMap:Map<Element, AngleIntervalState>;
 	public var vectorStateMap:Map<Element, VectorState>;
+
+	public var parallelStateMap:Map<Element, ParallelState>;
 
 	public function new ()
 	{
@@ -26,6 +29,8 @@ class StateManager
 		this.floatStateMap = new Map<Element, FloatState>();
 		this.angleIntervalStateMap = new Map<Element, AngleIntervalState>();
 		this.vectorStateMap = new Map<Element, VectorState>();
+
+		this.parallelStateMap = new Map<Element, ParallelState>();
 	}
 
 	public inline function clear():Void
@@ -43,6 +48,9 @@ class StateManager
 			angleIntervalStateMap.remove(key);
 
 		for (key in vectorStateMap.keys())
+			vectorStateMap.remove(key);
+
+		for (key in parallelStateMap.keys())
 			vectorStateMap.remove(key);
 	}
 
@@ -81,6 +89,13 @@ class StateManager
 		return if (state != null) state else NULL_VECTOR_STATE;
 	}
 
+	public inline function getParallelState(element:Element):ParallelState
+	{
+		var state = this.parallelStateMap.get(element);
+
+		return if (state != null) state else NULL_PARALLEL_STATE;
+	}
+
 	public inline function addCountState(element:Element, maxCount:Int)
 	{
 		this.countStateMap.set(element, new CountState(maxCount));
@@ -99,5 +114,10 @@ class StateManager
 	public inline function addVectorState(element:Element)
 	{
 		this.vectorStateMap.set(element, new VectorState());
+	}
+
+	public inline function addParallelState(element:Element)
+	{
+		this.parallelStateMap.set(element, new ParallelState());
 	}
 }

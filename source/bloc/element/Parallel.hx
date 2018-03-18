@@ -13,12 +13,33 @@ class Parallel extends List
 	{
 		var completedAll = true;
 
-		for (i in 0...this.elements.length)
-			completedAll = this.elements[i].run(actor) && completedAll;
+		var state = actor.getStateManager().getParallelState(this);
+
+		for (element in this.elements)
+		{
+			if (state.hasCompleted(element) == true)
+				continue;
+
+			if (element.run(actor))
+				state.setCompleted(element);
+			else
+				completedAll = false;
+		}
 
 		if (completedAll) this.resetChildrenState(actor);
 
 		return completedAll;
+	}
+
+	override public inline function prepareState(manager:StateManager):Void
+	{
+		super.prepareState(manager);
+		manager.addParallelState(this);
+	}
+
+	override public inline function resetState(actor:Actor):Void
+	{
+		actor.getStateManager().getParallelState(this).reset();
 	}
 
 	override public function toString():String

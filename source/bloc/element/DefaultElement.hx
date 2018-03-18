@@ -1,8 +1,13 @@
 package bloc.element;
 
-class DefaultElement implements Element
+import de.polygonal.ds.HashableItem;
+
+class DefaultElement extends HashableItem implements Element
 {
-	private function new () {}
+	private function new ()
+	{
+		super();
+	}
 
 	public function run(actor:Actor):Bool
 	{

@@ -1,5 +1,6 @@
 package bloc;
 
+import de.polygonal.ds.HashableItem;
 import bloc.element.Element;
 
 /**
@@ -11,12 +12,13 @@ interface Pattern extends Element
 	public function renderElements():String;
 }
 
-private class AbstractPattern implements Pattern
+private class AbstractPattern extends HashableItem implements Pattern
 {
 	public var name(get, null):String;
 
 	public function new (name:String)
 	{
+		super();
 		this.name = name;
 	}
 

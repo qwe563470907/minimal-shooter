@@ -43,8 +43,8 @@ patterns:
     - async:
       - shot_direction_angular_velocity:
           operation: set
-          value: 9
-          frames: 300
+          value: 12
+          frames: 200
     - loop:
         count: 300
         pattern:
