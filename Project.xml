@@ -38,6 +38,8 @@
 	<haxelib name="hscript" /> <!-- v2.1.1 -->
 	<haxelib name="tweenxcore" /> <!-- v1.0.3 -->
 	<haxelib name="tink_core" /> <!-- v1.16.1 -->
+	<haxelib name="polygonal-ds" /> <!-- v2.0.1 -->
+	
 	<!--
 		Other depending libraries:
 			hxcpp v3.4.64
