@@ -1,19 +1,17 @@
 package bloc.element;
 
-import bloc.element.ElementUtility.indent;
-
-class Endless extends Sequence
+class Endless extends WrapperElement
 {
-	override public inline function run(actor:Actor):Bool
+	public function new (pattern:Pattern)
 	{
-		while (super.run(actor))
-			this.resetState(actor);
-
-		return false;
+		super(endless_element, pattern);
 	}
 
-	override public function toString():String
+	override public inline function run(actor:Actor):Bool
 	{
-		return "endless:\n" + indent(this.render());
+		while (this._pattern.run(actor))
+			this.resetChildState(actor);
+
+		return false;
 	}
 }

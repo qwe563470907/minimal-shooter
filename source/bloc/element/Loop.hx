@@ -3,15 +3,13 @@ package bloc.element;
 import bloc.element.ElementUtility.indent;
 import bloc.state.CountState;
 
-class Loop extends DefaultElement
+class Loop extends WrapperElement
 {
-	private var _pattern:Pattern;
 	private var _repetitionCount:Int;
 
 	public function new (pattern:Pattern, count:Int)
 	{
-		super();
-		this._pattern = pattern;
+		super(loop_element, pattern);
 		this._repetitionCount = count;
 	}
 
@@ -25,7 +23,7 @@ class Loop extends DefaultElement
 
 			if (!completed) return false;
 
-			this._pattern.resetState(actor);
+			this.resetChildState(actor);
 			state.increment();
 		}
 
@@ -34,8 +32,8 @@ class Loop extends DefaultElement
 
 	override public inline function prepareState(manager:StateManager):Void
 	{
+		super.prepareState(manager);
 		manager.countStateMap.set(this, new CountState(this._repetitionCount));
-		this._pattern.prepareState(manager);
 	}
 
 	override public inline function resetState(actor:Actor):Void
@@ -48,10 +46,5 @@ class Loop extends DefaultElement
 		var content = "count: " + this._repetitionCount + "\npattern:\n" + indent(this._pattern.toString());
 
 		return "loop:\n" + indent(content);
-	}
-
-	override public inline function containsWait():Bool
-	{
-		return this._pattern.containsWait();
 	}
 }

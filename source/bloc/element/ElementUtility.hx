@@ -80,9 +80,9 @@ enum ElementName
 
 	sequence_element;
 	parallel_element;
+
 	async_element;
 	endless_element;
-
 	loop_element;
 
 	if_element;

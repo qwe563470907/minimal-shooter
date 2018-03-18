@@ -41,7 +41,7 @@ class ElementParser
 		}
 		catch (message:String)
 		{
-			trace("[BLOC] Warning: Invalid element. " + message);
+			trace("[BLOC] Warning: " + message);
 			parsedElement = NULL_ELEMENT;
 		}
 
@@ -50,12 +50,10 @@ class ElementParser
 
 	static private inline function parseElementContent(elementName:ElementName, elementNameString:String, content:Null<Dynamic>):Element
 	{
-		var parsedElement:Element;
-
 		try
 		{
 
-			parsedElement = switch (elementName)
+			return switch (elementName)
 			{
 				case position_element, velocity_element, shot_position_element, shot_velocity_element:
 					VectorParser.parse(elementName, content);
@@ -72,13 +70,13 @@ class ElementParser
 				case wait_element:
 					if (isInt(content)) new Wait(content);
 					else if (isFloat(content)) new Wait(Math.floor(content));
-					else throw "Passed a non-number value: " + content;
+					else throw "Invalid content. Passed a non-number value: " + content;
 
-				case sequence_element, parallel_element, endless_element:
+				case sequence_element, parallel_element:
 					CollectionParser.parse(elementName, content);
 
-				case async_element:
-					new Async(PatternParser.parsePatternContent(content));
+				case endless_element, async_element:
+					WrapperParser.parse(elementName, content);
 
 				case loop_element:
 					LoopParser.parse(content);
@@ -88,7 +86,7 @@ class ElementParser
 
 				case command_element:
 					if (isString(content)) new SendCommand(content);
-					else throw "Following must be a string:\n" + content;
+					else throw "Invalid content. Following must be a string:\n" + content;
 
 				default:
 					// definition?
@@ -97,11 +95,8 @@ class ElementParser
 		}
 		catch (message:String)
 		{
-			trace("[BLOC] Warning: Element <" + elementNameString + ">: Invalid content. " + message);
-			parsedElement = NULL_ELEMENT;
+			throw "Element <" + elementNameString + ">: " + message;
 		}
-
-		return parsedElement;
 	}
 
 	static private function getFirstKey(object:NonParsedElement):String
