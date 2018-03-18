@@ -1,6 +1,7 @@
 package actor;
 
 using tink.core.Ref;
+import de.polygonal.ds.ArrayedQueue;
 import bloc.Pattern;
 import bloc.Utility;
 import bloc.Vector;
@@ -29,14 +30,18 @@ class ActorAdapter implements bloc.Actor
 	private var _blocPattern:Pattern;
 	private var _blocStateManager:StateManager;
 	private var _receivedCommandTextSet:StringSet;
+	private var _blocSubThreads:ArrayedQueue<Pattern>;
 
 	public function new (actor:ActorSprite)
 	{
+		this.hasCompletedPattern = false;
+
 		this._actor = actor;
 		this._blocStateManager = new StateManager();
 		this._blocPattern = Utility.NULL_PATTERN;
 		this._receivedCommandTextSet = new StringSet();
-		this.hasCompletedPattern = false;
+		this._blocSubThreads = new ArrayedQueue<Pattern>(10);
+		this._blocSubThreads.reuseIterator = true;
 	}
 
 	public inline function reset():Void
@@ -63,6 +68,12 @@ class ActorAdapter implements bloc.Actor
 		{
 			this.hasCompletedPattern = this._blocPattern.run(this);
 			this._receivedCommandTextSet.clear();
+		}
+
+		for (thread in this._blocSubThreads)
+		{
+			if (thread.run(this))
+				this._blocSubThreads.dequeue();
 		}
 	}
 
@@ -94,6 +105,11 @@ class ActorAdapter implements bloc.Actor
 	{
 		v.prepareState(this._blocStateManager);
 		this._blocPattern = v;
+	}
+
+	public function addSubThreadPattern(pattern:Pattern):Void
+	{
+		this._blocSubThreads.enqueue(pattern);
 	}
 
 	inline function get_position()

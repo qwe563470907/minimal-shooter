@@ -74,27 +74,14 @@ class ElementParser
 					else if (isFloat(content)) new Wait(Math.floor(content));
 					else throw "Passed a non-number value: " + content;
 
-				case sequence_element:
-					if (isSequence(content)) new Sequence(PatternParser.parseElementArray(content));
-					else throw "Following object must be a list of elements:\n" + content;
+				case sequence_element, parallel_element, endless_element:
+					CollectionParser.parse(elementName, content);
 
-				case parallel_element:
-					if (isSequence(content)) new Parallel(PatternParser.parseElementArray(content));
-					else throw "Following object must be a list of elements:\n" + content;
+				case async_element:
+					new Async(PatternParser.parsePatternContent(content));
 
 				case loop_element:
 					LoopParser.parse(content);
-
-				case endless_element:
-					if (isSequence(content))
-					{
-						var pattern = new Endless(PatternParser.parseElementArray(content));
-
-						if (!pattern.containsWait()) throw "Contains no element which takes one or more frames.";
-
-						pattern;
-					}
-					else throw "Following object must be a list of elements:\n" + content;
 
 				case if_element:
 					IfParser.parse(content);

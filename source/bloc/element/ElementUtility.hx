@@ -77,10 +77,13 @@ enum ElementName
 	fire_element;
 
 	wait_element;
+
 	sequence_element;
 	parallel_element;
-	loop_element;
+	async_element;
 	endless_element;
+
+	loop_element;
 
 	if_element;
 	command_element;

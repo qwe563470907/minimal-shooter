@@ -40,28 +40,28 @@ patterns:
     - shot_direction_angular_velocity:
         operation: set
         value: 1
-    - parallel:
+    - async:
       - shot_direction_angular_velocity:
           operation: set
           value: 9
           frames: 300
-      - loop:
-          count: 300
-          pattern:
-            - loop:
-                count: 4
-                pattern:
-                  - shot_bearing: [add, 90]
-                  - fire:
-                      - speed:
-                          operation: set
-                          value: 10
-                          frames: 15
-                      - direction:
-                          operation: add
-                          value: 60
-                          frames: 30
-            - wait: 2
+    - loop:
+        count: 300
+        pattern:
+          - loop:
+              count: 4
+              pattern:
+                - shot_bearing: [add, 90]
+                - fire:
+                    - speed:
+                        operation: set
+                        value: 10
+                        frames: 15
+                    - direction:
+                        operation: add
+                        value: 60
+                        frames: 30
+          - wait: 2
     - velocity:
         operation: add
         values: [16, 180]
