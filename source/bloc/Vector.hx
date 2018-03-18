@@ -9,6 +9,7 @@ import bloc.Utility.EPSILON;
 class Vector
 {
 	private static var _dummyReference:Vector = new Vector();
+	private static var _temporalVector:Vector = new Vector();
 
 	/**
 	 * The x value in cartesian coordinates system.
@@ -249,6 +250,21 @@ class Vector
 	{
 		this._referer = Referers.relative;
 		this._reference = reference;
+
+		return this;
+	}
+
+	/**
+	 * Sets the coordinates according to the current absolute coordinates and sets the vector as absolute.
+	 * Useful for changing the vector from relative to absolute without changing the absolute coordinates.
+	 *
+	 * @return  Vector
+	 */
+	public inline function absolutize():Vector
+	{
+		this.calculateAbsolute(Vector._temporalVector);
+		this.setAbsoluteReference();
+		this.set(Vector._temporalVector);
 
 		return this;
 	}

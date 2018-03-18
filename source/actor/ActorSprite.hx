@@ -1,17 +1,22 @@
 package actor;
 
 using tink.core.Ref;
+import de.polygonal.ds.Hashable;
+import de.polygonal.ds.HashKey;
 import flixel.FlxSprite;
-// import flixel.math.FlxPoint;
-// import flixel.util.FlxArrayUtil.clearArray;
 import flixel.FlxG;
-import actor.behavior.*;
 import bloc.Pattern;
 import bloc.AngleInterval;
+import actor.behavior.*;
 
-class ActorSprite extends FlxSprite // implements ICleanable
+class ActorSprite extends FlxSprite implements Hashable
 {
+	private static var _temporalVector = new Vector();
+
+	public var key(default, null):Int = HashKey.next();
+
 	public var army:ActorArmy;
+	public var adapter:ActorAdapter;
 
 	public var position:Vector;
 	public var motionVelocity:Vector;
@@ -27,21 +32,19 @@ class ActorSprite extends FlxSprite // implements ICleanable
 	public var halfHeight:Float;
 
 	public var properFrameCount:Int = 0;
-	// public var childActors:CleanableGroup<Actor>;
 
-	private var behaviorList:Array<Behavior>;
-	public var adapter:ActorAdapter;
+	private var _behaviorList:Array<Behavior>;
 
-	private var absolutePosition:Vector;
-	private var isBinded:Bool;
+	private var _isBinded:Bool;
+	private var _positionBindingReferenceActor:ActorSprite;
 
 	public function new ()
 	{
 		super();
 		super.kill();
-		behaviorList = [];
+
 		adapter = new ActorAdapter(this);
-		// childActors = new CleanableGroup<Actor>(256);
+		_behaviorList = [];
 
 		position = new Vector();
 		motionVelocity = new Vector();
@@ -54,38 +57,44 @@ class ActorSprite extends FlxSprite // implements ICleanable
 		shotBearingAngularVelocity = AngleInterval.fromZero();
 		shotDirectionAngularVelocity = AngleInterval.fromZero();
 
-		absolutePosition = new Vector();
-		isBinded = false;
+		resetContents();
 	}
 
-	// public function clean():Void
-	// {
-	// 	childActors.clean();
-	// }
-
-	public inline function addBehavior(Behavior:Behavior)
+	public inline function resetContents():ActorSprite
 	{
-		behaviorList.push(Behavior);
-	}
+		position.reset();
+		motionVelocity.reset();
+		adapter.reset();
+		_isBinded = false;
+		_positionBindingReferenceActor = this;	// as dummy
 
-	public inline function truncateSpeed(max:Float):Void
-	{
-		if (motionVelocity.length > max)
-			motionVelocity.length = max;
+		return this;
 	}
 
 	/**
-	 * Check and see if this object is currently out of the world bounds.
-	 *
-	 * @param	margin	The margin around the world bounds.
-	 * @return   True if the object is out of the world.
+	 * Loads graphics.
+	 * @param   graphic		The file name.
+	 * @param   rotations	Set for calling `loadRotatedGraphic()`.
+	 * @return  This `FlxSprite` instance.
 	 */
-	public inline function isOutOfWorld(margin:Float = 0):Bool
+	public inline function setGraphic(graphic:String, ?rotations:Int):flixel.FlxSprite
 	{
-		position.calculateAbsolute(absolutePosition);
+		if (rotations != null)
+			loadRotatedGraphic(graphic, rotations, -1, true, true);
+		else
+			loadGraphic(graphic);
 
-		return (absolutePosition.x + halfWidth < FlxG.worldBounds.x - margin) || (absolutePosition.x - halfWidth > FlxG.worldBounds.right + margin) ||
-		(absolutePosition.y + halfHeight < FlxG.worldBounds.y - margin) || (absolutePosition.y - halfHeight > FlxG.worldBounds.bottom + margin);
+		return this;
+	}
+
+	public inline function addBehavior(Behavior:Behavior)
+	{
+		_behaviorList.push(Behavior);
+	}
+
+	public inline function setBlocPattern(v:Pattern):Void
+	{
+		this.adapter.setBlocPattern(v);
 	}
 
 	override public function update(elapsed:Float):Void
@@ -93,13 +102,13 @@ class ActorSprite extends FlxSprite // implements ICleanable
 		this.halfWidth = 0.5 * this.width;
 		this.halfHeight = 0.5 * this.height;
 
-		for (behavior in behaviorList)
+		for (behavior in _behaviorList)
 			behavior.run(this);
 
 		adapter.runBulletHellPattern();
 		applyAngularVelocities();
+
 		properFrameCount++;
-		// childActors.forEach(removeNonExistingChild);
 
 		syncBlocToFlixel();
 		super.update(elapsed);
@@ -108,8 +117,8 @@ class ActorSprite extends FlxSprite // implements ICleanable
 
 	public inline function syncBlocToFlixel():Void
 	{
-		position.calculateAbsolute(absolutePosition);
-		setPosition(absolutePosition.x - halfWidth, absolutePosition.y - halfHeight);
+		position.calculateAbsolute(ActorSprite._temporalVector);
+		setPosition(ActorSprite._temporalVector.x - halfWidth, ActorSprite._temporalVector.y - halfHeight);
 		velocity.set(motionVelocity.x * 60, motionVelocity.y * 60);
 	}
 
@@ -117,7 +126,7 @@ class ActorSprite extends FlxSprite // implements ICleanable
 	{
 		// Is it really OK????
 
-		if (this.isBinded)
+		if (this._isBinded)
 			position.add(motionVelocity);
 		else
 		{
@@ -130,29 +139,7 @@ class ActorSprite extends FlxSprite // implements ICleanable
 	{
 		super.kill();
 		setPosition(-10000, -10000);
-		isBinded = false;
-		// clearArray(behaviorList, false);
-	}
-
-	// private function removeNonExistingChild(A:Actor):Void {
-	// 	if(!A.exists)
-	// 		childActors.remove(A, true);
-	// }
-
-	/**
-	 * Loads graphics.
-	 * @param   Graphic		The file name.
-	 * @param   Rotation	Set `true` for calling `loadRotatedGraphic()`.
-	 * @return  This `FlxSprite` instance.
-	 */
-	public inline function setGraphic(Graphic:String, ?Rotations:Int):flixel.FlxSprite
-	{
-		if (Rotations != null)
-			loadRotatedGraphic(Graphic, Rotations, -1, true, true);
-		else
-			loadGraphic(Graphic);
-
-		return this;
+		army.receiveDeathNotice(this);
 	}
 
 	public inline function fire(pattern:Pattern, bind:Bool):ActorSprite
@@ -163,9 +150,8 @@ class ActorSprite extends FlxSprite // implements ICleanable
 
 		if (bind)
 		{
+			newBullet.bindPosition(this);
 			newBullet.position.set(this.shotPosition);
-			newBullet.position.setRelativeReference(this.position);
-			newBullet.isBinded = true;
 		}
 		else
 			this.shotPosition.calculateAbsolute(newBullet.position);
@@ -173,18 +159,55 @@ class ActorSprite extends FlxSprite // implements ICleanable
 		return this;
 	}
 
-	public inline function setBlocPattern(v:Pattern):Void
+	public inline function bindPosition(reference:ActorSprite):ActorSprite
 	{
-		this.adapter.setBlocPattern(v);
-	}
-
-	public inline function resetContents():ActorSprite
-	{
-		position.reset();
-		motionVelocity.reset();
-		adapter.reset();
+		this.position.setRelativeReference(reference.position);
+		this._isBinded = true;
+		this._positionBindingReferenceActor = reference;
 
 		return this;
+	}
+
+	public inline function unbindPosition():ActorSprite
+	{
+		this.position.absolutize();
+		this._isBinded = false;
+		this._positionBindingReferenceActor = this;	// as dummy
+
+		return this;
+	}
+
+	public inline function receiveDeathNotice(killedActor:ActorSprite):Void
+	{
+		if (this._isBinded)
+		{
+			if (this._positionBindingReferenceActor == killedActor)
+				unbindPosition();
+		}
+	}
+
+	public inline function truncateSpeed(max:Float):Void
+	{
+		motionVelocity.truncate(max);
+	}
+
+	/**
+	 * Check and see if this object is currently out of the world bounds.
+	 *
+	 * @param	margin	The margin around the world bounds.
+	 * @return   True if the object is out of the world.
+	 */
+	public inline function isOutOfWorld(margin:Float = 0):Bool
+	{
+		var vec = ActorSprite._temporalVector;
+		position.calculateAbsolute(vec);
+
+		return (
+		  (vec.x + halfWidth < FlxG.worldBounds.x - margin) ||
+		  (vec.x - halfWidth > FlxG.worldBounds.right + margin) ||
+		  (vec.y + halfHeight < FlxG.worldBounds.y - margin) ||
+		  (vec.y - halfHeight > FlxG.worldBounds.bottom + margin)
+		);
 	}
 
 	private inline function applyAngularVelocities():Void

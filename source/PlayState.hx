@@ -20,6 +20,8 @@ class PlayState extends FlxState
 		Parser.parseYaml(AssetPaths.enemy__yaml);
 		var blocPatternDictionary = Parser.patternDictionary;
 
+		var actorAliveMonitoringMediator = new ActorMediator();
+
 		var dieOutOfWorldBehavior = new DieOutOfWorld(200);
 
 		var playerFactory = function()
@@ -48,6 +50,7 @@ class PlayState extends FlxState
 
 		_playerArmy = new ActorArmy(
 		  this,
+		  actorAliveMonitoringMediator,
 		  1,
 		  256,
 		  playerFactory,
@@ -81,6 +84,7 @@ class PlayState extends FlxState
 
 		_enemyArmy = new ActorArmy(
 		  this,
+		  actorAliveMonitoringMediator,
 		  128,
 		  1024,
 		  enemyFactory,
