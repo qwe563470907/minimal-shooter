@@ -1,7 +1,6 @@
 package bloc.element;
 
 import bloc.element.ElementUtility.indent;
-import bloc.state.CountState;
 
 class Loop extends WrapperElement
 {
@@ -33,7 +32,7 @@ class Loop extends WrapperElement
 	override public inline function prepareState(manager:StateManager):Void
 	{
 		super.prepareState(manager);
-		manager.countStateMap.set(this, new CountState(this._repetitionCount));
+		manager.addCountState(this, this._repetitionCount);
 	}
 
 	override public inline function resetState(actor:Actor):Void
