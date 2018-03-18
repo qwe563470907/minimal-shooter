@@ -9,8 +9,9 @@ class ActorArmy extends FlxBasic
 {
 	public var agents:FlxTypedGroup<Agent>;
 	public var bullets:FlxTypedGroup<Bullet>;
+	public var aliveMonitor:ActorMediator;
+
 	private var _commands:Array<Command>;
-	private var _aliveMonitoringMediator:ActorMediator;
 
 	public function new (
 	  state:FlxState,
@@ -23,7 +24,7 @@ class ActorArmy extends FlxBasic
 	{
 		super();
 
-		_aliveMonitoringMediator = mediator;
+		aliveMonitor = mediator;
 
 		agents = new FlxTypedGroup<Agent>(agentCapacity);
 
@@ -92,10 +93,5 @@ class ActorArmy extends FlxBasic
 		bullet.resetContents();
 
 		return bullet;
-	}
-
-	public inline function receiveDeathNotice(killedActor:ActorSprite):Void
-	{
-		_aliveMonitoringMediator.receiveDeathNotice(killedActor);
 	}
 }

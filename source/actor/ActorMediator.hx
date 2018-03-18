@@ -2,7 +2,6 @@ package actor;
 
 import de.polygonal.ds.HashTable;
 import de.polygonal.ds.ArrayList;
-import flixel.group.FlxGroup;
 
 typedef ActorList = ArrayList<ActorSprite>;
 
@@ -27,15 +26,9 @@ class ActorMediator
 
 	public inline function registerActor(actor:ActorSprite):Void
 	{
-		var referers = new ActorList();
+		var referers = new ActorList(64);
 		referers.reuseIterator = true;
 		this._actorReferersMap.setIfAbsent(actor, referers);
-	}
-
-	public inline function registerActors(actorGroup:FlxTypedGroup<ActorSprite>):Void
-	{
-		for (actor in actorGroup)
-			this.registerActor(actor);
 	}
 
 	public inline function addActorReference(referer:ActorSprite, reference:ActorSprite):Void

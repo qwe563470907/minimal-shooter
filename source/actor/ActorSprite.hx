@@ -139,7 +139,7 @@ class ActorSprite extends FlxSprite implements Hashable
 	{
 		super.kill();
 		setPosition(-10000, -10000);
-		army.receiveDeathNotice(this);
+		army.aliveMonitor.receiveDeathNotice(this);
 	}
 
 	public inline function fire(pattern:Pattern, bind:Bool):ActorSprite
@@ -164,6 +164,7 @@ class ActorSprite extends FlxSprite implements Hashable
 		this.position.setRelativeReference(reference.position);
 		this._isBinded = true;
 		this._positionBindingReferenceActor = reference;
+		this.army.aliveMonitor.addActorReference(this, reference);	// Tell me if the reference actor has been killed!
 
 		return this;
 	}
