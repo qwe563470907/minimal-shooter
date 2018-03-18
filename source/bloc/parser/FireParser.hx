@@ -22,12 +22,12 @@ class FireParser
 		try
 		{
 
-			element = if (isMap(content))
+			element = if (content != null && isMap(content))
 			{
 				var patternValue:Null<Dynamic> = content.get("pattern");
 				var pattern = PatternParser.parsePatternContent(patternValue);
 
-				var bind = content.get("bind");
+				var bind:Null<Dynamic> = content.get("bind");
 
 				if (bind == null)
 					bind = false;

@@ -48,7 +48,7 @@ class VectorParser
 				var coords = getCoordinates(content.get("coordinates"));
 				var reference = getReference(content.get("reference"), elementName, operation);
 
-				var frames = content.get("frames");
+				var frames:Null<Dynamic> = content.get("frames");
 
 				if (frames == null) frames = 0;
 
