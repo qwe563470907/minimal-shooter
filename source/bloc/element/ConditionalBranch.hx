@@ -43,7 +43,7 @@ class ConditionalBranch extends DefaultElement
 
 	override public inline function prepareState(manager:StateManager):Void
 	{
-		manager.branchStateMap.set(this, new ConditionalBranchState());
+		manager.addBranchState(this);
 		this._then.prepareState(manager);
 		this._else.prepareState(manager);
 	}
@@ -53,15 +53,15 @@ class ConditionalBranch extends DefaultElement
 		actor.getStateManager().getBranchState(this).reset();
 	}
 
+	override public inline function containsWait():Bool
+	{
+		return this._then.containsWait() && this._else.containsWait();
+	}
+
 	public inline function resetChildrenState(actor:Actor):Void
 	{
 		this._then.resetState(actor);
 		this._else.resetState(actor);
-	}
-
-	override public inline function containsWait():Bool
-	{
-		return this._then.containsWait() && this._else.containsWait();
 	}
 
 	private function setActiveBranch(actor:Actor, state:ConditionalBranchState):Pattern

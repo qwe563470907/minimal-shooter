@@ -13,95 +13,95 @@ class StateManager
 	static private var NULL_VECTOR_STATE(default, never) = new VectorState();
 	static private var NULL_PARALLEL_STATE(default, never) = new ParallelState();
 
-	public var countStateMap:HashTable<Element, CountState>;
-	public var branchStateMap:HashTable<Element, ConditionalBranchState>;
-	public var floatStateMap:HashTable<Element, FloatState>;
-	public var angleIntervalStateMap:HashTable<Element, AngleIntervalState>;
-	public var vectorStateMap:HashTable<Element, VectorState>;
-	public var parallelStateMap:HashTable<Element, ParallelState>;
+	private var _countStateMap:HashTable<Element, CountState>;
+	private var _branchStateMap:HashTable<Element, ConditionalBranchState>;
+	private var _floatStateMap:HashTable<Element, FloatState>;
+	private var _angleIntervalStateMap:HashTable<Element, AngleIntervalState>;
+	private var _vectorStateMap:HashTable<Element, VectorState>;
+	private var _parallelStateMap:HashTable<Element, ParallelState>;
 
 	public function new ()
 	{
-		this.countStateMap = new HashTable<Element, CountState>(32, 32);
-		this.countStateMap.reuseIterator = true;
-		this.branchStateMap = new HashTable<Element, ConditionalBranchState>(4, 4);
-		this.branchStateMap.reuseIterator = true;
-		this.floatStateMap = new HashTable<Element, FloatState>(16, 16);
-		this.floatStateMap.reuseIterator = true;
-		this.angleIntervalStateMap = new HashTable<Element, AngleIntervalState>(8, 8);
-		this.angleIntervalStateMap.reuseIterator = true;
-		this.vectorStateMap = new HashTable<Element, VectorState>(16, 16);
-		this.vectorStateMap.reuseIterator = true;
-		this.parallelStateMap = new HashTable<Element, ParallelState>(8, 8);
-		this.parallelStateMap.reuseIterator = true;
+		this._countStateMap = new HashTable<Element, CountState>(32, 32);
+		this._countStateMap.reuseIterator = true;
+		this._branchStateMap = new HashTable<Element, ConditionalBranchState>(4, 4);
+		this._branchStateMap.reuseIterator = true;
+		this._floatStateMap = new HashTable<Element, FloatState>(16, 16);
+		this._floatStateMap.reuseIterator = true;
+		this._angleIntervalStateMap = new HashTable<Element, AngleIntervalState>(8, 8);
+		this._angleIntervalStateMap.reuseIterator = true;
+		this._vectorStateMap = new HashTable<Element, VectorState>(16, 16);
+		this._vectorStateMap.reuseIterator = true;
+		this._parallelStateMap = new HashTable<Element, ParallelState>(8, 8);
+		this._parallelStateMap.reuseIterator = true;
 	}
 
 	public inline function clear():Void
 	{
-		for (state in this.countStateMap)
+		for (state in this._countStateMap)
 			CountState.put(state);
 
-		for (state in this.branchStateMap)
+		for (state in this._branchStateMap)
 			ConditionalBranchState.put(state);
 
-		for (state in this.floatStateMap)
+		for (state in this._floatStateMap)
 			FloatState.put(state);
 
-		for (state in this.angleIntervalStateMap)
+		for (state in this._angleIntervalStateMap)
 			AngleIntervalState.put(state);
 
-		for (state in this.vectorStateMap)
+		for (state in this._vectorStateMap)
 			VectorState.put(state);
 
-		for (state in this.parallelStateMap)
+		for (state in this._parallelStateMap)
 			ParallelState.put(state);
 
-		this.countStateMap.clear();
-		this.branchStateMap.clear();
-		this.floatStateMap.clear();
-		this.angleIntervalStateMap.clear();
-		this.vectorStateMap.clear();
-		this.parallelStateMap.clear();
+		this._countStateMap.clear();
+		this._branchStateMap.clear();
+		this._floatStateMap.clear();
+		this._angleIntervalStateMap.clear();
+		this._vectorStateMap.clear();
+		this._parallelStateMap.clear();
 	}
 
 	public inline function getCountState(element:Element):CountState
 	{
-		var state = this.countStateMap.get(element);
+		var state = this._countStateMap.get(element);
 
 		return if (checkNull(state)) state else NULL_COUNT_STATE;
 	}
 
 	public inline function getBranchState(element:Element):ConditionalBranchState
 	{
-		var state = this.branchStateMap.get(element);
+		var state = this._branchStateMap.get(element);
 
 		return if (checkNull(state)) state else NULL_BRANCH_STATE;
 	}
 
 	public inline function getFloatState(element:Element):FloatState
 	{
-		var state = this.floatStateMap.get(element);
+		var state = this._floatStateMap.get(element);
 
 		return if (checkNull(state)) state else NULL_FLOAT_STATE;
 	}
 
 	public inline function getAngleIntervalState(element:Element):AngleIntervalState
 	{
-		var state = this.angleIntervalStateMap.get(element);
+		var state = this._angleIntervalStateMap.get(element);
 
 		return if (checkNull(state)) state else NULL_ANGLE_INTERVAL_STATE;
 	}
 
 	public inline function getVectorState(element:Element):VectorState
 	{
-		var state = this.vectorStateMap.get(element);
+		var state = this._vectorStateMap.get(element);
 
 		return if (checkNull(state)) state else NULL_VECTOR_STATE;
 	}
 
 	public inline function getParallelState(element:Element):ParallelState
 	{
-		var state = this.parallelStateMap.get(element);
+		var state = this._parallelStateMap.get(element);
 
 		return if (checkNull(state)) state else NULL_PARALLEL_STATE;
 	}
@@ -110,27 +110,32 @@ class StateManager
 	{
 		var state = CountState.get();
 		state.maxCount = maxCount;
-		this.countStateMap.set(element, state);
+		this._countStateMap.set(element, state);
+	}
+
+	public inline function addBranchState(element:Element)
+	{
+		this._branchStateMap.set(element, ConditionalBranchState.get());
 	}
 
 	public inline function addFloatState(element:Element)
 	{
-		this.floatStateMap.set(element, FloatState.get());
+		this._floatStateMap.set(element, FloatState.get());
 	}
 
 	public inline function addAngleIntervalState(element:Element)
 	{
-		this.angleIntervalStateMap.set(element, AngleIntervalState.get());
+		this._angleIntervalStateMap.set(element, AngleIntervalState.get());
 	}
 
 	public inline function addVectorState(element:Element)
 	{
-		this.vectorStateMap.set(element, VectorState.get());
+		this._vectorStateMap.set(element, VectorState.get());
 	}
 
 	public inline function addParallelState(element:Element)
 	{
-		this.parallelStateMap.set(element, ParallelState.get());
+		this._parallelStateMap.set(element, ParallelState.get());
 	}
 
 	private inline function checkNull(state:Null<State>):Bool
